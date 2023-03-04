@@ -13,7 +13,6 @@
     "default_icon": "icon-34.png"
   },
   "permissions": [
-    "tabs",
     "storage"
   ],
   "icons": {
