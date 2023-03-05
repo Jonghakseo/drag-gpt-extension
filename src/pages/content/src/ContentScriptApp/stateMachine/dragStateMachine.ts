@@ -12,13 +12,6 @@ type AnchorNodePosition = {
   center: number;
 };
 
-function isValidTextSelectedEvent(event: TextSelectedEvent): boolean {
-  if (!event.value.selectedNodeRect) {
-    return false;
-  }
-  return event.value.selectedText.length > 1;
-}
-
 type TextSelectedEvent = {
   type: "TEXT_SELECTED";
   value: {
@@ -31,10 +24,7 @@ type TextSelectedEvent = {
 type Events =
   | TextSelectedEvent
   | { type: "CLOSE_MESSAGE_BOX" }
-  | { type: "RESOLVE"; responseText: string }
-  | { type: "REJECT"; error: Error }
-  | { type: "REQUEST"; value: string }
-  | { type: "COUNTDOWN"; value: number };
+  | { type: "REQUEST"; value: string };
 
 interface Context {
   selectedText: string;
@@ -44,25 +34,6 @@ interface Context {
   anchorNodePosition: AnchorNodePosition;
   responseText: string;
   error?: Error;
-}
-
-enum Action {
-  ResetContextData = "ResetContextData",
-  CalculateAnchorNodePosition = "CalculateAnchorNodePosition",
-  CalculatePositionOnScreen = "CalculatePositionOnScreen",
-  RequestButtonDataPreparation = "RequestButtonDataPreparation",
-}
-
-enum StateKey {
-  Idle = "idle",
-  RequestButton = "request_button",
-  Loading = "loading",
-  ResponseMessageBox = "response_message_box",
-  ErrorMessageBox = "error_message_box",
-}
-
-enum StateTag {
-  ShowRequestButton = "show_request_button",
 }
 
 const initialContext: Context = {
@@ -75,90 +46,98 @@ const initialContext: Context = {
   error: undefined,
 } as const;
 
-const dragStateMachine = createMachine<Context, Events>(
+const dragStateMachine = createMachine(
   {
     id: "drag-state",
-    initial: StateKey.Idle,
+    initial: "idle",
     predictableActionArguments: true,
     context: initialContext,
+    schema: {
+      context: {} as Context,
+      events: {} as Events,
+      services: {} as {
+        getGPTResponse: {
+          data: string;
+        };
+      },
+    },
+    tsTypes: {} as import("./dragStateMachine.typegen").Typegen0,
     states: {
-      [StateKey.Idle]: {
+      idle: {
         meta: {
           message: "idle state with nothing selected",
         },
-        entry: [Action.ResetContextData],
+        entry: ["resetAll"],
         on: {
           TEXT_SELECTED: {
-            target: StateKey.RequestButton,
-            actions: [Action.RequestButtonDataPreparation],
-            cond: (_, event) => isValidTextSelectedEvent(event),
+            target: "request_button",
+            actions: "readyRequestButton",
+            cond: "isValidTextSelectedEvent",
           },
         },
       },
-      [StateKey.RequestButton]: {
+      request_button: {
         meta: {
           message: "the request button is visible",
         },
-        tags: StateTag.ShowRequestButton,
+        tags: "showRequestButton",
         on: {
           TEXT_SELECTED: [
             {
-              target: StateKey.RequestButton,
-              actions: [Action.RequestButtonDataPreparation],
-              cond: (_, event) => isValidTextSelectedEvent(event),
+              actions: "readyRequestButton",
+              cond: "isValidTextSelectedEvent",
             },
             {
-              target: StateKey.Idle,
-              cond: (_, event) => !isValidTextSelectedEvent(event),
+              target: "idle",
+              cond: "isInvalidTextSelectedEvent",
             },
           ],
-          REQUEST: StateKey.Loading,
+          REQUEST: "loading",
         },
       },
-      [StateKey.Loading]: {
+      loading: {
         meta: {
           message: "the loading spinner is running on the request button",
         },
-        tags: StateTag.ShowRequestButton,
-        entry: [Action.CalculateAnchorNodePosition],
-        exit: [Action.CalculatePositionOnScreen],
-        on: {
-          RESOLVE: {
-            target: StateKey.ResponseMessageBox,
-            actions: assign({
-              responseText: (_, event) => event.responseText,
-            }),
+        tags: "showRequestButton",
+        entry: ["setAnchorNodePosition"],
+        exit: ["setPositionOnScreen"],
+        invoke: {
+          src: "getGPTResponse",
+          onDone: {
+            target: "response_message_box",
+            actions: assign({ responseText: (_, event) => event.data }),
           },
-          REJECT: {
-            target: StateKey.ErrorMessageBox,
+          onError: {
+            target: "error_message_box",
             actions: assign({
-              error: (_, event) => event.error,
+              error: (_, event) => event.data,
             }),
           },
         },
       },
-      [StateKey.ResponseMessageBox]: {
+      response_message_box: {
         meta: {
           message: "receiving a normal response and showing the message box",
         },
         on: {
-          CLOSE_MESSAGE_BOX: StateKey.Idle,
+          CLOSE_MESSAGE_BOX: "idle",
         },
       },
-      [StateKey.ErrorMessageBox]: {
+      error_message_box: {
         meta: {
           message: "status showing error message box due to error occurrence",
         },
         on: {
-          CLOSE_MESSAGE_BOX: StateKey.Idle,
+          CLOSE_MESSAGE_BOX: "idle",
         },
       },
     },
   },
   {
     actions: {
-      [Action.ResetContextData]: assign({ ...initialContext }),
-      [Action.CalculateAnchorNodePosition]: assign({
+      resetAll: assign({ ...initialContext }),
+      setAnchorNodePosition: assign({
         anchorNodePosition: (context) => {
           const { left, width, height, top } = context.selectedTextNodeRect;
           const verticalCenter = left + width / 2;
@@ -169,7 +148,7 @@ const dragStateMachine = createMachine<Context, Events>(
           };
         },
       }),
-      [Action.CalculatePositionOnScreen]: assign({
+      setPositionOnScreen: assign({
         positionOnScreen: (context) => {
           const { left, width, height, top } = context.selectedTextNodeRect;
           const verticalCenter = left + width / 2;
@@ -182,23 +161,29 @@ const dragStateMachine = createMachine<Context, Events>(
           });
         },
       }),
-      [Action.RequestButtonDataPreparation]: assign<Context, TextSelectedEvent>(
-        {
-          selectedText: (_, event) => event.value.selectedText,
-          selectedTextNodeRect: (context, event) =>
-            event.value.selectedNodeRect ?? context.selectedTextNodeRect,
-          requestButtonPosition: (_, event) =>
-            event.value.requestButtonPosition,
-        }
-      ),
+      readyRequestButton: assign({
+        selectedText: (_, event) => event.value.selectedText,
+        selectedTextNodeRect: (context, event) =>
+          event.value.selectedNodeRect ?? context.selectedTextNodeRect,
+        requestButtonPosition: (_, event) => event.value.requestButtonPosition,
+      }),
+    },
+    guards: {
+      isValidTextSelectedEvent: (_, event) => {
+        return isValidTextSelectedEvent(event);
+      },
+      isInvalidTextSelectedEvent: (_, event) => {
+        return !isValidTextSelectedEvent(event);
+      },
     },
   }
 );
 
-const DragStateMachine = {
-  machine: dragStateMachine,
-  StateKey,
-  StateTag,
-};
+function isValidTextSelectedEvent(event: TextSelectedEvent): boolean {
+  if (!event.value.selectedNodeRect) {
+    return false;
+  }
+  return event.value.selectedText.length > 1;
+}
 
-export default DragStateMachine;
+export default dragStateMachine;

@@ -11,6 +11,7 @@
     "build": "tsc --noEmit && vite build",
     "build:watch": "__DEV__=true vite build --watch",
     "build:hmr": "rollup --config utils/reload/rollup.config.ts",
+    "typegen": "xstate typegen \"src/**/*.ts?(x)\"",
     "wss": "node utils/reload/initReloadServer.js",
     "dev": "npm run build:hmr && (run-p wss build:watch)",
     "test": "jest"
@@ -43,6 +44,7 @@
     "@typescript-eslint/eslint-plugin": "5.38.1",
     "@typescript-eslint/parser": "5.38.1",
     "@vitejs/plugin-react": "2.1.0",
+    "@xstate/cli": "^0.4.2",
     "chokidar": "^3.5.3",
     "eslint": "8.24.0",
     "eslint-config-prettier": "^8.5.0",

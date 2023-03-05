@@ -8,8 +8,8 @@ import { ChromeMessenger } from "@pages/chrome/ChromeMessenger";
 import ResponseMessageBox from "@pages/content/src/ContentScriptApp/components/messageBox/ResponseMessageBox";
 import ErrorMessageBox from "@pages/content/src/ContentScriptApp/components/messageBox/ErrorMessageBox";
 import { useMachine } from "@xstate/react";
-import DragStateMachine from "@pages/content/src/ContentScriptApp/stateMachine/dragStateMachine";
 import delayPromise from "@pages/content/src/ContentScriptApp/utils/delayPromise";
+import dragStateMachine from "@pages/content/src/ContentScriptApp/stateMachine/dragStateMachine";
 
 async function getGPTResponse(userInput: string) {
   return await ChromeMessenger.sendMessageAsync({
@@ -19,7 +19,11 @@ async function getGPTResponse(userInput: string) {
 }
 
 export default function DragGPT() {
-  const [state, send] = useMachine(DragStateMachine.machine);
+  const [state, send] = useMachine(dragStateMachine, {
+    services: {
+      getGPTResponse: (context) => getGPTResponse(context.selectedText),
+    },
+  });
 
   useEffect(() => {
     const onMouseUp = async (event: MouseEvent) => {
@@ -44,16 +48,8 @@ export default function DragGPT() {
     };
   }, []);
 
-  const requestGPT = async () => {
+  const requestGPT = () => {
     send("REQUEST");
-    try {
-      const responseText = await getGPTResponse(state.context.selectedText);
-      send({ type: "RESOLVE", responseText });
-    } catch (error) {
-      if (error instanceof Error) {
-        send({ type: "REJECT", error });
-      }
-    }
   };
 
   const closeMessageBox = () => {
@@ -62,15 +58,15 @@ export default function DragGPT() {
 
   return (
     <>
-      {state.hasTag(DragStateMachine.StateTag.ShowRequestButton) && (
+      {state.hasTag("showRequestButton") && (
         <GPTRequestButton
           onClick={requestGPT}
-          loading={state.value === DragStateMachine.StateKey.Loading}
+          loading={state.matches("loading")}
           top={state.context.requestButtonPosition.top}
           left={state.context.requestButtonPosition.left}
         />
       )}
-      {state.value === DragStateMachine.StateKey.ResponseMessageBox && (
+      {state.matches("response_message_box") && (
         <ResponseMessageBox
           onClose={closeMessageBox}
           text={state.context.responseText}
@@ -80,7 +76,7 @@ export default function DragGPT() {
           positionOnScreen={state.context.positionOnScreen}
         />
       )}
-      {state.value === DragStateMachine.StateKey.ErrorMessageBox && (
+      {state.matches("error_message_box") && (
         <ErrorMessageBox
           onClose={closeMessageBox}
           error={state.context.error}
