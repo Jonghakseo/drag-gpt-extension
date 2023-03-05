@@ -73,6 +73,7 @@ const dragStateMachine = createMachine<Context, Events>(
   {
     id: "drag-state",
     initial: StateKey.Idle,
+    predictableActionArguments: true,
     context: initialContext,
     states: {
       [StateKey.Idle]: {
