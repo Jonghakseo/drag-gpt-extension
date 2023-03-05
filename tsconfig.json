@@ -5,6 +5,7 @@
     "allowJs": false,
     "target": "esnext",
     "module": "esnext",
+    "strict": true,
     "jsx": "react-jsx",
     "skipLibCheck": true,
     "esModuleInterop": true,

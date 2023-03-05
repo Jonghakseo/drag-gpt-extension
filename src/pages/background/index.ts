@@ -77,19 +77,42 @@ class LocalStorage {
   }
 }
 
+const Logger = {
+  receive: (message: Message) => {
+    console.log(
+      "Message Receive:",
+      `${message.type}\ndata: ${message.data ?? "none"}`
+    );
+  },
+  send: (message: Message) => {
+    console.log(
+      "Message Sending:",
+      `${message.type}\ndata: ${message.data ?? "none"}`
+    );
+  },
+};
+
 // background script
 chrome.runtime.onMessage.addListener(function (request, sender, _sendResponse) {
   const message: Message = request;
-  const sendResponse = _sendResponse as (message: Message) => void;
+  Logger.receive(message);
 
-  const handleError = (error: Error & AxiosError) => {
-    if (error.isAxiosError) {
-      const customError = new Error();
-      customError.message = error.response.data?.error?.message;
-      customError.name = error.response.data?.error?.code ?? error.name;
-      sendResponse({ type: "Error", data: customError });
-    } else {
-      sendResponse({ type: "Error", data: error });
+  const sendResponse = (message: Message) => {
+    Logger.send(message);
+    return _sendResponse(message);
+  };
+
+  const handleError = (error: unknown) => {
+    if (error instanceof Error) {
+      if ((error as AxiosError).isAxiosError) {
+        const axiosError = error as AxiosError;
+        const customError = new Error();
+        customError.message = axiosError.response?.data?.error?.message;
+        customError.name = axiosError.response?.data?.error?.code ?? error.name;
+        sendResponse({ type: "Error", data: customError });
+      } else {
+        sendResponse({ type: "Error", data: error });
+      }
     }
   };
 
@@ -181,14 +204,14 @@ chrome.runtime.onMessage.addListener(function (request, sender, _sendResponse) {
             assistant: String(assistant),
             role: String(role),
           });
-          sendResponse({ type: "GPTResponse", data: response });
+          sendResponse({ type: "Response", data: response });
         } catch (error) {
           handleError(error);
           console.warn(error);
         }
       })();
       break;
-    case "LoadAPIKey":
+    case "GetAPIKey":
       (async () => {
         try {
           const apiKey = await LocalStorage.load(LocalStorage.API_KEY);

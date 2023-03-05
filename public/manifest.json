@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "drag-gpt",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "DragGPT chrome extension",
   "options_page": "src/pages/options/index.html",
   "background": {
@@ -13,7 +13,6 @@
     "default_icon": "icon-34.png"
   },
   "permissions": [
-    "tabs",
     "storage"
   ],
   "icons": {

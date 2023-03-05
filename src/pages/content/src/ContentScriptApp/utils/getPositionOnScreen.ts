@@ -25,4 +25,5 @@ export function getPositionOnScreen(position: {
   if (!isTop && !isLeft) {
     return PositionOnScreen.bottomRight;
   }
+  throw Error("UnExpected Position case");
 }

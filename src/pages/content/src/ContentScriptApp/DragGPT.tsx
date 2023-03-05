@@ -1,8 +1,4 @@
-import { useEffect, useState } from "react";
-import {
-  getPositionOnScreen,
-  PositionOnScreen,
-} from "@pages/content/src/ContentScriptApp/utils/getPositionOnScreen";
+import { useEffect } from "react";
 import {
   getSelectionNodeRect,
   getSelectionText,
@@ -11,60 +7,26 @@ import GPTRequestButton from "@pages/content/src/ContentScriptApp/components/GPT
 import { ChromeMessenger } from "@pages/chrome/ChromeMessenger";
 import ResponseMessageBox from "@pages/content/src/ContentScriptApp/components/messageBox/ResponseMessageBox";
 import ErrorMessageBox from "@pages/content/src/ContentScriptApp/components/messageBox/ErrorMessageBox";
-
-type Position = { top: number; left: number };
-const INITIAL_POSITION: Position = { top: 0, left: 0 };
-
-const MINIMUM_SELECTION_TEXT = 5;
+import { useMachine } from "@xstate/react";
+import DragStateMachine from "@pages/content/src/ContentScriptApp/stateMachine/dragStateMachine";
+import delayPromise from "@pages/content/src/ContentScriptApp/utils/delayPromise";
 
 export default function DragGPT() {
-  const [selectedText, setSelectedText] = useState<string>("");
-  const [gptResponseText, setGptResponseText] = useState<string>("");
-  const [gptResponseError, setGptResponseError] = useState<Error | null>(null);
-  const [requestLoading, setRequestLoading] = useState<boolean>(false);
-  const [requestButtonPosition, setRequestButtonPosition] =
-    useState<Position>(INITIAL_POSITION);
-  const [anchorNodeRect, setAnchorNodeRect] = useState<{
-    top: number;
-    bottom: number;
-    center: number;
-  }>({ top: 0, center: 0, bottom: 0 });
-  const [positionOnScreen, setPositionOnScreen] = useState<PositionOnScreen>(
-    PositionOnScreen.topLeft
-  );
+  const [state, send] = useMachine(DragStateMachine.machine);
 
   useEffect(() => {
     const onMouseUp = async (event: MouseEvent) => {
-      if (requestLoading || !!gptResponseText) {
-        return;
-      }
-      const selectionText = getSelectionText();
-      if (selectionText === selectedText) {
-        return;
-      }
-
-      setSelectedText(selectionText);
-      if (selectionText.length < MINIMUM_SELECTION_TEXT) {
-        return;
-      }
-
-      setRequestButtonPosition({
-        top: event.y + window.scrollY,
-        left: event.x + window.scrollX,
-      });
-
-      const { left, width, height, top } = getSelectionNodeRect();
-      const verticalCenter = left + width / 2;
-      const horizontalCenter = top + height / 2;
-      const position = getPositionOnScreen({
-        verticalCenter,
-        horizontalCenter,
-      });
-      setPositionOnScreen(position);
-      setAnchorNodeRect({
-        top: top + window.scrollY,
-        bottom: top + height + window.scrollY,
-        center: verticalCenter + window.scrollX,
+      await delayPromise(1);
+      send({
+        type: "TEXT_SELECTED",
+        value: {
+          selectedText: getSelectionText(),
+          selectedNodeRect: getSelectionNodeRect(),
+          requestButtonPosition: {
+            top: event.y + window.scrollY,
+            left: event.x + window.scrollX,
+          },
+        },
       });
     };
 
@@ -72,67 +34,55 @@ export default function DragGPT() {
     return () => {
       window.document.removeEventListener("mouseup", onMouseUp);
     };
-  }, [requestLoading, gptResponseText, selectedText]);
+  }, []);
 
   const sendSelectionText = async () => {
-    setRequestLoading(true);
+    send("REQUEST");
     try {
-      const responseMessage = await ChromeMessenger.sendMessageAsync({
+      const responseText = await ChromeMessenger.sendMessageAsync({
         type: "RequestSelectionMessage",
-        data: selectedText,
+        data: state.context.selectedText,
       });
-      switch (responseMessage.type) {
-        case "GPTResponse":
-          setGptResponseText(responseMessage.data);
-          break;
-        case "Error":
-          setGptResponseError(responseMessage.data);
-          break;
-        default:
-          console.error("unknown message", { message: responseMessage });
+      send({ type: "RESOLVE", responseText });
+    } catch (error) {
+      if (error instanceof Error) {
+        send({ type: "REJECT", error });
       }
-    } finally {
-      setRequestLoading(false);
     }
   };
 
   const handleCloseMessageBox = () => {
-    setGptResponseText("");
-    setSelectedText("");
-    setGptResponseError(null);
+    send("CLOSE_MESSAGE_BOX");
   };
-
-  const showRequestButton =
-    !!selectedText && !gptResponseText && !gptResponseError;
 
   return (
     <>
-      {showRequestButton && (
+      {state.hasTag(DragStateMachine.StateTag.ShowRequestButton) && (
         <GPTRequestButton
-          loading={requestLoading}
+          loading={state.value === DragStateMachine.StateKey.Loading}
           onMouseDown={sendSelectionText}
-          top={requestButtonPosition.top}
-          left={requestButtonPosition.left}
+          top={state.context.requestButtonPosition.top}
+          left={state.context.requestButtonPosition.left}
         />
       )}
-      {gptResponseText && (
+      {state.value === DragStateMachine.StateKey.ResponseMessageBox && (
         <ResponseMessageBox
           onClose={handleCloseMessageBox}
-          text={gptResponseText}
-          anchorTop={anchorNodeRect.top}
-          anchorCenter={anchorNodeRect.center}
-          anchorBottom={anchorNodeRect.bottom}
-          positionOnScreen={positionOnScreen}
+          text={state.context.responseText}
+          anchorTop={state.context.anchorNodePosition.top}
+          anchorCenter={state.context.anchorNodePosition.center}
+          anchorBottom={state.context.anchorNodePosition.bottom}
+          positionOnScreen={state.context.positionOnScreen}
         />
       )}
-      {gptResponseError && (
+      {state.value === DragStateMachine.StateKey.ErrorMessageBox && (
         <ErrorMessageBox
           onClose={handleCloseMessageBox}
-          error={gptResponseError}
-          anchorTop={anchorNodeRect.top}
-          anchorCenter={anchorNodeRect.center}
-          anchorBottom={anchorNodeRect.bottom}
-          positionOnScreen={positionOnScreen}
+          error={state.context.error}
+          anchorTop={state.context.anchorNodePosition.top}
+          anchorCenter={state.context.anchorNodePosition.center}
+          anchorBottom={state.context.anchorNodePosition.bottom}
+          positionOnScreen={state.context.positionOnScreen}
         />
       )}
     </>

@@ -37,24 +37,29 @@ declare module "*.json" {
 }
 
 declare global {
-  type ErrorMessageType = "GPTResponseError" | "Error";
+  type ResponseMessageType = "Response";
+  type ErrorMessageType = "Error";
   type CommonMessageType =
     | "RequestSelectionMessage"
-    | "GPTResponse"
     | "SaveAPIKey"
     | "SetAssistantPrompt"
-    | "SetRole"
-    | "Response";
+    | "SetRole";
 
   type ActionMessageType =
-    | "LoadAPIKey"
+    | "GetAPIKey"
     | "ResetAPIKey"
     | "GetAssistantPrompt"
     | "GetRole";
 
-  type MessageType = ErrorMessageType | CommonMessageType | ActionMessageType;
+  type MessageType =
+    | ErrorMessageType
+    | CommonMessageType
+    | ActionMessageType
+    | ResponseMessageType;
 
+  type ResponseMessage = { type: "Response"; data: string };
   type Message =
+    | ResponseMessage
     | { type: CommonMessageType; data: string }
     | { type: ActionMessageType; data?: null }
     | { type: ErrorMessageType; data: Error };
