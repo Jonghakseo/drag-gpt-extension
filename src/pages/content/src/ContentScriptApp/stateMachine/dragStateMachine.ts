@@ -24,7 +24,7 @@ type TextSelectedEvent = {
 type Events =
   | TextSelectedEvent
   | { type: "CLOSE_MESSAGE_BOX" }
-  | { type: "REQUEST"; value: string };
+  | { type: "REQUEST" };
 
 interface Context {
   selectedText: string;
@@ -35,6 +35,12 @@ interface Context {
   responseText: string;
   error?: Error;
 }
+
+type Services = {
+  getGPTResponse: {
+    data: string;
+  };
+};
 
 const initialContext: Context = {
   selectedText: "",
@@ -55,18 +61,11 @@ const dragStateMachine = createMachine(
     schema: {
       context: {} as Context,
       events: {} as Events,
-      services: {} as {
-        getGPTResponse: {
-          data: string;
-        };
-      },
+      services: {} as Services,
     },
     tsTypes: {} as import("./dragStateMachine.typegen").Typegen0,
     states: {
       idle: {
-        meta: {
-          message: "idle state with nothing selected",
-        },
         entry: ["resetAll"],
         on: {
           TEXT_SELECTED: {
@@ -77,9 +76,6 @@ const dragStateMachine = createMachine(
         },
       },
       request_button: {
-        meta: {
-          message: "the request button is visible",
-        },
         tags: "showRequestButton",
         on: {
           TEXT_SELECTED: [
@@ -96,9 +92,6 @@ const dragStateMachine = createMachine(
         },
       },
       loading: {
-        meta: {
-          message: "the loading spinner is running on the request button",
-        },
         tags: "showRequestButton",
         entry: ["setAnchorNodePosition"],
         exit: ["setPositionOnScreen"],
@@ -117,17 +110,11 @@ const dragStateMachine = createMachine(
         },
       },
       response_message_box: {
-        meta: {
-          message: "receiving a normal response and showing the message box",
-        },
         on: {
           CLOSE_MESSAGE_BOX: "idle",
         },
       },
       error_message_box: {
-        meta: {
-          message: "status showing error message box due to error occurrence",
-        },
         on: {
           CLOSE_MESSAGE_BOX: "idle",
         },

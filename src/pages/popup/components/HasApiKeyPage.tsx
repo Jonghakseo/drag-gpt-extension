@@ -1,5 +1,10 @@
 import { Button, HStack, Text, Textarea, VStack } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, {
+  ChangeEventHandler,
+  ReactEventHandler,
+  useEffect,
+  useState,
+} from "react";
 import { ChromeMessenger } from "@pages/chrome/ChromeMessenger";
 import styled from "@emotion/styled";
 
@@ -26,29 +31,28 @@ const StyledButton = styled(Button)`
 `;
 
 type HasApiKeyPageProps = {
-  initialRole: string;
-  initialAssistantPrompt: string;
+  role: string;
+  assistantPrompt: string;
   onClickChangeApiKey: () => void;
+  updateRole: (role: string) => void;
+  updateAssistantPrompt: (assistantPrompt: string) => void;
 };
 
 export default function HasApiKeyPage({
-  initialRole,
-  initialAssistantPrompt,
+  role,
+  assistantPrompt,
   onClickChangeApiKey,
+  updateRole,
+  updateAssistantPrompt,
 }: HasApiKeyPageProps) {
   const [isSaved, setIsSaved] = useState(false);
-  const [role, setRole] = useState(initialRole);
-  const [assistantPrompt, setAssistantPrompt] = useState(
-    initialAssistantPrompt
-  );
+  const [_role, onChangeRole] = useInput<HTMLTextAreaElement>(role);
+  const [_assistantPrompt, onChangeAssistantPrompt] =
+    useInput<HTMLTextAreaElement>(assistantPrompt);
 
   const saveRoleAndAssistant = () => {
-    ChromeMessenger.sendMessage({
-      message: { type: "SetRole", data: role },
-    });
-    ChromeMessenger.sendMessage({
-      message: { type: "SetAssistantPrompt", data: assistantPrompt },
-    });
+    updateRole(_role);
+    updateAssistantPrompt(_assistantPrompt);
     setIsSaved(true);
   };
 
@@ -60,9 +64,9 @@ export default function HasApiKeyPage({
         resize="none"
         width={220}
         maxLength={200}
-        value={role}
+        value={_role}
         placeholder="ex. You are a code reviewer."
-        onChange={(event) => setRole(event.target.value)}
+        onChange={onChangeRole}
         size="sm"
       />
       <Text color="antiquewhite">Try adding phrases to help with GPT</Text>
@@ -72,9 +76,9 @@ export default function HasApiKeyPage({
         width={220}
         height={50}
         maxLength={200}
-        value={assistantPrompt}
+        value={_assistantPrompt}
         placeholder="ex. I don't need to explain what this code is. And Please answer only in Korean."
-        onChange={(event) => setAssistantPrompt(event.target.value)}
+        onChange={onChangeAssistantPrompt}
         size="sm"
       />
       <HStack marginTop={24}>
@@ -88,3 +92,19 @@ export default function HasApiKeyPage({
     </VStack>
   );
 }
+
+const useInput = <T extends HTMLInputElement | HTMLTextAreaElement>(
+  value: string
+) => {
+  const [_value, setValue] = useState(value);
+
+  useEffect(() => {
+    setValue(value);
+  }, [value]);
+
+  const onChange: ChangeEventHandler<T> = (event) => {
+    setValue(event.target.value);
+  };
+
+  return [_value, onChange] as const;
+};

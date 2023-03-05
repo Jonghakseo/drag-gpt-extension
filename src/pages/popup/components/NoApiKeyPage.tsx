@@ -1,35 +1,24 @@
 import React, { ChangeEventHandler, useState } from "react";
-import { ChromeMessenger } from "@pages/chrome/ChromeMessenger";
 import { Button, HStack, Input, Spinner, Text, VStack } from "@chakra-ui/react";
 
 type NoApiKeyPageProps = {
-  updateOpenaiApiKey: (key: string) => void;
+  checkApiKey: (key: string) => void;
+  apiKeyError?: Error;
+  loading: boolean;
 };
-export const NoApiKeyPage = ({ updateOpenaiApiKey }: NoApiKeyPageProps) => {
-  const [loading, setLoading] = useState(false);
+export const NoApiKeyPage = ({
+  loading,
+  checkApiKey,
+  apiKeyError,
+}: NoApiKeyPageProps) => {
   const [apiKey, setApiKey] = useState("");
-  const [error, setError] = useState<Error | null>(null);
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     setApiKey(event.target.value);
   };
 
-  const save = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      await ChromeMessenger.sendMessageAsync({
-        type: "SaveAPIKey",
-        data: apiKey,
-      });
-      updateOpenaiApiKey(apiKey);
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error);
-      }
-    } finally {
-      setLoading(false);
-    }
+  const onClickSaveButton = () => {
+    checkApiKey(apiKey);
   };
 
   return (
@@ -46,18 +35,18 @@ export const NoApiKeyPage = ({ updateOpenaiApiKey }: NoApiKeyPageProps) => {
             placeholder="open api key"
             size="sm"
           />
-          <Button appearance="textfield" onClick={save}>
+          <Button appearance="textfield" onClick={onClickSaveButton}>
             SAVE
           </Button>
         </HStack>
       )}
-      {error && (
+      {apiKeyError && (
         <VStack>
           <Text fontWeight="bold" color="red">
-            {error.name}
+            {apiKeyError.name}
           </Text>
           <Text whiteSpace="pre-wrap" color="#e84646">
-            {error.message}
+            {apiKeyError.message}
           </Text>
         </VStack>
       )}

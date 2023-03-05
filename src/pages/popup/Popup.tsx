@@ -1,5 +1,5 @@
 import React from "react";
-import MainPage from "@pages/popup/pages/MainPage";
+import MainPage from "@pages/popup/components/MainPage";
 
 const Popup = () => {
   return <MainPage />;
