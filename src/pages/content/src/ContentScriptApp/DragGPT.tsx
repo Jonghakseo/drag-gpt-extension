@@ -81,16 +81,9 @@ export default function DragGPT() {
         type: "RequestSelectionMessage",
         data: selectedText,
       });
-      switch (responseMessage.type) {
-        case "GPTResponse":
-          setGptResponseText(responseMessage.data);
-          break;
-        case "Error":
-          setGptResponseError(responseMessage.data);
-          break;
-        default:
-          console.error("unknown message", { message: responseMessage });
-      }
+      setGptResponseText(responseMessage);
+    } catch (error) {
+      setGptResponseError(error);
     } finally {
       setRequestLoading(false);
     }

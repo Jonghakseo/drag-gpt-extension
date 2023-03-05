@@ -18,24 +18,20 @@ export const NoApiKeyPage = ({
     setApiKey(event.target.value);
   };
 
-  const save = () => {
+  const save = async () => {
     setLoading(true);
     setError(null);
-    ChromeMessenger.sendMessage({
-      message: {
+    try {
+      await ChromeMessenger.sendMessageAsync({
         type: "SaveAPIKey",
         data: apiKey,
-      },
-      callback: (message) => {
-        if (message.type === "Response") {
-          updateOpenaiApiKey(apiKey);
-        }
-        if (message.type === "Error") {
-          setError(message.data);
-        }
-        setLoading(false);
-      },
-    });
+      });
+      updateOpenaiApiKey(apiKey);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

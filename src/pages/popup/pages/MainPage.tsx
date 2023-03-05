@@ -24,45 +24,6 @@ const Container = styled.div`
   }
 `;
 
-function getAPIkey(handler: (apiKey: string) => void) {
-  ChromeMessenger.sendMessage({
-    message: {
-      type: "LoadAPIKey",
-    },
-    callback: (response) => {
-      if (response.type === "Response") {
-        handler(response.data);
-      }
-    },
-  });
-}
-
-function getRole(handler: (role: string) => void) {
-  ChromeMessenger.sendMessage({
-    message: {
-      type: "GetRole",
-    },
-    callback: (response) => {
-      if (response.type === "Response") {
-        handler(response.data);
-      }
-    },
-  });
-}
-
-function getAssistantPrompt(handler: (assistantPrompt: string) => void) {
-  ChromeMessenger.sendMessage({
-    message: {
-      type: "GetAssistantPrompt",
-    },
-    callback: (response) => {
-      if (response.type === "Response") {
-        handler(response.data);
-      }
-    },
-  });
-}
-
 export default function MainPage() {
   const [openaiApiKey, setOpenaiApiKey] = useState(null);
   const [role, setRole] = useState("");
@@ -78,9 +39,24 @@ export default function MainPage() {
   };
 
   useLayoutEffect(() => {
-    getAPIkey(setOpenaiApiKey);
-    getRole(setRole);
-    getAssistantPrompt(setAssistantPrompt);
+    ChromeMessenger.sendMessage({
+      message: {
+        type: "GetAPIKey",
+      },
+      handleSuccess: setOpenaiApiKey,
+    });
+    ChromeMessenger.sendMessage({
+      message: {
+        type: "GetRole",
+      },
+      handleSuccess: setRole,
+    });
+    ChromeMessenger.sendMessage({
+      message: {
+        type: "GetAssistantPrompt",
+      },
+      handleSuccess: setAssistantPrompt,
+    });
   }, []);
 
   return (

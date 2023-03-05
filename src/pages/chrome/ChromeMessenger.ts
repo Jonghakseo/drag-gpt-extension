@@ -1,27 +1,44 @@
 export class ChromeMessenger {
   static async sendMessageAsync(message: Message) {
-    return new Promise<Message>((resolve, reject) => {
+    return new Promise<ResponseMessage["data"]>((resolve, reject) => {
       try {
         this.sendMessage({
           message,
-          callback: (response) => {
+          handleSuccess: (response) => {
             resolve(response);
             return true;
           },
+          handleError: (error) => {
+            reject(error);
+          },
         });
-      } catch (e) {
-        reject(e);
+      } catch (error) {
+        reject(error);
       }
     });
   }
 
   static sendMessage({
     message,
-    callback,
+    handleSuccess,
+    handleError,
   }: {
     message: Message;
-    callback?: (message: Message) => void;
+    handleSuccess?: (data: ResponseMessage["data"]) => void;
+    handleError?: (error: Error) => void;
   }) {
-    chrome.runtime.sendMessage(message, (response) => callback?.(response));
+    chrome.runtime.sendMessage(message, (_response) => {
+      const response = _response as Message;
+      switch (response.type) {
+        case "Error":
+          handleError?.(response.data);
+          break;
+        case "Response":
+          handleSuccess?.(response.data);
+          break;
+        default:
+          throw Error("unknown message");
+      }
+    });
   }
 }
