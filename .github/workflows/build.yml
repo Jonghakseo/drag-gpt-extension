@@ -13,13 +13,23 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         cache: 'yarn'
+
+    - uses: actions/cache@v3
+      with:
+        path: node_modules
+        key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+
     - run: yarn install
+
     - run: yarn typegen
+
     - run: yarn test
+
     - run: yarn build
 
     - shell: bash
