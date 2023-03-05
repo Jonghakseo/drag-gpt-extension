@@ -12,24 +12,19 @@ type AnchorNodePosition = {
   center: number;
 };
 
-function isValidSelectionTextLength(selectionText: string) {
-  return selectionText.length > 1;
-}
+type TextSelectedEvent = {
+  type: "TEXT_SELECTED";
+  value: {
+    selectedText: string;
+    selectedNodeRect?: NodeRect;
+    requestButtonPosition: RequestButtonPosition;
+  };
+};
 
 type Events =
-  | {
-      type: "TEXT_SELECTED";
-      value: {
-        selectedText: string;
-        selectedNodeRect?: NodeRect;
-        requestButtonPosition: RequestButtonPosition;
-      };
-    }
+  | TextSelectedEvent
   | { type: "CLOSE_MESSAGE_BOX" }
-  | { type: "RESOLVE"; responseText: string }
-  | { type: "REJECT"; error: Error }
-  | { type: "REQUEST"; value: string }
-  | { type: "COUNTDOWN"; value: number };
+  | { type: "REQUEST" };
 
 interface Context {
   selectedText: string;
@@ -41,23 +36,11 @@ interface Context {
   error?: Error;
 }
 
-enum Action {
-  ResetContext = "ResetContext",
-  CalcAnchorNodePosition = "CalcAnchorNodePosition",
-  CalcPositionOnScreen = "CalcPositionOnScreen",
-}
-
-enum StateKey {
-  Idle = "idle",
-  RequestButton = "request_button",
-  Loading = "loading",
-  ResponseMessageBox = "response_message_box",
-  ErrorMessageBox = "error_message_box",
-}
-
-enum StateTag {
-  ShowRequestButton = "show_request_button",
-}
+type Services = {
+  getGPTResponse: {
+    data: string;
+  };
+};
 
 const initialContext: Context = {
   selectedText: "",
@@ -69,114 +52,79 @@ const initialContext: Context = {
   error: undefined,
 } as const;
 
-const dragStateMachine = createMachine<Context, Events>(
+const dragStateMachine = createMachine(
   {
     id: "drag-state",
-    initial: StateKey.Idle,
+    initial: "idle",
     predictableActionArguments: true,
     context: initialContext,
+    schema: {
+      context: {} as Context,
+      events: {} as Events,
+      services: {} as Services,
+    },
+    tsTypes: {} as import("./dragStateMachine.typegen").Typegen0,
     states: {
-      [StateKey.Idle]: {
-        meta: {
-          message: "아무것도 선택되지 않은 대기 상태",
-        },
-        entry: [Action.ResetContext],
+      idle: {
+        entry: ["resetAll"],
         on: {
           TEXT_SELECTED: {
-            target: StateKey.RequestButton,
-            actions: assign({
-              selectedText: (_, event) => event.value.selectedText,
-              selectedTextNodeRect: (_, event) =>
-                event.value.selectedNodeRect as NodeRect,
-              requestButtonPosition: (_, event) =>
-                event.value.requestButtonPosition,
-            }),
-            cond: (_, event) => {
-              return (
-                isValidSelectionTextLength(event.value.selectedText) &&
-                !!event.value.selectedNodeRect
-              );
-            },
+            target: "request_button",
+            actions: "readyRequestButton",
+            cond: "isValidTextSelectedEvent",
           },
         },
       },
-      [StateKey.RequestButton]: {
-        meta: {
-          message: "요청 버튼이 보이는 상태",
-        },
-        tags: StateTag.ShowRequestButton,
+      request_button: {
+        tags: "showRequestButton",
         on: {
           TEXT_SELECTED: [
             {
-              target: StateKey.RequestButton,
-              actions: assign({
-                selectedText: (_, event) => event.value.selectedText,
-                selectedTextNodeRect: (_, event) =>
-                  event.value.selectedNodeRect as NodeRect,
-                requestButtonPosition: (_, event) =>
-                  event.value.requestButtonPosition,
-              }),
-              cond: (_, event) => {
-                return (
-                  isValidSelectionTextLength(event.value.selectedText) &&
-                  !!event.value.selectedNodeRect
-                );
-              },
+              actions: "readyRequestButton",
+              cond: "isValidTextSelectedEvent",
             },
             {
-              target: StateKey.Idle,
-              cond: (_, event) =>
-                !isValidSelectionTextLength(event.value.selectedText) ||
-                !event.value.selectedNodeRect,
+              target: "idle",
+              cond: "isInvalidTextSelectedEvent",
             },
           ],
-          REQUEST: StateKey.Loading,
+          REQUEST: "loading",
         },
       },
-      [StateKey.Loading]: {
-        meta: {
-          message: "요청 버튼에 로딩 스피너가 돌아가는 상태",
-        },
-        tags: StateTag.ShowRequestButton,
-        entry: [Action.CalcAnchorNodePosition],
-        exit: [Action.CalcPositionOnScreen],
-        on: {
-          RESOLVE: {
-            target: StateKey.ResponseMessageBox,
-            actions: assign({
-              responseText: (_, event) => event.responseText,
-            }),
+      loading: {
+        tags: "showRequestButton",
+        entry: ["setAnchorNodePosition"],
+        exit: ["setPositionOnScreen"],
+        invoke: {
+          src: "getGPTResponse",
+          onDone: {
+            target: "response_message_box",
+            actions: assign({ responseText: (_, event) => event.data }),
           },
-          REJECT: {
-            target: StateKey.ErrorMessageBox,
+          onError: {
+            target: "error_message_box",
             actions: assign({
-              error: (_, event) => event.error,
+              error: (_, event) => event.data,
             }),
           },
         },
       },
-      [StateKey.ResponseMessageBox]: {
-        meta: {
-          message: "정상적인 응답을 받아 메시지 박스를 보여주는 상태",
-        },
+      response_message_box: {
         on: {
-          CLOSE_MESSAGE_BOX: StateKey.Idle,
+          CLOSE_MESSAGE_BOX: "idle",
         },
       },
-      [StateKey.ErrorMessageBox]: {
-        meta: {
-          message: "에러 발생으로 에러 메시지 박스를 보여주는 상태",
-        },
+      error_message_box: {
         on: {
-          CLOSE_MESSAGE_BOX: StateKey.Idle,
+          CLOSE_MESSAGE_BOX: "idle",
         },
       },
     },
   },
   {
     actions: {
-      [Action.ResetContext]: assign({ ...initialContext }),
-      [Action.CalcAnchorNodePosition]: assign({
+      resetAll: assign({ ...initialContext }),
+      setAnchorNodePosition: assign({
         anchorNodePosition: (context) => {
           const { left, width, height, top } = context.selectedTextNodeRect;
           const verticalCenter = left + width / 2;
@@ -187,26 +135,42 @@ const dragStateMachine = createMachine<Context, Events>(
           };
         },
       }),
-      [Action.CalcPositionOnScreen]: assign({
+      setPositionOnScreen: assign({
         positionOnScreen: (context) => {
           const { left, width, height, top } = context.selectedTextNodeRect;
           const verticalCenter = left + width / 2;
           const horizontalCenter = top + height / 2;
 
+          // warn: side effect can occur by window.innerWidth / window.innerHeight
           return getPositionOnScreen({
             verticalCenter,
             horizontalCenter,
           });
         },
       }),
+      readyRequestButton: assign({
+        selectedText: (_, event) => event.value.selectedText,
+        selectedTextNodeRect: (context, event) =>
+          event.value.selectedNodeRect ?? context.selectedTextNodeRect,
+        requestButtonPosition: (_, event) => event.value.requestButtonPosition,
+      }),
+    },
+    guards: {
+      isValidTextSelectedEvent: (_, event) => {
+        return isValidTextSelectedEvent(event);
+      },
+      isInvalidTextSelectedEvent: (_, event) => {
+        return !isValidTextSelectedEvent(event);
+      },
     },
   }
 );
 
-const DragStateMachine = {
-  machine: dragStateMachine,
-  StateKey,
-  StateTag,
-};
+function isValidTextSelectedEvent(event: TextSelectedEvent): boolean {
+  if (!event.value.selectedNodeRect) {
+    return false;
+  }
+  return event.value.selectedText.length > 1;
+}
 
-export default DragStateMachine;
+export default dragStateMachine;

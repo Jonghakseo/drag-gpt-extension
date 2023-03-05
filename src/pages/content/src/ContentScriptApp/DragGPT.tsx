@@ -8,23 +8,35 @@ import { ChromeMessenger } from "@pages/chrome/ChromeMessenger";
 import ResponseMessageBox from "@pages/content/src/ContentScriptApp/components/messageBox/ResponseMessageBox";
 import ErrorMessageBox from "@pages/content/src/ContentScriptApp/components/messageBox/ErrorMessageBox";
 import { useMachine } from "@xstate/react";
-import DragStateMachine from "@pages/content/src/ContentScriptApp/stateMachine/dragStateMachine";
 import delayPromise from "@pages/content/src/ContentScriptApp/utils/delayPromise";
+import dragStateMachine from "@pages/content/src/ContentScriptApp/stateMachine/dragStateMachine";
+
+async function getGPTResponse(userInput: string) {
+  return await ChromeMessenger.sendMessageAsync({
+    type: "RequestSelectionMessage",
+    data: userInput,
+  });
+}
 
 export default function DragGPT() {
-  const [state, send] = useMachine(DragStateMachine.machine);
+  const [state, send] = useMachine(dragStateMachine, {
+    services: {
+      getGPTResponse: (context) => getGPTResponse(context.selectedText),
+    },
+  });
 
   useEffect(() => {
     const onMouseUp = async (event: MouseEvent) => {
       await delayPromise(1);
+      const selectionNodeRect = getSelectionNodeRect();
       send({
         type: "TEXT_SELECTED",
         value: {
           selectedText: getSelectionText(),
-          selectedNodeRect: getSelectionNodeRect(),
+          selectedNodeRect: selectionNodeRect,
           requestButtonPosition: {
-            top: event.y + window.scrollY,
-            left: event.x + window.scrollX,
+            top: event.clientY + window.scrollY,
+            left: event.clientX + window.scrollX,
           },
         },
       });
@@ -36,38 +48,27 @@ export default function DragGPT() {
     };
   }, []);
 
-  const sendSelectionText = async () => {
+  const requestGPT = () => {
     send("REQUEST");
-    try {
-      const responseText = await ChromeMessenger.sendMessageAsync({
-        type: "RequestSelectionMessage",
-        data: state.context.selectedText,
-      });
-      send({ type: "RESOLVE", responseText });
-    } catch (error) {
-      if (error instanceof Error) {
-        send({ type: "REJECT", error });
-      }
-    }
   };
 
-  const handleCloseMessageBox = () => {
+  const closeMessageBox = () => {
     send("CLOSE_MESSAGE_BOX");
   };
 
   return (
     <>
-      {state.hasTag(DragStateMachine.StateTag.ShowRequestButton) && (
+      {state.hasTag("showRequestButton") && (
         <GPTRequestButton
-          loading={state.value === DragStateMachine.StateKey.Loading}
-          onMouseDown={sendSelectionText}
+          onClick={requestGPT}
+          loading={state.matches("loading")}
           top={state.context.requestButtonPosition.top}
           left={state.context.requestButtonPosition.left}
         />
       )}
-      {state.value === DragStateMachine.StateKey.ResponseMessageBox && (
+      {state.matches("response_message_box") && (
         <ResponseMessageBox
-          onClose={handleCloseMessageBox}
+          onClose={closeMessageBox}
           text={state.context.responseText}
           anchorTop={state.context.anchorNodePosition.top}
           anchorCenter={state.context.anchorNodePosition.center}
@@ -75,9 +76,9 @@ export default function DragGPT() {
           positionOnScreen={state.context.positionOnScreen}
         />
       )}
-      {state.value === DragStateMachine.StateKey.ErrorMessageBox && (
+      {state.matches("error_message_box") && (
         <ErrorMessageBox
-          onClose={handleCloseMessageBox}
+          onClose={closeMessageBox}
           error={state.context.error}
           anchorTop={state.context.anchorNodePosition.top}
           anchorCenter={state.context.anchorNodePosition.center}

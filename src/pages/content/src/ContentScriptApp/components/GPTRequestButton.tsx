@@ -2,6 +2,8 @@ import { ComponentPropsWithRef, useEffect, useRef } from "react";
 import styled from "@emotion/styled";
 import { Spinner } from "@chakra-ui/react";
 
+const GAP = 4;
+
 const StyledRequestButton = styled.button`
   border: none;
   padding: 0;
@@ -47,8 +49,8 @@ export default function GPTRequestButton({
     if (!buttonRef.current) {
       return;
     }
-    buttonRef.current.style.top = `${top}px`;
-    buttonRef.current.style.left = `${left}px`;
+    buttonRef.current.style.top = `${top + GAP}px`;
+    buttonRef.current.style.left = `${left + GAP}px`;
   }, [buttonRef, top, left]);
 
   return (

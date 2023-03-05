@@ -1,10 +1,14 @@
 import reloadOnUpdate from "virtual:reload-on-update-in-background-script";
 import "regenerator-runtime/runtime.js";
 import { Configuration, OpenAIApi } from "openai";
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosInstance } from "axios";
 import fetchAdapter from "@vespaiach/axios-fetch-adapter";
 
 reloadOnUpdate("pages/background");
+
+let openAiApiInstance: OpenAIApi | null = null;
+let axiosInstance: AxiosInstance | null = null;
+let configuration: Configuration | null = null;
 
 async function chatGPT({
   role,
@@ -17,16 +21,15 @@ async function chatGPT({
   input: string;
   apiKey: string;
 }): Promise<string> {
-  const configuration = new Configuration({
+  configuration ??= new Configuration({
     apiKey,
   });
-  const axiosInstance = axios.create({
+  axiosInstance ??= axios.create({
     adapter: fetchAdapter,
   });
+  openAiApiInstance ??= new OpenAIApi(configuration, undefined, axiosInstance);
 
-  const openai = new OpenAIApi(configuration, undefined, axiosInstance);
-
-  const completion = await openai.createChatCompletion({
+  const completion = await openAiApiInstance.createChatCompletion({
     model: "gpt-3.5-turbo",
     // max 4000
     max_tokens: 1500,
@@ -68,7 +71,7 @@ class LocalStorage {
       chrome.storage.local.get([key], (result) => {
         const value = result[key];
         if (value === null || value === undefined) {
-          reject("NotFound Key");
+          reject(Error("NotFound Key"));
         } else {
           resolve(value);
         }
@@ -76,21 +79,6 @@ class LocalStorage {
     });
   }
 }
-
-const Logger = {
-  receive: (message: Message) => {
-    console.log(
-      "Message Receive:",
-      `${message.type}\ndata: ${message.data ?? "none"}`
-    );
-  },
-  send: (message: Message) => {
-    console.log(
-      "Message Sending:",
-      `${message.type}\ndata: ${message.data ?? "none"}`
-    );
-  },
-};
 
 // background script
 chrome.runtime.onMessage.addListener(function (request, sender, _sendResponse) {
@@ -103,6 +91,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, _sendResponse) {
   };
 
   const handleError = (error: unknown) => {
+    console.warn(error);
     if (error instanceof Error) {
       if ((error as AxiosError).isAxiosError) {
         const axiosError = error as AxiosError;
@@ -124,7 +113,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, _sendResponse) {
           sendResponse({ type: "Response", data: "success" });
         } catch (error) {
           handleError(error);
-          console.warn(error);
         }
       })();
       break;
@@ -136,7 +124,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, _sendResponse) {
           sendResponse({ type: "Response", data: "success" });
         } catch (error) {
           handleError(error);
-          console.warn(error);
         }
       })();
       break;
@@ -148,7 +135,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, _sendResponse) {
           sendResponse({ type: "Response", data: String(role) });
         } catch (error) {
           handleError(error);
-          console.warn(error);
         }
       })();
       break;
@@ -162,19 +148,17 @@ chrome.runtime.onMessage.addListener(function (request, sender, _sendResponse) {
           sendResponse({ type: "Response", data: String(assistantPrompt) });
         } catch (error) {
           handleError(error);
-          console.warn(error);
         }
       })();
       break;
     }
-    case "ResetAPIKey":
+    case "GetAPIKey":
       (async () => {
         try {
-          await LocalStorage.save(LocalStorage.API_KEY, null);
-          sendResponse({ type: "Response", data: "success" });
+          const apiKey = await LocalStorage.load(LocalStorage.API_KEY);
+          sendResponse({ type: "Response", data: String(apiKey) });
         } catch (error) {
           handleError(error);
-          console.warn(error);
         }
       })();
       break;
@@ -186,7 +170,16 @@ chrome.runtime.onMessage.addListener(function (request, sender, _sendResponse) {
           sendResponse({ type: "Response", data: "success" });
         } catch (error) {
           handleError(error);
-          console.warn(error);
+        }
+      })();
+      break;
+    case "ResetAPIKey":
+      (async () => {
+        try {
+          await LocalStorage.save(LocalStorage.API_KEY, null);
+          sendResponse({ type: "Response", data: "success" });
+        } catch (error) {
+          handleError(error);
         }
       })();
       break;
@@ -207,18 +200,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, _sendResponse) {
           sendResponse({ type: "Response", data: response });
         } catch (error) {
           handleError(error);
-          console.warn(error);
-        }
-      })();
-      break;
-    case "GetAPIKey":
-      (async () => {
-        try {
-          const apiKey = await LocalStorage.load(LocalStorage.API_KEY);
-          sendResponse({ type: "Response", data: String(apiKey) });
-        } catch (error) {
-          handleError(error);
-          console.warn(error);
         }
       })();
       break;
@@ -229,3 +210,18 @@ chrome.runtime.onMessage.addListener(function (request, sender, _sendResponse) {
 
   return true;
 });
+
+const Logger = {
+  receive: (message: Message) => {
+    console.log(
+      "Message Receive:",
+      `${message.type}\ndata: ${message.data ?? "none"}`
+    );
+  },
+  send: (message: Message) => {
+    console.log(
+      "Message Sending:",
+      `${message.type}\ndata: ${message.data ?? "none"}`
+    );
+  },
+};
