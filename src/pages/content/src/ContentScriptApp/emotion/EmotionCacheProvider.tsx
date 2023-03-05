@@ -13,7 +13,7 @@ export default function EmotionCacheProvider({
 
   useEffect(() => {
     const root = document.getElementById(ROOT_ID);
-    if (root.shadowRoot) {
+    if (root && root.shadowRoot) {
       setEmotionStyles(root);
     }
   }, [shadowRootRef.current?.shadowRoot]);
@@ -34,7 +34,7 @@ export default function EmotionCacheProvider({
   }
 
   return (
-    <div id={"root"} ref={shadowRootRef}>
+    <div id="root" ref={shadowRootRef}>
       {emotionCache && (
         <CacheProvider value={emotionCache}>{children}</CacheProvider>
       )}

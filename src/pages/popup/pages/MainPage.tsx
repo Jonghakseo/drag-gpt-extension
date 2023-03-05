@@ -25,7 +25,7 @@ const Container = styled.div`
 `;
 
 export default function MainPage() {
-  const [openaiApiKey, setOpenaiApiKey] = useState(null);
+  const [openaiApiKey, setOpenaiApiKey] = useState<string | null>(null);
   const [role, setRole] = useState("");
   const [assistantPrompt, setAssistantPrompt] = useState("");
 
@@ -71,7 +71,6 @@ export default function MainPage() {
       ) : (
         <NoApiKeyPage
           key={(!!openaiApiKey).toString()}
-          openaiApiKey={openaiApiKey}
           updateOpenaiApiKey={setOpenaiApiKey}
         />
       )}

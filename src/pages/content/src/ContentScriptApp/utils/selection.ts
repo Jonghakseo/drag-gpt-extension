@@ -1,7 +1,14 @@
 export function getSelectionText(): string {
-  return window.getSelection().toString();
+  return window.getSelection()?.toString() ?? "";
 }
 
-export function getSelectionNodeRect() {
-  return window.getSelection().getRangeAt(0).getBoundingClientRect();
+export function getSelectionNodeRect(): DOMRect | undefined {
+  try {
+    const rect =
+      window.getSelection()?.getRangeAt(0)?.getBoundingClientRect() ??
+      undefined;
+    return rect;
+  } catch {
+    return undefined;
+  }
 }

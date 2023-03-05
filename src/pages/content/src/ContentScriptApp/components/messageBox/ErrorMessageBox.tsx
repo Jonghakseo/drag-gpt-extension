@@ -13,7 +13,7 @@ type ErrorMessageBoxProps = Omit<
   MessageBoxProps,
   "header" | "text" | "width"
 > & {
-  error: Error;
+  error?: Error;
 };
 
 export default function ErrorMessageBox({
@@ -22,9 +22,13 @@ export default function ErrorMessageBox({
 }: ErrorMessageBoxProps) {
   return (
     <MessageBox
-      header={<ErrorHeaderText>{`Error: ${error.name}`}</ErrorHeaderText>}
+      header={
+        <ErrorHeaderText>{`Error: ${
+          error?.name ?? "Unknown"
+        }`}</ErrorHeaderText>
+      }
       width={400}
-      text={error.message}
+      text={error?.message ?? "unknown error"}
       {...restProps}
     />
   );

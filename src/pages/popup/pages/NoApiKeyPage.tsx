@@ -3,15 +3,11 @@ import { ChromeMessenger } from "@pages/chrome/ChromeMessenger";
 import { Button, HStack, Input, Spinner, Text, VStack } from "@chakra-ui/react";
 
 type NoApiKeyPageProps = {
-  openaiApiKey: string;
   updateOpenaiApiKey: (key: string) => void;
 };
-export const NoApiKeyPage = ({
-  openaiApiKey,
-  updateOpenaiApiKey,
-}: NoApiKeyPageProps) => {
+export const NoApiKeyPage = ({ updateOpenaiApiKey }: NoApiKeyPageProps) => {
   const [loading, setLoading] = useState(false);
-  const [apiKey, setApiKey] = useState(openaiApiKey);
+  const [apiKey, setApiKey] = useState("");
   const [error, setError] = useState<Error | null>(null);
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
@@ -28,7 +24,9 @@ export const NoApiKeyPage = ({
       });
       updateOpenaiApiKey(apiKey);
     } catch (error) {
-      setError(error);
+      if (error instanceof Error) {
+        setError(error);
+      }
     } finally {
       setLoading(false);
     }

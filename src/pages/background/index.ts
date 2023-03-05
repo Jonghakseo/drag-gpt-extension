@@ -102,14 +102,17 @@ chrome.runtime.onMessage.addListener(function (request, sender, _sendResponse) {
     return _sendResponse(message);
   };
 
-  const handleError = (error: Error & AxiosError) => {
-    if (error.isAxiosError) {
-      const customError = new Error();
-      customError.message = error.response.data?.error?.message;
-      customError.name = error.response.data?.error?.code ?? error.name;
-      sendResponse({ type: "Error", data: customError });
-    } else {
-      sendResponse({ type: "Error", data: error });
+  const handleError = (error: unknown) => {
+    if (error instanceof Error) {
+      if ((error as AxiosError).isAxiosError) {
+        const axiosError = error as AxiosError;
+        const customError = new Error();
+        customError.message = axiosError.response?.data?.error?.message;
+        customError.name = axiosError.response?.data?.error?.code ?? error.name;
+        sendResponse({ type: "Error", data: customError });
+      } else {
+        sendResponse({ type: "Error", data: error });
+      }
     }
   };
 

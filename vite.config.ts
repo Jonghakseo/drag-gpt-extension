@@ -57,7 +57,7 @@ export default defineConfig({
           ? "assets/js/[name].js"
           : "assets/js/[name].[hash].js",
         assetFileNames: (assetInfo) => {
-          const { dir, name: _name } = path.parse(assetInfo.name);
+          const { dir, name: _name } = path.parse(assetInfo.name ?? "");
           const assetFolder = dir.split("/").at(-1);
           const name = assetFolder + firstUpperCase(_name);
           return `assets/[ext]/${name}.chunk.[ext]`;
