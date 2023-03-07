@@ -30,9 +30,6 @@ jobs:
 
     - run: yarn build
 
-    - shell: bash
-      run: zip -r deploy.zip dist/
-
     - uses: actions/upload-artifact@v3
       with:
-        path: deploy.zip
+        path: dist/*
