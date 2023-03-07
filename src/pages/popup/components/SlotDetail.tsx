@@ -84,7 +84,6 @@ export default function SlotDetail({
         <StyledButton onClick={onSaveButtonClick}>SAVE</StyledButton>
         <StyledButton onClick={exitDetail}>BACK</StyledButton>
       </HStack>
-      <Footer />
     </VStack>
   );
 }
