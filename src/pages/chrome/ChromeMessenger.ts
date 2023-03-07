@@ -1,6 +1,6 @@
 export class ChromeMessenger {
   static async sendMessageAsync(message: Message) {
-    return new Promise<ResponseMessage["data"]>((resolve, reject) => {
+    return new Promise<DoneResponseMessage["data"]>((resolve, reject) => {
       try {
         this.sendMessage({
           message,
@@ -24,7 +24,7 @@ export class ChromeMessenger {
     handleError,
   }: {
     message: Message;
-    handleSuccess?: (data: ResponseMessage["data"]) => void;
+    handleSuccess?: (data: DoneResponseMessage["data"]) => void;
     handleError?: (error: Error) => void;
   }) {
     chrome.runtime.sendMessage(message, (_response) => {
@@ -34,6 +34,7 @@ export class ChromeMessenger {
           handleError?.(response.data);
           break;
         case "Response":
+        case "ResponseSlots":
           handleSuccess?.(response.data);
           break;
         default:

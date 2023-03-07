@@ -37,30 +37,62 @@ declare module "*.json" {
 }
 
 declare global {
-  type ResponseMessageType = "Response";
+  type ChatGPTSlot = {
+    type: "ChatGPT";
+    system: string;
+    assistant: string;
+    /**
+     * config
+     */
+    maxTokens?: number; // max 4000
+    temperature?: number; // 의외성 (0~1)
+    topP?: number; // 단어 풀의 범위(0~1)
+    frequencyPenalty?: number; // 자주 사용하는 단어 억제
+    presencePenalty?: number; // 이미 사용된 단어 억제
+  };
+
+  type Slot = { id: string; name: string; isSelected: boolean } & ChatGPTSlot;
+
+  type ResponseMessageType = "Response" | "ResponseSlots";
   type ErrorMessageType = "Error";
   type CommonMessageType =
+    | "SelectSlot"
+    | "DeleteSlot"
     | "RequestSelectionMessage"
-    | "SaveAPIKey"
-    | "SetAssistantPrompt"
-    | "SetRole";
+    | "SaveAPIKey";
 
-  type ActionMessageType =
-    | "GetAPIKey"
-    | "ResetAPIKey"
-    | "GetAssistantPrompt"
-    | "GetRole";
+  type RequestMessageType = "GetAPIKey" | "GetSlots" | "ResetAPIKey";
 
   type MessageType =
     | ErrorMessageType
     | CommonMessageType
-    | ActionMessageType
+    | RequestMessageType
     | ResponseMessageType;
 
-  type ResponseMessage = { type: "Response"; data: string };
+  type ErrorResponseMessage = { type: ErrorMessageType; data: Error };
+  type DoneResponseMessage =
+    | {
+        type: "Response";
+        data: any;
+      }
+    | {
+        type: "ResponseSlots";
+        data: Slot[];
+      };
+
+  type RequestMessages = { type: RequestMessageType; data?: null };
+
   type Message =
-    | ResponseMessage
+    | {
+        type: "GetSlots";
+        data: Slot[];
+      }
+    | {
+        type: "AddNewSlot" | "UpdateSlotData";
+        data: Slot;
+      }
+    | DoneResponseMessage
+    | ErrorResponseMessage
     | { type: CommonMessageType; data: string }
-    | { type: ActionMessageType; data?: null }
-    | { type: ErrorMessageType; data: Error };
+    | { type: RequestMessageType; data?: null };
 }

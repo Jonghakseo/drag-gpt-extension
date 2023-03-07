@@ -1,5 +1,7 @@
 import React, { ChangeEventHandler, useState } from "react";
 import { Button, HStack, Input, Spinner, Text, VStack } from "@chakra-ui/react";
+import Footer from "@pages/popup/components/Footer";
+import StyledButton from "@pages/popup/components/StyledButton";
 
 type NoApiKeyPageProps = {
   checkApiKey: (key: string) => void;
@@ -22,34 +24,40 @@ export const NoApiKeyPage = ({
   };
 
   return (
-    <VStack>
-      <Text color="antiquewhite">Input openai api key</Text>
-      {loading ? (
-        <Spinner width={30} height={30} color="antiquewhite" />
-      ) : (
-        <HStack>
-          <Input
-            value={apiKey}
-            type="password"
-            onChange={handleChange}
-            placeholder="open api key"
-            size="sm"
-          />
-          <Button appearance="textfield" onClick={onClickSaveButton}>
-            SAVE
-          </Button>
-        </HStack>
-      )}
-      {apiKeyError && (
-        <VStack>
-          <Text fontWeight="bold" color="red">
-            {apiKeyError.name}
-          </Text>
-          <Text whiteSpace="pre-wrap" color="#e84646">
-            {apiKeyError.message}
-          </Text>
-        </VStack>
-      )}
-    </VStack>
+    <>
+      <VStack>
+        <Text color="antiquewhite">Input openai api key</Text>
+        {loading ? (
+          <VStack spacing={20}>
+            <Spinner width={30} height={30} color="antiquewhite" />
+            <Text color="antiquewhite">
+              Currently sending a request to check for the API key...
+            </Text>
+          </VStack>
+        ) : (
+          <HStack>
+            <Input
+              value={apiKey}
+              type="password"
+              onChange={handleChange}
+              placeholder="open api key"
+              size="sm"
+            />
+            <StyledButton onClick={onClickSaveButton}>SAVE</StyledButton>
+          </HStack>
+        )}
+        {apiKeyError && (
+          <VStack>
+            <Text fontWeight="bold" color="red">
+              {apiKeyError.name}
+            </Text>
+            <Text whiteSpace="pre-wrap" color="#e84646">
+              {apiKeyError.message}
+            </Text>
+          </VStack>
+        )}
+      </VStack>
+      <Footer />
+    </>
   );
 };
