@@ -9,6 +9,7 @@ const StyledButton = styled(Button)`
   padding: 4px 8px;
   font-weight: bold;
   background-color: gainsboro;
+  color: black;
 
   &:active {
     transition: all ease-in-out 100ms;

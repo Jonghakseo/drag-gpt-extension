@@ -4,15 +4,16 @@ import { CloseButton, HStack, Stack, Text } from "@chakra-ui/react";
 import { PositionOnScreen } from "@pages/content/src/ContentScriptApp/utils/getPositionOnScreen";
 import useRootOutsideClick from "@pages/content/src/ContentScriptApp/hooks/useRootOutsideClick";
 import getSafePixel from "@pages/content/src/ContentScriptApp/utils/getSafePixel";
+import { COLORS, Z_INDEX } from "@src/constant/style";
 
 const GAP = 8;
 
 const MessageBoxContainer = styled.div<{ width: number }>`
-  background: #2a4365;
+  background: ${COLORS.PRIMARY};
   display: flex;
   flex-direction: column;
   position: absolute;
-  z-index: 2147483647;
+  z-index: ${Z_INDEX.ROOT};
 
   white-space: pre-wrap;
 
@@ -21,6 +22,7 @@ const MessageBoxContainer = styled.div<{ width: number }>`
   max-width: ${(p) => p.width}px;
 
   border-radius: 6px;
+  padding: 12px;
 
   p {
     margin: 0;
@@ -48,10 +50,11 @@ export type MessageBoxProps = {
   anchorCenter: number;
   anchorBottom: number;
   header: ReactNode;
-  text: string;
+  content: ReactNode;
   width: number;
   onClose: () => void;
   positionOnScreen: PositionOnScreen;
+  footer?: ReactNode;
 } & ComponentPropsWithRef<"div">;
 
 export default function MessageBox({
@@ -60,9 +63,10 @@ export default function MessageBox({
   anchorBottom,
   header,
   width,
-  text,
+  content,
   onClose,
   positionOnScreen,
+  footer,
   ...restProps
 }: MessageBoxProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -94,8 +98,8 @@ export default function MessageBox({
 
   return (
     <MessageBoxContainer width={width} ref={containerRef} {...restProps}>
-      <Stack py={8}>
-        <HStack px={12} justifyContent="space-between">
+      <Stack>
+        <HStack justifyContent="space-between">
           {typeof header === "string" ? (
             <Text color="white" fontWeight="bold">
               {header}
@@ -105,9 +109,14 @@ export default function MessageBox({
           )}
           <StyledCloseButton color="white" size="sm" onClick={onClose} />
         </HStack>
-        <HStack px={12}>
-          <Text color="white">{text}</Text>
+        <HStack>
+          {typeof content === "string" ? (
+            <Text color="white">{content}</Text>
+          ) : (
+            content
+          )}
         </HStack>
+        {footer}
       </Stack>
     </MessageBoxContainer>
   );
