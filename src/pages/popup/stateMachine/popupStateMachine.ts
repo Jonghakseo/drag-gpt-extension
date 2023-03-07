@@ -19,19 +19,11 @@ type Events =
 
 interface Context {
   openAiApiKey: string | null;
-  role?: string;
-  assistantPrompt?: string;
   apiKeyCheckError?: Error;
 }
 
 type Services = {
   getApiKey: {
-    data: string;
-  };
-  getRole: {
-    data: string;
-  };
-  getAssistantPrompt: {
     data: string;
   };
   saveApiKey: {
@@ -67,30 +59,10 @@ const popupStateMachine = createMachine(
         },
       },
       has_api_key: {
-        invoke: [
-          {
-            src: "getRole",
-            onDone: {
-              actions: "setRole",
-            },
-          },
-          {
-            src: "getAssistantPrompt",
-            onDone: {
-              actions: "setAssistantPrompt",
-            },
-          },
-        ],
         on: {
           RESET_API_KEY: {
             target: "no_api_key",
             actions: "resetOpenAiApiKey",
-          },
-          UPDATE_ROLE: {
-            actions: "setRole",
-          },
-          UPDATE_ASSISTANT_PROMPT: {
-            actions: "setAssistantPrompt",
           },
         },
       },
@@ -118,13 +90,9 @@ const popupStateMachine = createMachine(
   },
   {
     actions: {
-      setRole: assign({
-        role: (_, event) => event.data,
-      }),
       setApiKey: assign({
         openAiApiKey: (_, event) => event.data,
       }),
-      setAssistantPrompt: assign({ assistantPrompt: (_, event) => event.data }),
       resetOpenAiApiKey: assign({
         openAiApiKey: null,
       }),
