@@ -4,6 +4,7 @@ import { useMachine } from "@xstate/react";
 import hasApiKeyPageStateMachine from "@pages/popup/stateMachine/hasApiKeyPageStateMachine";
 import SlotDetail from "@pages/popup/components/SlotDetail";
 import StyledButton from "@pages/popup/components/StyledButton";
+import Footer from "@pages/popup/components/Footer";
 
 type SlotListPageProps = {
   onClickChangeApiKey: () => void;
@@ -129,6 +130,7 @@ export default function SlotListPage({
           exitDetail={() => send("BACK")}
         />
       )}
+      <Footer />
     </>
   );
 }
