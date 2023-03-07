@@ -63,6 +63,22 @@ export default function ResponseMessageBox({
     <MessageBox
       header="Response"
       width={480}
+      isOutsideClickDisabled={chats.length > 1}
+      content={
+        <VStack maxHeight={400} width="100%" overflowY="scroll">
+          {chats.map((chat, index) => {
+            const isLast =
+              index === chats.length - 1 || index === chats.length - 2;
+            const isLastAndResponse = isLast && chat.role === "assistant";
+            return (
+              <Fragment key={index}>
+                <ChatBox chat={chat} isLastAndResponse={isLastAndResponse} />
+                <Divider />
+              </Fragment>
+            );
+          })}
+        </VStack>
+      }
       footer={
         <HStack width="100%" pt={8} justifyContent="space-between">
           <StyledButton onClick={copyResponse}>
@@ -85,21 +101,6 @@ export default function ResponseMessageBox({
             </StyledButton>
           </HStack>
         </HStack>
-      }
-      content={
-        <VStack maxHeight={400} width="100%" overflowY="scroll">
-          {chats.map((chat, index) => {
-            const isLast =
-              index === chats.length - 1 || index === chats.length - 2;
-            const isLastAndResponse = isLast && chat.role === "assistant";
-            return (
-              <Fragment key={index}>
-                <ChatBox chat={chat} isLastAndResponse={isLastAndResponse} />
-                <Divider />
-              </Fragment>
-            );
-          })}
-        </VStack>
       }
       {...restProps}
     />

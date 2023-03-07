@@ -46,6 +46,7 @@ const StyledCloseButton = styled(CloseButton)`
 `;
 
 export type MessageBoxProps = {
+  isOutsideClickDisabled?: boolean;
   anchorTop: number;
   anchorCenter: number;
   anchorBottom: number;
@@ -67,11 +68,16 @@ export default function MessageBox({
   onClose,
   positionOnScreen,
   footer,
+  isOutsideClickDisabled,
   ...restProps
 }: MessageBoxProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useRootOutsideClick({ ref: containerRef, handler: onClose });
+  useRootOutsideClick({
+    ref: containerRef,
+    isDisabled: isOutsideClickDisabled,
+    handler: onClose,
+  });
 
   useEffect(() => {
     if (!containerRef.current) {

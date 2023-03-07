@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "drag-gpt",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "DragGPT chrome extension",
   "options_page": "src/pages/options/index.html",
   "background": {
