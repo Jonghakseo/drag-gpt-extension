@@ -4,11 +4,13 @@ import { ROOT_ID } from "@pages/content/src/ContentScriptApp/constant/elementId"
 type UseOutsideClickArgs = {
   ref: React.RefObject<HTMLElement>;
   handler: (event?: MouseEvent) => void;
+  isDisabled?: boolean;
 };
 
 export default function useRootOutsideClick({
   ref,
   handler,
+  isDisabled,
 }: UseOutsideClickArgs) {
   useEffect(() => {
     if (!ref.current) {
@@ -17,6 +19,9 @@ export default function useRootOutsideClick({
 
     const root = ref.current.getRootNode();
     const onClick = (event: MouseEvent) => {
+      if (isDisabled) {
+        return;
+      }
       if ((event.target as HTMLElement).id === ROOT_ID) {
         return;
       }
@@ -31,5 +36,5 @@ export default function useRootOutsideClick({
     return () => {
       window.removeEventListener("click", onClick);
     };
-  }, [ref.current, handler]);
+  }, [ref.current, handler, isDisabled]);
 }
