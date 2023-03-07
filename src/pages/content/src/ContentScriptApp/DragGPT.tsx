@@ -10,6 +10,7 @@ import { useMachine } from "@xstate/react";
 import delayPromise from "@pages/content/src/ContentScriptApp/utils/delayPromise";
 import dragStateMachine from "@pages/content/src/ContentScriptApp/stateMachine/dragStateMachine";
 import { sendMessageToBackgroundAsync } from "@pages/chrome/message";
+import { ChatCompletionRequestMessage } from "openai";
 
 async function getGPTResponse(userInput: string) {
   return await sendMessageToBackgroundAsync({
@@ -17,11 +18,30 @@ async function getGPTResponse(userInput: string) {
     data: userInput,
   });
 }
+async function getAdditionalGPTResponse(
+  input: string,
+  histories: ChatCompletionRequestMessage[]
+) {
+  return await sendMessageToBackgroundAsync({
+    type: "RequestAdditionalChat",
+    data: { input, histories },
+  });
+}
 
 export default function DragGPT() {
   const [state, send] = useMachine(dragStateMachine, {
     services: {
       getGPTResponse: (context) => getGPTResponse(context.selectedText),
+      getAdditionalGPTResponse: (context) => {
+        const requestChat = context.chats.at(-1)?.content;
+        if (!requestChat) {
+          throw Error;
+        }
+        const chats = context.chats.filter(
+          (chat) => chat.role !== "error"
+        ) as ChatCompletionRequestMessage[];
+        return getAdditionalGPTResponse(requestChat, chats);
+      },
     },
   });
 
@@ -56,6 +76,10 @@ export default function DragGPT() {
     send("CLOSE_MESSAGE_BOX");
   };
 
+  const onRequestMoreChat = (moreChatText: string) => {
+    send({ type: "REQUEST_MORE_CHAT", data: moreChatText });
+  };
+
   return (
     <>
       {state.hasTag("showRequestButton") && (
@@ -66,10 +90,12 @@ export default function DragGPT() {
           left={state.context.requestButtonPosition.left}
         />
       )}
-      {state.matches("response_message_box") && (
+      {state.hasTag("showResponseMessages") && (
         <ResponseMessageBox
           onClose={closeMessageBox}
-          text={state.context.responseText}
+          loading={state.matches("chat_loading_message_box")}
+          onRequestMoreChat={onRequestMoreChat}
+          chats={state.context.chats}
           anchorTop={state.context.anchorNodePosition.top}
           anchorCenter={state.context.anchorNodePosition.center}
           anchorBottom={state.context.anchorNodePosition.bottom}

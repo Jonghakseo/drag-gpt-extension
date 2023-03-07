@@ -85,6 +85,23 @@ chrome.runtime.onConnect.addListener((port) => {
           }
           break;
         }
+        case "RequestAdditionalChat": {
+          const selectedSlot = await LocalStorage.getSelectedSlot();
+          const apiKey = await LocalStorage.getApiKey();
+          switch (selectedSlot.type) {
+            case "ChatGPT": {
+              const response = await chatGPT({
+                input: message.data.input,
+                histories: message.data.histories,
+                slot: selectedSlot,
+                apiKey: String(apiKey),
+              });
+              sendResponse({ type: "Response", data: response });
+              break;
+            }
+          }
+          break;
+        }
         default:
           Logger.error("unknown message:" + JSON.stringify(message));
           break;

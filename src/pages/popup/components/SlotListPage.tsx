@@ -146,8 +146,6 @@ function createNewChatGPTSlot(config?: Partial<Slot>): Slot {
     isSelected: false,
     id: generateId(),
     name: "",
-    assistant: "",
-    system: "",
     ...config,
   };
 }

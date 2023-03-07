@@ -24,15 +24,21 @@ type TextSelectedEvent = {
 type Events =
   | TextSelectedEvent
   | { type: "CLOSE_MESSAGE_BOX" }
-  | { type: "REQUEST" };
+  | { type: "REQUEST" }
+  | { type: "REQUEST_MORE_CHAT"; data: string };
+
+export type Chat = {
+  role: "user" | "assistant" | "error";
+  content: string;
+};
 
 interface Context {
+  chats: Chat[];
   selectedText: string;
   selectedTextNodeRect: NodeRect;
   requestButtonPosition: RequestButtonPosition;
   positionOnScreen: PositionOnScreen;
   anchorNodePosition: AnchorNodePosition;
-  responseText: string;
   error?: Error;
 }
 
@@ -40,11 +46,14 @@ type Services = {
   getGPTResponse: {
     data: string;
   };
+  getAdditionalGPTResponse: {
+    data: string;
+  };
 };
 
 const initialContext: Context = {
+  chats: [] as Chat[],
   selectedText: "",
-  responseText: "",
   requestButtonPosition: { top: 0, left: 0 },
   anchorNodePosition: { top: 0, center: 0, bottom: 0 },
   selectedTextNodeRect: { top: 0, left: 0, height: 0, width: 0 },
@@ -99,7 +108,7 @@ const dragStateMachine = createMachine(
           src: "getGPTResponse",
           onDone: {
             target: "response_message_box",
-            actions: assign({ responseText: (_, event) => event.data }),
+            actions: "addResponseChat",
           },
           onError: {
             target: "error_message_box",
@@ -110,6 +119,28 @@ const dragStateMachine = createMachine(
         },
       },
       response_message_box: {
+        tags: "showResponseMessages",
+        on: {
+          CLOSE_MESSAGE_BOX: "idle",
+          REQUEST_MORE_CHAT: {
+            target: "chat_loading_message_box",
+            actions: "addRequestChat",
+          },
+        },
+      },
+      chat_loading_message_box: {
+        tags: "showResponseMessages",
+        invoke: {
+          src: "getAdditionalGPTResponse",
+          onDone: {
+            target: "response_message_box",
+            actions: "addResponseChat",
+          },
+          onError: {
+            target: "response_message_box",
+            actions: "addErrorChat",
+          },
+        },
         on: {
           CLOSE_MESSAGE_BOX: "idle",
         },
@@ -153,6 +184,23 @@ const dragStateMachine = createMachine(
         selectedTextNodeRect: (context, event) =>
           event.value.selectedNodeRect ?? context.selectedTextNodeRect,
         requestButtonPosition: (_, event) => event.value.requestButtonPosition,
+      }),
+      addRequestChat: assign({
+        chats: (context, event) =>
+          context.chats.concat({ role: "user", content: event.data }),
+      }),
+      addResponseChat: assign({
+        chats: (context, event) =>
+          context.chats.concat({ role: "assistant", content: event.data }),
+      }),
+      addErrorChat: assign({
+        chats: (context, event) => {
+          const error: Error = event.data as Error;
+          return context.chats.concat({
+            role: "error",
+            content: `${error?.name}\n${error?.message}`,
+          });
+        },
       }),
     },
     guards: {

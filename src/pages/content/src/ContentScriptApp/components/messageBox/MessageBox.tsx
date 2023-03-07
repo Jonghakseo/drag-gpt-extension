@@ -50,7 +50,7 @@ export type MessageBoxProps = {
   anchorCenter: number;
   anchorBottom: number;
   header: ReactNode;
-  text: string;
+  content: ReactNode;
   width: number;
   onClose: () => void;
   positionOnScreen: PositionOnScreen;
@@ -63,7 +63,7 @@ export default function MessageBox({
   anchorBottom,
   header,
   width,
-  text,
+  content,
   onClose,
   positionOnScreen,
   footer,
@@ -110,7 +110,11 @@ export default function MessageBox({
           <StyledCloseButton color="white" size="sm" onClick={onClose} />
         </HStack>
         <HStack>
-          <Text color="white">{text}</Text>
+          {typeof content === "string" ? (
+            <Text color="white">{content}</Text>
+          ) : (
+            content
+          )}
         </HStack>
         {footer}
       </Stack>

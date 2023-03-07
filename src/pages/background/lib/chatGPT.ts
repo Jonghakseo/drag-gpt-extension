@@ -9,9 +9,11 @@ let configuration: Configuration | null = null;
 export async function chatGPT({
   input,
   slot,
+  histories,
   apiKey,
 }: {
   slot: ChatGPTSlot;
+  histories?: ChatCompletionRequestMessage[];
   input: string;
   apiKey: string;
 }): Promise<string> {
@@ -31,11 +33,8 @@ export async function chatGPT({
       content: slot.system,
     });
   }
-  if (slot.assistant) {
-    messages.push({
-      role: "assistant",
-      content: slot.assistant,
-    });
+  if (histories && histories.length > 0) {
+    messages.push(...histories);
   }
 
   const completion = await openAiApiInstance.createChatCompletion({

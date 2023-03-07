@@ -1,4 +1,5 @@
 import Chrome from "chrome";
+import { ChatCompletionRequestMessage } from "openai";
 
 declare namespace chrome {
   export default Chrome;
@@ -40,7 +41,6 @@ declare global {
   type ChatGPTSlot = {
     type: "ChatGPT";
     system?: string;
-    assistant?: string;
     /** config */
     maxTokens?: number; // max 4000
     temperature?: number; // 의외성 (0~1)
@@ -81,6 +81,10 @@ declare global {
     | {
         type: "AddNewSlot" | "UpdateSlotData";
         data: Slot;
+      }
+    | {
+        type: "RequestAdditionalChat";
+        data: { input: string; histories: ChatCompletionRequestMessage[] };
       }
     | ResponseMessages
     | CommonMessages
