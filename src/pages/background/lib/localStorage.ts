@@ -88,7 +88,10 @@ async function findSelectedSlot(slots: Slot[]): Promise<Slot> {
     if (found) {
       resolve(found);
     } else {
-      reject(Error("Not found selected slot"));
+      const notFoundError = new Error();
+      notFoundError.name = "Not found selected slot";
+      notFoundError.message = "Check selected slot on popup window.";
+      reject(notFoundError);
     }
   });
 }
