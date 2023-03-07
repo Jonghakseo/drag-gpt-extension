@@ -59,19 +59,17 @@ export class LocalStorage {
 
   static async addSlot(slot: Slot): Promise<Slot[]> {
     const slots: Slot[] = await this.getAllSlots();
-    const updatedSlots = slots.concat(slot);
+    const updatedSlots = slots.concat({
+      ...slot,
+      isSelected: slots.length === 0,
+    });
     await this.save(this.SLOTS, updatedSlots);
     return updatedSlots;
   }
 
   static async updateSlot(slot: Slot): Promise<Slot[]> {
     const slots = await this.getAllSlots();
-    const updatedSlots = slots.reduce<Slot[]>((previousValue, currentValue) => {
-      if (currentValue.id === slot.id) {
-        return previousValue.concat(slot);
-      }
-      return previousValue.concat(currentValue);
-    }, []);
+    const updatedSlots = updateSlot(slots, slot);
     await this.save(this.SLOTS, updatedSlots);
     return updatedSlots;
   }
@@ -93,4 +91,13 @@ async function findSelectedSlot(slots: Slot[]): Promise<Slot> {
       reject(Error("Not found selected slot"));
     }
   });
+}
+
+function updateSlot(slots: Slot[], slot: Slot): Slot[] {
+  return slots.reduce<Slot[]>((previousValue, currentValue) => {
+    if (currentValue.id === slot.id) {
+      return previousValue.concat(slot);
+    }
+    return previousValue.concat(currentValue);
+  }, []);
 }

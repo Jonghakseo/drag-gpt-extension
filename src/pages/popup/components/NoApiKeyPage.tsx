@@ -28,7 +28,12 @@ export const NoApiKeyPage = ({
       <VStack>
         <Text color="antiquewhite">Input openai api key</Text>
         {loading ? (
-          <Spinner width={30} height={30} color="antiquewhite" />
+          <VStack spacing={20}>
+            <Spinner width={30} height={30} color="antiquewhite" />
+            <Text color="antiquewhite">
+              Currently sending a request to check for the API key...
+            </Text>
+          </VStack>
         ) : (
           <HStack>
             <Input

@@ -1,6 +1,6 @@
 import { ComponentPropsWithRef, useEffect, useRef } from "react";
 import styled from "@emotion/styled";
-import { Spinner } from "@chakra-ui/react";
+import { Spinner, Text } from "@chakra-ui/react";
 
 const GAP = 4;
 
@@ -11,7 +11,7 @@ const StyledRequestButton = styled.button`
   z-index: 2147483647;
   width: 20px;
   height: 20px;
-  background: cadetblue;
+  background: #2a4365;
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -60,7 +60,11 @@ export default function GPTRequestButton({
       ref={buttonRef}
       {...restProps}
     >
-      {loading ? <Spinner size="s" /> : "D"}
+      {loading ? (
+        <Spinner color="white" width={8} height={8} />
+      ) : (
+        <Text color="white">D</Text>
+      )}
     </StyledRequestButton>
   );
 }

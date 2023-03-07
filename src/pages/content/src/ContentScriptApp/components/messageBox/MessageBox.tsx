@@ -97,7 +97,9 @@ export default function MessageBox({
       <Stack py={8}>
         <HStack px={12} justifyContent="space-between">
           {typeof header === "string" ? (
-            <Text color="white">{header}</Text>
+            <Text color="white" fontWeight="bold">
+              {header}
+            </Text>
           ) : (
             header
           )}

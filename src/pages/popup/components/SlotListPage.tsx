@@ -23,16 +23,17 @@ export default function SlotListPage({
   });
 
   const addNewSlot = () => {
-    const newSlot = createNewChatGPTSlot();
+    const newSlot = createNewChatGPTSlot({
+      isSelected: state.context.slots.length === 0,
+    });
     send({
       type: "ADD_SLOT",
       data: newSlot,
     });
-    goToSlotDetail(newSlot.id);
     ChromeMessenger.sendMessage({
       message: { type: "AddNewSlot", data: newSlot },
-      handleSuccess: () => selectSlot(newSlot.id),
     });
+    goToSlotDetail(newSlot.id);
   };
 
   const selectSlot = (slotId: string) => {
@@ -132,14 +133,15 @@ export default function SlotListPage({
   );
 }
 
-function createNewChatGPTSlot(): Slot {
+function createNewChatGPTSlot(config?: Partial<Slot>): Slot {
   return {
     type: "ChatGPT",
-    isSelected: true,
+    isSelected: false,
     id: generateId(),
     name: "",
     assistant: "",
     system: "",
+    ...config,
   };
 }
 
