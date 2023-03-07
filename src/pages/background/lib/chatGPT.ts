@@ -19,7 +19,7 @@ export const DEFAULT_CHAT_GPT_SLOT: ChatGPTSlot = {
 
 export async function chatGPT({
   input,
-  slot,
+  slot: _slot,
   apiKey,
 }: {
   slot: ChatGPTSlot;
@@ -34,9 +34,10 @@ export async function chatGPT({
   });
   openAiApiInstance ??= new OpenAIApi(configuration, undefined, axiosInstance);
 
+  const slot = { ...DEFAULT_CHAT_GPT_SLOT, ..._slot };
+
   const completion = await openAiApiInstance.createChatCompletion({
     model: "gpt-3.5-turbo",
-
     max_tokens: slot.maxTokens,
     messages: [
       {

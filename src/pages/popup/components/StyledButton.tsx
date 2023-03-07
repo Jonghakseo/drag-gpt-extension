@@ -17,7 +17,7 @@ const StyledButton = styled(Button)`
 
   &:hover {
     transition: all ease-in-out 200ms;
-    background: #3f75e5;
+    background: #86a9ea;
   }
 ` as typeof Button;
 

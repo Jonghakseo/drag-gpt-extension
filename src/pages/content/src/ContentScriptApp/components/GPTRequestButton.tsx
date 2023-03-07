@@ -60,7 +60,7 @@ export default function GPTRequestButton({
       ref={buttonRef}
       {...restProps}
     >
-      {loading ? <Spinner size="s" /> : "R"}
+      {loading ? <Spinner size="s" /> : "D"}
     </StyledRequestButton>
   );
 }

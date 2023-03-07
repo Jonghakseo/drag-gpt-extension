@@ -28,8 +28,10 @@ export default function SlotListPage({
       type: "ADD_SLOT",
       data: newSlot,
     });
+    goToSlotDetail(newSlot.id);
     ChromeMessenger.sendMessage({
       message: { type: "AddNewSlot", data: newSlot },
+      handleSuccess: () => selectSlot(newSlot.id),
     });
   };
 
@@ -63,6 +65,10 @@ export default function SlotListPage({
     });
   };
 
+  const goToSlotDetail = (slotId: string) => {
+    send({ type: "SHOW_DETAIL", slotId });
+  };
+
   return (
     <>
       {state.matches("slot_list") && (
@@ -89,12 +95,14 @@ export default function SlotListPage({
               onClick={() => selectSlot(slot.id)}
             >
               <HStack justifyContent="space-between">
-                <Text fontWeight="bold">{`${index + 1}. ${slot.name}`}</Text>
+                <Text fontWeight="bold">{`${index + 1}. ${
+                  slot.name || slot.type
+                }`}</Text>
                 <HStack>
                   <StyledButton
                     onClick={(event) => {
                       event.stopPropagation();
-                      send({ type: "SHOW_DETAIL", slotId: slot.id });
+                      goToSlotDetail(slot.id);
                     }}
                   >
                     <Text fontSize={11}>EDIT</Text>
@@ -129,7 +137,7 @@ function createNewChatGPTSlot(): Slot {
     type: "ChatGPT",
     isSelected: true,
     id: generateId(),
-    name: "slot",
+    name: "",
     assistant: "",
     system: "",
   };

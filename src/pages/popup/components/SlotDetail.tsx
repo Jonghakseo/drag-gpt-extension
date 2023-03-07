@@ -44,7 +44,7 @@ export default function SlotDetail({
       </Text>
       <Input
         value={slot.name}
-        placeholder="Code Review"
+        placeholder="ex. Code Review"
         onChange={(event) => {
           updateSlot("name", event.target.value);
         }}
