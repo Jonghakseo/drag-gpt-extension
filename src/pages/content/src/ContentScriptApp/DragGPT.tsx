@@ -4,15 +4,15 @@ import {
   getSelectionText,
 } from "@pages/content/src/ContentScriptApp/utils/selection";
 import GPTRequestButton from "@pages/content/src/ContentScriptApp/components/GPTRequestButton";
-import { ChromeMessenger } from "@pages/chrome/ChromeMessenger";
 import ResponseMessageBox from "@pages/content/src/ContentScriptApp/components/messageBox/ResponseMessageBox";
 import ErrorMessageBox from "@pages/content/src/ContentScriptApp/components/messageBox/ErrorMessageBox";
 import { useMachine } from "@xstate/react";
 import delayPromise from "@pages/content/src/ContentScriptApp/utils/delayPromise";
 import dragStateMachine from "@pages/content/src/ContentScriptApp/stateMachine/dragStateMachine";
+import { sendMessageToBackgroundAsync } from "@pages/chrome/message";
 
 async function getGPTResponse(userInput: string) {
-  return await ChromeMessenger.sendMessageAsync({
+  return await sendMessageToBackgroundAsync({
     type: "RequestSelectionMessage",
     data: userInput,
   });

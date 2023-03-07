@@ -1,66 +1,36 @@
 import reloadOnUpdate from "virtual:reload-on-update-in-background-script";
 import "regenerator-runtime/runtime.js";
-import { AxiosError } from "axios";
 import { LocalStorage } from "@pages/background/lib/localStorage";
-import { chatGPT, DEFAULT_CHAT_GPT_SLOT } from "@pages/background/lib/chatGPT";
+import { chatGPT } from "@pages/background/lib/chatGPT";
+import Logger from "@pages/background/lib/logger";
+import {
+  sendErrorMessageToClient,
+  sendMessageToClient,
+} from "@pages/background/lib/message";
 
 reloadOnUpdate("pages/background");
 
-// background script
-chrome.runtime.onMessage.addListener(function (request, sender, _sendResponse) {
-  const message: Message = request;
-  Logger.receive(message);
+chrome.runtime.onConnect.addListener((port) => {
+  port.onDisconnect.addListener(() => console.log("Port disconnected"));
+  port.onMessage.addListener(async (message: Message) => {
+    Logger.receive(message);
 
-  const sendResponse = (
-    message: DoneResponseMessage | ErrorResponseMessage
-  ) => {
-    Logger.send(message);
-    return _sendResponse(message);
-  };
+    const sendResponse = (responseMessage: DoneResponseMessage) =>
+      sendMessageToClient(port, responseMessage);
 
-  const handleError = (error: unknown) => {
-    console.warn(error);
-    if (!(error instanceof Error)) {
-      sendResponse({ type: "Error", data: Error("Unknown Error") });
-      return;
-    }
-    if ((error as AxiosError).isAxiosError) {
-      const axiosError = error as AxiosError;
-      const customError = new Error();
-      customError.message = axiosError.response?.data?.error?.message;
-      customError.name = axiosError.response?.data?.error?.code ?? error.name;
-      sendResponse({ type: "Error", data: customError });
-    } else {
-      sendResponse({ type: "Error", data: error });
-    }
-  };
-
-  switch (message.type) {
-    case "GetSlots": {
-      (async () => {
-        try {
+    try {
+      switch (message.type) {
+        case "GetSlots": {
           const slots = await LocalStorage.getAllSlots();
           sendResponse({ type: "ResponseSlots", data: slots });
-        } catch (error) {
-          handleError(error);
+          break;
         }
-      })();
-      break;
-    }
-    case "AddNewSlot": {
-      (async () => {
-        try {
+        case "AddNewSlot": {
           const slots = await LocalStorage.addSlot(message.data);
           sendResponse({ type: "ResponseSlots", data: slots });
-        } catch (error) {
-          handleError(error);
+          break;
         }
-      })();
-      break;
-    }
-    case "SelectSlot": {
-      (async () => {
-        try {
+        case "SelectSlot": {
           const slots = await LocalStorage.getAllSlots();
           const updatedSlots = slots.map((slot) => ({
             ...slot,
@@ -68,72 +38,37 @@ chrome.runtime.onMessage.addListener(function (request, sender, _sendResponse) {
           }));
           await LocalStorage.setAllSlots(updatedSlots);
           sendResponse({ type: "ResponseSlots", data: slots });
-        } catch (error) {
-          handleError(error);
+          break;
         }
-      })();
-      break;
-    }
-    case "UpdateSlotData": {
-      (async () => {
-        try {
+        case "UpdateSlotData": {
           const slots = await LocalStorage.updateSlot(message.data);
           sendResponse({ type: "ResponseSlots", data: slots });
-        } catch (error) {
-          handleError(error);
+          break;
         }
-      })();
-      break;
-    }
-    case "DeleteSlot": {
-      (async () => {
-        try {
+        case "DeleteSlot": {
           const slots = await LocalStorage.deleteSlot(message.data);
           sendResponse({ type: "ResponseSlots", data: slots });
-        } catch (error) {
-          handleError(error);
+          break;
         }
-      })();
-      break;
-    }
-    case "GetAPIKey":
-      (async () => {
-        try {
+        case "GetAPIKey": {
           const apiKey = await LocalStorage.getApiKey();
           sendResponse({ type: "Response", data: String(apiKey) });
-        } catch (error) {
-          handleError(error);
+          break;
         }
-      })();
-      break;
-    case "SaveAPIKey":
-      (async () => {
-        try {
+        case "SaveAPIKey":
           await chatGPT({
             input: "hello",
             apiKey: message.data,
-            slot: DEFAULT_CHAT_GPT_SLOT,
+            slot: { type: "ChatGPT" },
           });
           await LocalStorage.setApiKey(message.data);
           sendResponse({ type: "Response", data: "success" });
-        } catch (error) {
-          handleError(error);
-        }
-      })();
-      break;
-    case "ResetAPIKey":
-      (async () => {
-        try {
+          break;
+        case "ResetAPIKey":
           await LocalStorage.setApiKey(null);
           sendResponse({ type: "Response", data: "success" });
-        } catch (error) {
-          handleError(error);
-        }
-      })();
-      break;
-    case "RequestSelectionMessage":
-      (async () => {
-        try {
+          break;
+        case "RequestSelectionMessage": {
           const selectedSlot = await LocalStorage.getSelectedSlot();
           const apiKey = await LocalStorage.getApiKey();
 
@@ -148,34 +83,14 @@ chrome.runtime.onMessage.addListener(function (request, sender, _sendResponse) {
               break;
             }
           }
-        } catch (error) {
-          handleError(error);
+          break;
         }
-      })();
-      break;
-    default:
-      console.error("unknown message:" + JSON.stringify(message));
-      break;
-  }
-
-  return true;
+        default:
+          Logger.error("unknown message:" + JSON.stringify(message));
+          break;
+      }
+    } catch (error) {
+      sendErrorMessageToClient(port, error);
+    }
+  });
 });
-
-const Logger = {
-  receive: (message: Message) => {
-    console.log(
-      "Message Receive:",
-      `${message.type}\ndata: ${
-        message.data ? JSON.stringify(message.data) : "none"
-      }`
-    );
-  },
-  send: (message: Message) => {
-    console.log(
-      "Message Sending:",
-      `${message.type}\ndata: ${
-        message.data ? JSON.stringify(message.data) : "none"
-      }`
-    );
-  },
-};
