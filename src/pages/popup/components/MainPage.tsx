@@ -1,12 +1,16 @@
 import React from "react";
 import { Heading } from "@chakra-ui/react";
-import { ChromeMessenger } from "@pages/chrome/ChromeMessenger";
 import { NoApiKeyPage } from "@pages/popup/components/NoApiKeyPage";
 import SlotListPage from "@pages/popup/components/SlotListPage";
 import "@pages/popup/Popup.css";
 import styled from "@emotion/styled";
 import { useMachine } from "@xstate/react";
 import popupStateMachine from "@pages/popup/stateMachine/popupStateMachine";
+import {
+  sendMessageToBackground,
+  sendMessageToBackgroundAsync,
+} from "@pages/chrome/message";
+import { COLORS } from "@src/constant/style";
 
 const Container = styled.div`
   position: relative;
@@ -21,7 +25,7 @@ const Container = styled.div`
 
   text-align: center;
   padding: 24px;
-  background-color: #282c34;
+  background-color: ${COLORS.BACKGROUND};
 
   p {
     margin: 0;
@@ -29,20 +33,20 @@ const Container = styled.div`
 `;
 
 const saveApiKey = async (apiKey: string) => {
-  await ChromeMessenger.sendMessageAsync({
+  await sendMessageToBackgroundAsync({
     type: "SaveAPIKey",
     data: apiKey,
   });
 };
 
 const getApiKey = async () => {
-  return ChromeMessenger.sendMessageAsync({
+  return sendMessageToBackgroundAsync({
     type: "GetAPIKey",
   });
 };
 
 const resetApiKey = () => {
-  ChromeMessenger.sendMessage({
+  sendMessageToBackground({
     message: {
       type: "ResetAPIKey",
     },

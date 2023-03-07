@@ -1,10 +1,13 @@
 import { Box, HStack, Text, VStack } from "@chakra-ui/react";
-import { ChromeMessenger } from "@pages/chrome/ChromeMessenger";
 import { useMachine } from "@xstate/react";
 import hasApiKeyPageStateMachine from "@pages/popup/stateMachine/hasApiKeyPageStateMachine";
 import SlotDetail from "@pages/popup/components/SlotDetail";
 import StyledButton from "@pages/popup/components/StyledButton";
 import Footer from "@pages/popup/components/Footer";
+import {
+  sendMessageToBackground,
+  sendMessageToBackgroundAsync,
+} from "@pages/chrome/message";
 
 type SlotListPageProps = {
   onClickChangeApiKey: () => void;
@@ -16,7 +19,9 @@ export default function SlotListPage({
   const [state, send] = useMachine(hasApiKeyPageStateMachine, {
     services: {
       getAllSlots: async () =>
-        ChromeMessenger.sendMessageAsync({ type: "GetSlots" }),
+        sendMessageToBackgroundAsync({
+          type: "GetSlots",
+        }),
     },
     actions: {
       exitPage: onClickChangeApiKey,
@@ -31,7 +36,7 @@ export default function SlotListPage({
       type: "ADD_SLOT",
       data: newSlot,
     });
-    ChromeMessenger.sendMessage({
+    sendMessageToBackground({
       message: { type: "AddNewSlot", data: newSlot },
     });
     goToSlotDetail(newSlot.id);
@@ -39,7 +44,7 @@ export default function SlotListPage({
 
   const selectSlot = (slotId: string) => {
     send({ type: "SELECT_SLOT", slotId });
-    ChromeMessenger.sendMessage({
+    sendMessageToBackground({
       message: {
         type: "SelectSlot",
         data: slotId,
@@ -49,7 +54,7 @@ export default function SlotListPage({
 
   const updateSlotData = (slot: Slot) => {
     send({ type: "UPDATE_SLOT", data: slot });
-    ChromeMessenger.sendMessage({
+    sendMessageToBackground({
       message: {
         type: "UpdateSlotData",
         data: slot,
@@ -59,7 +64,7 @@ export default function SlotListPage({
 
   const deleteSlot = (slotId: string) => {
     send({ type: "DELETE_SLOT", slotId });
-    ChromeMessenger.sendMessage({
+    sendMessageToBackground({
       message: {
         type: "DeleteSlot",
         data: slotId,
@@ -141,8 +146,6 @@ function createNewChatGPTSlot(config?: Partial<Slot>): Slot {
     isSelected: false,
     id: generateId(),
     name: "",
-    assistant: "",
-    system: "",
     ...config,
   };
 }

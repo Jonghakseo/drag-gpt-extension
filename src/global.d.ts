@@ -1,4 +1,5 @@
 import Chrome from "chrome";
+import { ChatCompletionRequestMessage } from "openai";
 
 declare namespace chrome {
   export default Chrome;
@@ -39,11 +40,8 @@ declare module "*.json" {
 declare global {
   type ChatGPTSlot = {
     type: "ChatGPT";
-    system: string;
-    assistant: string;
-    /**
-     * config
-     */
+    system?: string;
+    /** config */
     maxTokens?: number; // max 4000
     temperature?: number; // 의외성 (0~1)
     topP?: number; // 단어 풀의 범위(0~1)
@@ -53,23 +51,14 @@ declare global {
 
   type Slot = { id: string; name: string; isSelected: boolean } & ChatGPTSlot;
 
-  type ResponseMessageType = "Response" | "ResponseSlots";
-  type ErrorMessageType = "Error";
   type CommonMessageType =
     | "SelectSlot"
     | "DeleteSlot"
     | "RequestSelectionMessage"
     | "SaveAPIKey";
-
   type RequestMessageType = "GetAPIKey" | "GetSlots" | "ResetAPIKey";
 
-  type MessageType =
-    | ErrorMessageType
-    | CommonMessageType
-    | RequestMessageType
-    | ResponseMessageType;
-
-  type ErrorResponseMessage = { type: ErrorMessageType; data: Error };
+  type ErrorResponseMessage = { type: "Error"; data: Error };
   type DoneResponseMessage =
     | {
         type: "Response";
@@ -79,7 +68,9 @@ declare global {
         type: "ResponseSlots";
         data: Slot[];
       };
+  type ResponseMessages = ErrorResponseMessage | DoneResponseMessage;
 
+  type CommonMessages = { type: CommonMessageType; data: string };
   type RequestMessages = { type: RequestMessageType; data?: null };
 
   type Message =
@@ -91,8 +82,11 @@ declare global {
         type: "AddNewSlot" | "UpdateSlotData";
         data: Slot;
       }
-    | DoneResponseMessage
-    | ErrorResponseMessage
-    | { type: CommonMessageType; data: string }
-    | { type: RequestMessageType; data?: null };
+    | {
+        type: "RequestAdditionalChat";
+        data: { input: string; histories: ChatCompletionRequestMessage[] };
+      }
+    | ResponseMessages
+    | CommonMessages
+    | RequestMessages;
 }

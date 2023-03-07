@@ -11,7 +11,7 @@ const ErrorHeaderText = styled(Text)`
 
 type ErrorMessageBoxProps = Omit<
   MessageBoxProps,
-  "header" | "text" | "width"
+  "header" | "content" | "width"
 > & {
   error?: Error;
 };
@@ -28,7 +28,7 @@ export default function ErrorMessageBox({
         }`}</ErrorHeaderText>
       }
       width={400}
-      text={error?.message ?? "unknown error"}
+      content={error?.message ?? "unknown error"}
       {...restProps}
     />
   );

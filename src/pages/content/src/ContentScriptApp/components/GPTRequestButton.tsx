@@ -1,6 +1,7 @@
 import { ComponentPropsWithRef, useEffect, useRef } from "react";
 import styled from "@emotion/styled";
 import { Spinner, Text } from "@chakra-ui/react";
+import { COLORS, Z_INDEX } from "@src/constant/style";
 
 const GAP = 4;
 
@@ -8,10 +9,10 @@ const StyledRequestButton = styled.button`
   border: none;
   padding: 0;
   position: absolute;
-  z-index: 2147483647;
+  z-index: ${Z_INDEX.ROOT};
   width: 20px;
   height: 20px;
-  background: #2a4365;
+  background: ${COLORS.PRIMARY};
   border-radius: 4px;
   display: flex;
   align-items: center;
