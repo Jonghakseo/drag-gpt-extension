@@ -29,7 +29,7 @@
     "src",
     "utils",
     "vite.config.ts",
-    "node_modules/@types",
-    "node_modules/ts-jest/globals.d.ts"
-  ]
-}
+    "node_modules/@types"
+  ],
+  "exclude": ["node_modules/ts-jest"]
+},
