@@ -9,6 +9,7 @@ import {
   sendMessageToBackgroundAsync,
 } from "@pages/chrome/message";
 import SlotListItem from "@pages/popup/components/SlotListItem";
+import { COLORS } from "@src/constant/style";
 
 type SlotListPageProps = {
   onClickChangeApiKey: () => void;
@@ -81,7 +82,7 @@ export default function SlotListPage({
     <>
       {state.matches("slot_list") && (
         <VStack spacing={12} width="100%">
-          <Text color="antiquewhite" fontWeight="bold">
+          <Text color={COLORS.WHITE} fontWeight="bold">
             Slots
           </Text>
           <HStack width="100%" justifyContent="space-between">

@@ -25,7 +25,7 @@ const Container = styled.div`
 
   text-align: center;
   padding: 24px;
-  background-color: ${COLORS.BACKGROUND};
+  background-color: ${COLORS.POPUP_BACKGROUND};
 
   p {
     margin: 0;
@@ -73,7 +73,7 @@ export default function MainPage() {
 
   return (
     <Container>
-      <Heading color="antiquewhite" padding={12} fontWeight="bold">
+      <Heading color={COLORS.WHITE} padding={12} fontWeight="bold">
         Drag GPT
       </Heading>
       {state.matches("has_api_key") && (

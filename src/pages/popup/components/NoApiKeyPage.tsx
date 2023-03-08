@@ -2,6 +2,7 @@ import React, { ChangeEventHandler, useState } from "react";
 import { HStack, Input, Spinner, Text, VStack } from "@chakra-ui/react";
 import Footer from "@pages/popup/components/Footer";
 import StyledButton from "@pages/popup/components/StyledButton";
+import { COLORS } from "@src/constant/style";
 
 type NoApiKeyPageProps = {
   checkApiKey: (key: string) => void;
@@ -26,13 +27,13 @@ export const NoApiKeyPage = ({
   return (
     <>
       <VStack>
-        <Text color="antiquewhite" pt={24}>
+        <Text color={COLORS.WHITE} pt={24}>
           Input openai api key
         </Text>
         {loading ? (
           <VStack spacing={20}>
-            <Spinner width={30} height={30} color="antiquewhite" />
-            <Text color="antiquewhite">
+            <Spinner width={30} height={30} color={COLORS.WHITE} />
+            <Text color={COLORS.WHITE}>
               Currently sending a request to check for the API key...
             </Text>
           </VStack>
@@ -50,10 +51,10 @@ export const NoApiKeyPage = ({
         )}
         {apiKeyError && (
           <VStack>
-            <Text fontWeight="bold" color="red">
+            <Text fontWeight="bold" color={COLORS.RED}>
               {apiKeyError.name}
             </Text>
-            <Text whiteSpace="pre-wrap" color="#e84646">
+            <Text whiteSpace="pre-wrap" color={COLORS.RED}>
               {apiKeyError.message}
             </Text>
           </VStack>

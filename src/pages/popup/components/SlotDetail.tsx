@@ -2,6 +2,7 @@ import { HStack, Input, Text, Textarea, VStack } from "@chakra-ui/react";
 import React, { useState } from "react";
 import styled from "@emotion/styled";
 import StyledButton from "@pages/popup/components/StyledButton";
+import { COLORS } from "@src/constant/style";
 
 const StyledTextArea = styled(Textarea)`
   padding: 4px;
@@ -34,7 +35,7 @@ export default function SlotDetail({
 
   return (
     <VStack spacing={12} alignItems="flex-start">
-      <Text color="antiquewhite" fontSize={14}>
+      <Text color={COLORS.WHITE} fontSize={12}>
         Prompt Slot name
       </Text>
       <Input
@@ -45,8 +46,8 @@ export default function SlotDetail({
           updateSlot("name", event.target.value);
         }}
       />
-      <Text color="antiquewhite" fontSize={14}>
-        Write a prompt for chat gpt
+      <Text color={COLORS.WHITE} fontSize={12}>
+        Write a prompt for ChatGPT (MAX 2000)
       </Text>
       <StyledTextArea
         fontSize={12}
