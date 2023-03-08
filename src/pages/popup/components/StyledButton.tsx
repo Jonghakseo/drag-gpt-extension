@@ -7,6 +7,8 @@ const StyledButton = styled(Button)`
   border: none;
   border-radius: 4px;
   padding: 4px 8px;
+  font-size: 12px;
+  line-height: 14px;
   font-weight: bold;
   background-color: gainsboro;
   color: black;
