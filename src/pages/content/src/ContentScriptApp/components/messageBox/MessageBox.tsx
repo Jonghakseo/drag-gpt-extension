@@ -110,6 +110,7 @@ export default function MessageBox({
     }
   }, [containerRef, anchorCenter, anchorBottom, anchorTop, positionOnScreen]);
 
+  // TODO withDraggableBox 등으로 로직 추출
   const containerRefRect = useMemo(() => {
     return containerRef.current?.getBoundingClientRect();
   }, [containerRef.current]);
