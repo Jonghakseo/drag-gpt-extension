@@ -2,14 +2,18 @@ import MessageBox, {
   MessageBoxProps,
 } from "@pages/content/src/ContentScriptApp/components/messageBox/MessageBox";
 import StyledButton from "@pages/popup/components/StyledButton";
-import { Fragment, KeyboardEventHandler, useEffect, useState } from "react";
+import {
+  Fragment,
+  KeyboardEventHandler,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   Box,
   Collapse,
-  Divider,
   HStack,
   Input,
-  StatDownArrow,
   StatUpArrow,
   Text,
   VStack,
@@ -34,6 +38,7 @@ export default function ResponseMessageBox({
   onRequestMoreChat,
   ...restProps
 }: ResponseMessageBoxProps) {
+  const chatListRef = useRef<HTMLDivElement>(null);
   const [moreChatText, setMoreChatText] = useState("");
   const [isCopied, setIsCopied] = useState(false);
 
@@ -62,13 +67,28 @@ export default function ResponseMessageBox({
     event.stopPropagation();
   };
 
+  useEffect(() => {
+    if (!chatListRef.current) {
+      return;
+    }
+    chatListRef.current.scrollTo({
+      top: chatListRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [chats.length]);
+
   return (
     <MessageBox
       header="Response"
       width={480}
       isOutsideClickDisabled={chats.length > 1}
       content={
-        <VStack maxHeight={400} width="100%" overflowY="scroll">
+        <VStack
+          ref={chatListRef}
+          maxHeight={400}
+          width="100%"
+          overflowY="scroll"
+        >
           {chats.map((chat, index) => {
             const isLast =
               index === chats.length - 1 || index === chats.length - 2;
@@ -84,12 +104,11 @@ export default function ResponseMessageBox({
       footer={
         <HStack width="100%" pt={8} justifyContent="space-between">
           <StyledButton onClick={copyResponse}>
-            {isCopied ? "COPIED!" : "COPY"}
+            {isCopied ? "COPIED!" : "COPY LAST RESPONSE"}
           </StyledButton>
           <HStack>
             <Input
-              width={250}
-              autoFocus
+              width={230}
               value={moreChatText}
               placeholder="ex. Summarize!"
               onChange={(e) => setMoreChatText(e.target.value)}
