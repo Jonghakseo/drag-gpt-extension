@@ -222,7 +222,7 @@ const CollapseBox = styled(Box)<{ isShow: boolean }>`
 
         background-image: linear-gradient(
           0deg,
-          ${COLORS.PRIMARY} 0%,
+          ${COLORS.CONTENT_BACKGROUND} 0%,
           rgba(0, 0, 0, 0) 100%
         );
       }
