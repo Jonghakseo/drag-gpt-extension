@@ -1,10 +1,17 @@
-import { ComponentPropsWithRef, ReactNode, useEffect, useRef } from "react";
+import {
+  ComponentPropsWithRef,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 import styled from "@emotion/styled";
 import { CloseButton, HStack, Stack, Text } from "@chakra-ui/react";
 import { PositionOnScreen } from "@pages/content/src/ContentScriptApp/utils/getPositionOnScreen";
 import useRootOutsideClick from "@pages/content/src/ContentScriptApp/hooks/useRootOutsideClick";
 import getSafePixel from "@pages/content/src/ContentScriptApp/utils/getSafePixel";
 import { COLORS, Z_INDEX } from "@src/constant/style";
+import DraggableBox from "@pages/content/src/ContentScriptApp/components/DraggableBox";
 
 const GAP = 8;
 
@@ -103,28 +110,37 @@ export default function MessageBox({
     }
   }, [containerRef, anchorCenter, anchorBottom, anchorTop, positionOnScreen]);
 
+  const containerRefRect = useMemo(() => {
+    return containerRef.current?.getBoundingClientRect();
+  }, [containerRef.current]);
+
   return (
-    <MessageBoxContainer width={width} ref={containerRef} {...restProps}>
-      <Stack>
-        <HStack justifyContent="space-between">
-          {typeof header === "string" ? (
-            <Text color="white" fontWeight="bold">
-              {header}
-            </Text>
-          ) : (
-            header
-          )}
-          <StyledCloseButton color="white" size="sm" onClick={onClose} />
-        </HStack>
-        <HStack>
-          {typeof content === "string" ? (
-            <Text color="white">{content}</Text>
-          ) : (
-            content
-          )}
-        </HStack>
-        {footer}
-      </Stack>
-    </MessageBoxContainer>
+    <DraggableBox
+      defaultX={containerRefRect?.x ?? 0}
+      defaultY={containerRefRect?.y ?? 0}
+    >
+      <MessageBoxContainer width={width} ref={containerRef} {...restProps}>
+        <Stack>
+          <HStack justifyContent="space-between">
+            {typeof header === "string" ? (
+              <Text color="white" fontWeight="bold">
+                {header}
+              </Text>
+            ) : (
+              header
+            )}
+            <StyledCloseButton color="white" size="sm" onClick={onClose} />
+          </HStack>
+          <HStack>
+            {typeof content === "string" ? (
+              <Text color="white">{content}</Text>
+            ) : (
+              content
+            )}
+          </HStack>
+          {footer}
+        </Stack>
+      </MessageBoxContainer>
+    </DraggableBox>
   );
 }
