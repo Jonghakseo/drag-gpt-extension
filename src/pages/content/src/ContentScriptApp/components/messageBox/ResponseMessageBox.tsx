@@ -87,7 +87,7 @@ export default function ResponseMessageBox({
           cursor="move"
           className={DraggableBox.handlerClassName}
         >
-          Response
+          ✣ Response
         </Text>
       }
       width={480}
