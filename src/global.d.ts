@@ -1,5 +1,5 @@
-import Chrome from "chrome";
-import { ChatCompletionRequestMessage } from "openai";
+import type Chrome from "chrome";
+import type { ChatCompletionRequestMessage } from "openai";
 
 declare namespace chrome {
   export default Chrome;

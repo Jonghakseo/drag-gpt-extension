@@ -17,6 +17,9 @@ export async function chatGPT({
   input: string;
   apiKey: string;
 }): Promise<string> {
+  if (configuration?.apiKey !== apiKey) {
+    configuration = null;
+  }
   configuration ??= new Configuration({
     apiKey,
   });
@@ -47,5 +50,5 @@ export async function chatGPT({
     presence_penalty: slot.presencePenalty,
   });
 
-  return completion.data.choices.at(0)?.message?.content ?? "알 수 없는 에러";
+  return completion.data.choices.at(0)?.message?.content ?? "Unknown Response";
 }

@@ -1,3 +1,5 @@
+import { SlotsManipulator } from "@pages/background/lib/slotsManipulator";
+
 export class LocalStorage {
   private static API_KEY = "OPEN_AI_API_KEY";
   private static SLOTS = "SLOTS";
@@ -54,53 +56,34 @@ export class LocalStorage {
 
   static async getSelectedSlot(): Promise<Slot> {
     const slots = await this.getAllSlots();
-    return await findSelectedSlot(slots);
+    const selectedSlot = SlotsManipulator.getSelectedSlot(slots);
+    if (selectedSlot) {
+      return selectedSlot;
+    }
+    const notFoundError = new Error();
+    notFoundError.name = "Not found selected slot";
+    notFoundError.message = "Check selected slot on popup window.";
+    throw notFoundError;
   }
 
   static async addSlot(slot: Slot): Promise<Slot[]> {
     const slots: Slot[] = await this.getAllSlots();
-    const updatedSlots = slots.concat({
-      ...slot,
-      isSelected: slots.length === 0,
-    });
-    await this.save(this.SLOTS, updatedSlots);
-    return updatedSlots;
+    const addedSlots = SlotsManipulator.addSlot(slots, slot);
+    await this.save(this.SLOTS, addedSlots);
+    return addedSlots;
   }
 
   static async updateSlot(slot: Slot): Promise<Slot[]> {
     const slots = await this.getAllSlots();
-    const updatedSlots = updateSlot(slots, slot);
+    const updatedSlots = SlotsManipulator.updateSlot(slots, slot);
     await this.save(this.SLOTS, updatedSlots);
     return updatedSlots;
   }
 
   static async deleteSlot(slotId: string): Promise<Slot[]> {
     const slots = await this.getAllSlots();
-    const updatedSlots = slots.filter((slot) => slot.id !== slotId);
-    await this.save(this.SLOTS, updatedSlots);
-    return updatedSlots;
+    const deletedSlots = SlotsManipulator.deleteSlot(slots, slotId);
+    await this.save(this.SLOTS, deletedSlots);
+    return deletedSlots;
   }
-}
-
-async function findSelectedSlot(slots: Slot[]): Promise<Slot> {
-  return new Promise((resolve, reject) => {
-    const found = slots.find(({ isSelected }) => isSelected);
-    if (found) {
-      resolve(found);
-    } else {
-      const notFoundError = new Error();
-      notFoundError.name = "Not found selected slot";
-      notFoundError.message = "Check selected slot on popup window.";
-      reject(notFoundError);
-    }
-  });
-}
-
-function updateSlot(slots: Slot[], slot: Slot): Slot[] {
-  return slots.reduce<Slot[]>((previousValue, currentValue) => {
-    if (currentValue.id === slot.id) {
-      return previousValue.concat(slot);
-    }
-    return previousValue.concat(currentValue);
-  }, []);
 }

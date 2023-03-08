@@ -1,5 +1,5 @@
 import React, { ChangeEventHandler, useState } from "react";
-import { Button, HStack, Input, Spinner, Text, VStack } from "@chakra-ui/react";
+import { HStack, Input, Spinner, Text, VStack } from "@chakra-ui/react";
 import Footer from "@pages/popup/components/Footer";
 import StyledButton from "@pages/popup/components/StyledButton";
 
@@ -26,7 +26,9 @@ export const NoApiKeyPage = ({
   return (
     <>
       <VStack>
-        <Text color="antiquewhite">Input openai api key</Text>
+        <Text color="antiquewhite" pt={24}>
+          Input openai api key
+        </Text>
         {loading ? (
           <VStack spacing={20}>
             <Spinner width={30} height={30} color="antiquewhite" />
