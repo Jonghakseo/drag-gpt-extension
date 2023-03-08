@@ -3,7 +3,6 @@ import MessageBox, {
 } from "@pages/content/src/ContentScriptApp/components/messageBox/MessageBox";
 import StyledButton from "@pages/popup/components/StyledButton";
 import {
-  Fragment,
   KeyboardEventHandler,
   useEffect,
   useMemo,
@@ -79,9 +78,12 @@ export default function ResponseMessageBox({
     });
   }, [chats.length]);
 
-  const lastResponseIndex = useMemo(() => {
-    return [...chats].reverse().findIndex((chat) => chat.role === "assistant");
-  }, [chats.length]);
+  const lastResponseIndex: number = (() => {
+    if (loading) {
+      return chats.length - 2;
+    }
+    return chats.length - 1;
+  })();
 
   return (
     <MessageBox
