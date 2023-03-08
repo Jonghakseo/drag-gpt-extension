@@ -6,6 +6,7 @@ import {
   Fragment,
   KeyboardEventHandler,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -78,6 +79,10 @@ export default function ResponseMessageBox({
     });
   }, [chats.length]);
 
+  const lastResponseIndex = useMemo(() => {
+    return [...chats].reverse().findIndex((chat) => chat.role === "assistant");
+  }, [chats.length]);
+
   return (
     <MessageBox
       header={
@@ -87,7 +92,7 @@ export default function ResponseMessageBox({
           cursor="move"
           className={DraggableBox.handlerClassName}
         >
-          Response
+          ✣ Response
         </Text>
       }
       width={480}
@@ -99,16 +104,13 @@ export default function ResponseMessageBox({
           width="100%"
           overflowY="scroll"
         >
-          {chats.map((chat, index) => {
-            const isLast =
-              index === chats.length - 1 || index === chats.length - 2;
-            const isLastAndResponse = isLast && chat.role === "assistant";
-            return (
-              <Fragment key={index}>
-                <ChatBox chat={chat} isLastAndResponse={isLastAndResponse} />
-              </Fragment>
-            );
-          })}
+          {chats.map((chat, index) => (
+            <ChatBox
+              key={index}
+              chat={chat}
+              isLastAndResponse={lastResponseIndex === index}
+            />
+          ))}
         </VStack>
       }
       footer={
