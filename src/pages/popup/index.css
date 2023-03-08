@@ -49,3 +49,8 @@ table {
   box-sizing: border-box;
   font-family: "Noto Sans KR", sans-serif;
 }
+
+textarea, input:focus-visible {
+  transition: outline-offset 75ms ease-out;
+  outline-offset: 4px;
+}

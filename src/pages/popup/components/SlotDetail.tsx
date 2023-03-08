@@ -5,10 +5,6 @@ import StyledButton from "@pages/popup/components/StyledButton";
 
 const StyledTextArea = styled(Textarea)`
   padding: 4px;
-  &:focus-visible {
-    transition: outline-offset 75ms ease-out;
-    outline-offset: 4px;
-  }
 `;
 
 type SlotDetailProps = {
@@ -38,24 +34,25 @@ export default function SlotDetail({
 
   return (
     <VStack spacing={12} alignItems="flex-start">
-      <Text color="antiquewhite" fontSize={11}>
+      <Text color="antiquewhite" fontSize={14}>
         Prompt Slot name
       </Text>
       <Input
+        fontSize={12}
         value={slot.name}
         placeholder="ex. Code Review"
         onChange={(event) => {
           updateSlot("name", event.target.value);
         }}
       />
-      <Text color="antiquewhite" fontSize={11}>
+      <Text color="antiquewhite" fontSize={14}>
         Write a prompt for chat gpt
       </Text>
       <StyledTextArea
         fontSize={12}
         resize="none"
         width={220}
-        height={60}
+        height={70}
         maxLength={2000}
         value={slot.system}
         placeholder="ex. You are a code reviewer."
