@@ -29,6 +29,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   position: relative;
+  background-color: #282c34;
 }
 ol, ul {
   list-style: none;

@@ -16,7 +16,7 @@ import DraggableBox from "@pages/content/src/ContentScriptApp/components/Draggab
 const GAP = 8;
 
 const MessageBoxContainer = styled.div<{ width: number }>`
-  background: ${COLORS.PRIMARY};
+  background: ${COLORS.CONTENT_BACKGROUND};
   display: flex;
   flex-direction: column;
   position: absolute;
