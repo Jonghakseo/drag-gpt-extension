@@ -22,6 +22,7 @@ import { Chat } from "@pages/content/src/ContentScriptApp/stateMachine/dragState
 import styled from "@emotion/styled";
 import { COLORS } from "@src/constant/style";
 import { css } from "@emotion/react";
+import DraggableBox from "@pages/content/src/ContentScriptApp/components/DraggableBox";
 
 type ResponseMessageBoxProps = Omit<
   MessageBoxProps,
@@ -79,7 +80,16 @@ export default function ResponseMessageBox({
 
   return (
     <MessageBox
-      header="Response"
+      header={
+        <Text
+          color="white"
+          fontWeight="bold"
+          cursor="move"
+          className={DraggableBox.handlerClassName}
+        >
+          Response
+        </Text>
+      }
       width={480}
       isOutsideClickDisabled={chats.length > 1}
       content={

@@ -13,8 +13,13 @@ export default function DraggableBox({
   children,
 }: DraggableBoxProps) {
   return (
-    <Draggable defaultPosition={{ x: defaultX, y: defaultY }}>
+    <Draggable
+      handle=".drag_gpt_handle"
+      defaultPosition={{ x: defaultX, y: defaultY }}
+    >
       {children}
     </Draggable>
   );
 }
+
+DraggableBox.handlerClassName = "drag_gpt_handle";
