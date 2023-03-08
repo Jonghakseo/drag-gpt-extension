@@ -1,4 +1,4 @@
-import { Box, HStack, Text, VStack } from "@chakra-ui/react";
+import { HStack, Text, VStack } from "@chakra-ui/react";
 import { useMachine } from "@xstate/react";
 import hasApiKeyPageStateMachine from "@pages/popup/stateMachine/hasApiKeyPageStateMachine";
 import SlotDetail from "@pages/popup/components/SlotDetail";
@@ -8,6 +8,7 @@ import {
   sendMessageToBackground,
   sendMessageToBackgroundAsync,
 } from "@pages/chrome/message";
+import SlotListItem from "@pages/popup/components/SlotListItem";
 
 type SlotListPageProps = {
   onClickChangeApiKey: () => void;
@@ -90,41 +91,14 @@ export default function SlotListPage({
             </StyledButton>
           </HStack>
           {state.context.slots.map((slot, index) => (
-            <Box
+            <SlotListItem
               key={slot.id}
-              width="100%"
-              backgroundColor="white"
-              cursor="pointer"
-              padding={8}
-              borderRadius={4}
-              border="2px solid"
-              borderColor={slot.isSelected ? "#3F75E5FF" : "white"}
-              onClick={() => selectSlot(slot.id)}
-            >
-              <HStack justifyContent="space-between">
-                <Text fontWeight="bold">{`${index + 1}. ${
-                  slot.name || slot.type
-                }`}</Text>
-                <HStack>
-                  <StyledButton
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      goToSlotDetail(slot.id);
-                    }}
-                  >
-                    <Text fontSize={11}>EDIT</Text>
-                  </StyledButton>
-                  <StyledButton
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      deleteSlot(slot.id);
-                    }}
-                  >
-                    <Text fontSize={11}>DEL</Text>
-                  </StyledButton>
-                </HStack>
-              </HStack>
-            </Box>
+              slotName={`${index + 1}. ${slot.name || slot.type}`}
+              isSelected={slot.isSelected}
+              onSelect={() => selectSlot(slot.id)}
+              onDetail={() => goToSlotDetail(slot.id)}
+              onDelete={() => deleteSlot(slot.id)}
+            />
           ))}
         </VStack>
       )}

@@ -17,6 +17,9 @@ export async function chatGPT({
   input: string;
   apiKey: string;
 }): Promise<string> {
+  if (configuration?.apiKey !== apiKey) {
+    configuration = null;
+  }
   configuration ??= new Configuration({
     apiKey,
   });

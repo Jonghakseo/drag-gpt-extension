@@ -67,12 +67,15 @@ export default function MainPage() {
   };
 
   const checkApiKey = (apiKey: string) => {
+    console.log(apiKey);
     send({ type: "CHECK_API_KEY", data: apiKey });
   };
 
   return (
     <Container>
-      <Heading color="antiquewhite">Drag GPT</Heading>
+      <Heading color="antiquewhite" padding={12} fontWeight="bold">
+        Drag GPT
+      </Heading>
       {state.matches("has_api_key") && (
         <SlotListPage onClickChangeApiKey={resetOpenApiKey} />
       )}
