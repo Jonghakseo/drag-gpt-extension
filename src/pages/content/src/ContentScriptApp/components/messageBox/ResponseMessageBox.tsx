@@ -76,7 +76,6 @@ export default function ResponseMessageBox({
             return (
               <Fragment key={index}>
                 <ChatBox chat={chat} isLastAndResponse={isLastAndResponse} />
-                <Divider height={1} />
               </Fragment>
             );
           })}
@@ -90,6 +89,7 @@ export default function ResponseMessageBox({
           <HStack>
             <Input
               width={250}
+              autoFocus
               value={moreChatText}
               placeholder="ex. Summarize!"
               onChange={(e) => setMoreChatText(e.target.value)}
@@ -119,13 +119,14 @@ const ChatBox = ({
 }) => {
   const [show, setShow] = useState(false);
 
-  const handleToggle = () => setShow(!show);
+  const openCollapse = () => setShow(true);
+  const closeCollapse = () => setShow(false);
 
   const textNode = (
     <Text
       borderRadius={4}
       border="1px solid #f0ffff2e"
-      padding="3px 8px"
+      padding={6}
       color={chat.role === "error" ? "red" : "white"}
       fontWeight={chat.role === "user" ? "bold" : "normal"}
     >
@@ -141,20 +142,30 @@ const ChatBox = ({
 
   if (chat.role === "assistant") {
     return (
-      <Box>
-        <CollapseBox isShow={show}>
-          <Collapse startingHeight={24} in={show} animateOpacity>
-            {textNode}
-          </Collapse>
-        </CollapseBox>
-        <Box onClick={handleToggle}>
-          {show ? (
-            <StatUpArrow cursor="pointer" color="white" />
-          ) : (
-            <StatDownArrow cursor="pointer" color="white" />
-          )}
-        </Box>
-      </Box>
+      <CollapseBox isShow={show} onClick={openCollapse}>
+        <Collapse startingHeight={24} in={show} animateOpacity>
+          <Text
+            borderRadius={4}
+            border="1px solid #f0ffff2e"
+            padding={6}
+            color="white"
+            fontWeight="normal"
+          >
+            {chat.content.trim()}
+            <VStack
+              margin="4px auto 0"
+              cursor="pointer"
+              width="100%"
+              onClick={(e) => {
+                closeCollapse();
+                e.stopPropagation();
+              }}
+            >
+              <StatUpArrow color="white" />
+            </VStack>
+          </Text>
+        </Collapse>
+      </CollapseBox>
     );
   }
 
@@ -162,12 +173,12 @@ const ChatBox = ({
 };
 
 const CollapseBox = styled(Box)<{ isShow: boolean }>`
-  cursor: pointer;
   align-self: start;
   position: relative;
   ${(p) =>
     p.isShow ||
     css`
+      cursor: pointer;
       &:before {
         content: "";
         position: absolute;

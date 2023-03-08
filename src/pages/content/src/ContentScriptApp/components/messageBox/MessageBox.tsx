@@ -23,7 +23,8 @@ const MessageBoxContainer = styled.div<{ width: number }>`
 
   border-radius: 6px;
   padding: 12px;
-
+  font-size: 14px;
+  line-height: 16px;
   p {
     margin: 0;
   }
