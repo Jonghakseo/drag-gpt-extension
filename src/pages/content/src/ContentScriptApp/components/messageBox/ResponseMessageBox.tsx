@@ -57,6 +57,7 @@ export default function ResponseMessageBox({
     if (event.key === "Enter") {
       requestMoreChat();
     }
+    event.stopPropagation();
   };
 
   return (
