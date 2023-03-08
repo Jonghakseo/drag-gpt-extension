@@ -67,7 +67,6 @@ export default function MainPage() {
   };
 
   const checkApiKey = (apiKey: string) => {
-    console.log(apiKey);
     send({ type: "CHECK_API_KEY", data: apiKey });
   };
 
