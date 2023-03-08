@@ -55,8 +55,8 @@ export default function SlotDetail({
         fontSize={12}
         resize="none"
         width={220}
-        height={50}
-        maxLength={200}
+        height={60}
+        maxLength={2000}
         value={slot.system}
         placeholder="ex. You are a code reviewer."
         onChange={(event) => {
