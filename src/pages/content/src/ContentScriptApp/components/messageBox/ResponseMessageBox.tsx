@@ -9,6 +9,8 @@ import {
   Divider,
   HStack,
   Input,
+  StatDownArrow,
+  StatUpArrow,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -74,7 +76,7 @@ export default function ResponseMessageBox({
             return (
               <Fragment key={index}>
                 <ChatBox chat={chat} isLastAndResponse={isLastAndResponse} />
-                <Divider />
+                <Divider height={1} />
               </Fragment>
             );
           })}
@@ -121,6 +123,9 @@ const ChatBox = ({
 
   const textNode = (
     <Text
+      borderRadius={4}
+      border="1px solid #f0ffff2e"
+      padding="3px 8px"
       color={chat.role === "error" ? "red" : "white"}
       fontWeight={chat.role === "user" ? "bold" : "normal"}
     >
@@ -136,11 +141,20 @@ const ChatBox = ({
 
   if (chat.role === "assistant") {
     return (
-      <CollapseBox isShow={show} onClick={handleToggle}>
-        <Collapse startingHeight={20} in={show} animateOpacity>
-          {textNode}
-        </Collapse>
-      </CollapseBox>
+      <Box>
+        <CollapseBox isShow={show}>
+          <Collapse startingHeight={24} in={show} animateOpacity>
+            {textNode}
+          </Collapse>
+        </CollapseBox>
+        <Box onClick={handleToggle}>
+          {show ? (
+            <StatUpArrow cursor="pointer" color="white" />
+          ) : (
+            <StatDownArrow cursor="pointer" color="white" />
+          )}
+        </Box>
+      </Box>
     );
   }
 
@@ -151,24 +165,24 @@ const CollapseBox = styled(Box)<{ isShow: boolean }>`
   cursor: pointer;
   align-self: start;
   position: relative;
+  ${(p) =>
+    p.isShow ||
+    css`
+      &:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 100%;
 
-  &:before {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    height: 100%;
-    ${(p) =>
-      p.isShow ||
-      css`
         background-image: linear-gradient(
           0deg,
           ${COLORS.PRIMARY} 0%,
           rgba(0, 0, 0, 0) 100%
         );
-      `}
-  }
+      }
+    `}
 `;
 
 async function copyToClipboard(text: string) {
