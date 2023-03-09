@@ -56,13 +56,18 @@ chrome.runtime.onConnect.addListener((port) => {
           break;
         }
         case "SaveAPIKey":
-          await chatGPT({
-            input: "hello",
-            apiKey: message.data,
-            slot: { type: "ChatGPT" },
-          });
-          await LocalStorage.setApiKey(message.data);
-          sendResponse({ type: "Response", data: "success" });
+          try {
+            await chatGPT({
+              input: "hello",
+              apiKey: message.data,
+              slot: { type: "ChatGPT" },
+            });
+            await LocalStorage.setApiKey(message.data);
+            sendResponse({ type: "Response", data: "success" });
+          } catch (e) {
+            await LocalStorage.setApiKey(null);
+            throw e;
+          }
           break;
         case "ResetAPIKey":
           await LocalStorage.setApiKey(null);
