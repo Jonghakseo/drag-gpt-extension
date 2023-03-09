@@ -5,7 +5,7 @@ import packageJson from "./package.json";
  */
 const manifest: chrome.runtime.ManifestV3 = {
   manifest_version: 3,
-  name: "DragGPT - easy start with drag!",
+  name: "Drag GPT - easy start with drag!",
   version: packageJson.version,
   description: packageJson.description,
   options_page: "src/pages/options/index.html",
