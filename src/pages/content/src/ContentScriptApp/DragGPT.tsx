@@ -9,7 +9,7 @@ import ErrorMessageBox from "@pages/content/src/ContentScriptApp/components/mess
 import { useMachine } from "@xstate/react";
 import delayPromise from "@pages/content/src/ContentScriptApp/utils/delayPromise";
 import dragStateMachine from "@pages/content/src/ContentScriptApp/stateMachine/dragStateMachine";
-import { sendMessageToBackgroundAsync } from "@pages/chrome/message";
+import { sendMessageToBackgroundAsync } from "@src/chrome/message";
 import { ChatCompletionRequestMessage } from "openai";
 import styled from "@emotion/styled";
 

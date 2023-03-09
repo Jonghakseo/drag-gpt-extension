@@ -9,7 +9,7 @@ import popupStateMachine from "@pages/popup/stateMachine/popupStateMachine";
 import {
   sendMessageToBackground,
   sendMessageToBackgroundAsync,
-} from "@pages/chrome/message";
+} from "@src/chrome/message";
 import { COLORS } from "@src/constant/style";
 
 const Container = styled.div`
