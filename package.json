@@ -1,7 +1,7 @@
 {
   "name": "drag-gpt",
   "version": "1.1.7",
-  "description": "DragGPT chrome extension",
+  "description": "Drag GPT chrome extension",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -18,20 +18,20 @@
   },
   "type": "module",
   "dependencies": {
-    "@chakra-ui/react": "^2.5.1",
-    "@emotion/cache": "^11.10.5",
-    "@emotion/react": "^11.10.6",
-    "@emotion/styled": "^11.10.6",
-    "@vespaiach/axios-fetch-adapter": "^0.3.1",
-    "@xstate/react": "^3.2.1",
+    "@chakra-ui/react": "2.5.1",
+    "@emotion/cache": "11.10.5",
+    "@emotion/react": "11.10.6",
+    "@emotion/styled": "11.10.6",
+    "@vespaiach/axios-fetch-adapter": "0.3.1",
+    "@xstate/react": "3.2.1",
     "axios": "0.26.0",
-    "framer-motion": "^10.0.1",
-    "openai": "^3.2.1",
+    "framer-motion": "10.0.1",
+    "openai": "3.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-draggable": "^4.4.5",
-    "regenerator-runtime": "^0.13.11",
-    "xstate": "^4.37.0"
+    "react-draggable": "4.4.5",
+    "regenerator-runtime": "0.13.11",
+    "xstate": "4.37.0"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.5.0",
