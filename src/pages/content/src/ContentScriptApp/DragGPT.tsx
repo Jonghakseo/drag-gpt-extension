@@ -10,7 +10,6 @@ import { useMachine } from "@xstate/react";
 import delayPromise from "@pages/content/src/ContentScriptApp/utils/delayPromise";
 import dragStateMachine from "@pages/content/src/ContentScriptApp/stateMachine/dragStateMachine";
 import { sendMessageToBackgroundAsync } from "@src/chrome/message";
-import { ChatCompletionRequestMessage } from "openai";
 import styled from "@emotion/styled";
 
 const Container = styled.div`
@@ -22,20 +21,9 @@ const Container = styled.div`
 const skipLoopCycleOnce = async () => await delayPromise(1);
 
 async function getGPTResponse(userInput: string) {
-  console.log("RequestSelectionMessage");
-  return await sendMessageToBackgroundAsync({
-    type: "RequestSelectionMessage",
+  return sendMessageToBackgroundAsync({
+    type: "RequestOnetimeChatGPTResponse",
     data: userInput,
-  });
-}
-
-async function getAdditionalGPTResponse(
-  input: string,
-  histories: ChatCompletionRequestMessage[]
-) {
-  return await sendMessageToBackgroundAsync({
-    type: "RequestAdditionalChat",
-    data: { input, histories },
   });
 }
 
@@ -43,16 +31,6 @@ export default function DragGPT() {
   const [state, send] = useMachine(dragStateMachine, {
     services: {
       getGPTResponse: (context) => getGPTResponse(context.selectedText),
-      getAdditionalGPTResponse: (context) => {
-        const requestChat = context.chats.at(-1)?.content ?? "";
-        const chatsWithoutError = context.chats.filter(
-          (chat) => chat.role !== "error"
-        );
-        return getAdditionalGPTResponse(
-          requestChat,
-          chatsWithoutError as ChatCompletionRequestMessage[]
-        );
-      },
     },
   });
 
@@ -87,10 +65,6 @@ export default function DragGPT() {
     send("CLOSE_MESSAGE_BOX");
   };
 
-  const onRequestAdditionalChat = (additionalChatText: string) => {
-    send({ type: "REQUEST_ADDITIONAL_CHAT", data: additionalChatText });
-  };
-
   return (
     <Container>
       {state.hasTag("showRequestButton") && (
@@ -104,14 +78,11 @@ export default function DragGPT() {
       {state.hasTag("showResponseMessages") && (
         <ResponseMessageBox
           onClose={closeMessageBox}
-          loading={state.matches("chat_loading_message_box")}
-          onRequestAdditionalChat={onRequestAdditionalChat}
-          chats={state.context.chats}
+          initialChats={state.context.chats}
           anchorTop={state.context.anchorNodePosition.top}
           anchorCenter={state.context.anchorNodePosition.center}
           anchorBottom={state.context.anchorNodePosition.bottom}
           positionOnScreen={state.context.positionOnScreen}
-          leftToken={state.context.leftToken}
         />
       )}
       {state.matches("error_message_box") && (

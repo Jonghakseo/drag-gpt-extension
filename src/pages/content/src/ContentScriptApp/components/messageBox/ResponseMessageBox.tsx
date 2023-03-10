@@ -2,7 +2,13 @@ import MessageBox, {
   MessageBoxProps,
 } from "@pages/content/src/ContentScriptApp/components/messageBox/MessageBox";
 import StyledButton from "@pages/popup/components/StyledButton";
-import { KeyboardEventHandler, useEffect, useRef, useState } from "react";
+import {
+  DependencyList,
+  KeyboardEventHandler,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   Box,
   Collapse,
@@ -12,70 +18,87 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { Chat } from "@pages/content/src/ContentScriptApp/stateMachine/dragStateMachine";
 import styled from "@emotion/styled";
 import { COLORS } from "@src/constant/style";
 import { css } from "@emotion/react";
 import DraggableBox from "@pages/content/src/ContentScriptApp/components/DraggableBox";
+import { useMachine } from "@xstate/react";
+import chatStateMachine, {
+  Chat,
+} from "@pages/content/src/ContentScriptApp/stateMachine/chatStateMachine";
+import { ChatCompletionRequestMessage } from "openai";
+import { sendMessageToBackgroundAsync } from "@src/chrome/message";
+
+async function getAdditionalGPTResponse(
+  messages: ChatCompletionRequestMessage[]
+) {
+  return await sendMessageToBackgroundAsync({
+    type: "RequestOngoingChatGPTResponse",
+    data: messages,
+  });
+}
 
 type ResponseMessageBoxProps = Omit<
   MessageBoxProps,
   "header" | "width" | "footer" | "content"
 > & {
-  chats: Chat[];
-  loading: boolean;
-  onRequestAdditionalChat: (text: string) => void;
-  leftToken: number;
+  initialChats: Chat[];
 };
 
 export default function ResponseMessageBox({
-  chats,
-  loading,
-  onRequestAdditionalChat,
-  leftToken,
+  initialChats,
+  onClose,
   ...restProps
 }: ResponseMessageBoxProps) {
-  const chatListRef = useRef<HTMLDivElement>(null);
-  const [additionalChatText, setAdditionalChatText] = useState("");
-  const [isCopied, setIsCopied] = useState(false);
+  const [state, send] = useMachine(chatStateMachine, {
+    context: {
+      chats: initialChats,
+    },
+    services: {
+      getGPTResponse: (context) => {
+        const chatsWithoutError = context.chats.filter(
+          (chat) => chat.role !== "error"
+        );
+        return getAdditionalGPTResponse(
+          chatsWithoutError as ChatCompletionRequestMessage[]
+        );
+      },
+    },
+    actions: {
+      onExitChatting: onClose,
+    },
+  });
 
-  const requestMoreChat = () => {
-    setAdditionalChatText("");
-    onRequestAdditionalChat(additionalChatText);
+  /** 첫 번째 질문 숨김처리 (드래깅으로 질문) */
+  const [, ...chats] = state.context.chats;
+  const isLoading = state.matches("loading");
+
+  const { scrollDownRef } = useScrollDownEffect([chats.length]);
+  const { isCopied, copyLastResponse } = useCopyLastResponse(
+    chats.filter(({ role }) => role === "assistant").length
+  );
+
+  const sendChatQuery = () => {
+    send({ type: "QUERY" });
   };
 
-  useEffect(() => {
-    setIsCopied(false);
-  }, [chats.length]);
-
-  const copyResponse = async () => {
+  const onClickCopy = async () => {
     const lastResponseText = findLastResponseChat(chats);
-    if (!lastResponseText) {
-      return;
+    if (lastResponseText) {
+      await copyLastResponse(lastResponseText.content);
     }
-    await copyToClipboard(lastResponseText.content);
-    setIsCopied(true);
   };
 
   const handleKeyPress: KeyboardEventHandler<HTMLInputElement> = (event) => {
-    if (event.key === "Enter") {
-      requestMoreChat();
-    }
     event.stopPropagation();
+    if (event.key === "Enter") {
+      sendChatQuery();
+    }
   };
 
-  useEffect(() => {
-    if (!chatListRef.current) {
-      return;
-    }
-    chatListRef.current.scrollTo({
-      top: chatListRef.current.scrollHeight,
-      behavior: "smooth",
-    });
-  }, [chats.length]);
-
+  // TODO refactor
   const lastResponseIndex: number = (() => {
-    if (loading) {
+    if (isLoading) {
       return chats.length - 2;
     }
     return chats.length - 1;
@@ -93,11 +116,12 @@ export default function ResponseMessageBox({
           ✣ Response
         </Text>
       }
+      onClose={() => send("EXIT")}
       width={480}
       isOutsideClickDisabled={chats.length > 1}
       content={
         <VStack
-          ref={chatListRef}
+          ref={scrollDownRef}
           maxHeight={400}
           width="100%"
           overflowY="scroll"
@@ -112,23 +136,22 @@ export default function ResponseMessageBox({
         </VStack>
       }
       footer={
+        // TODO refactor
         <HStack width="100%" pt={8} justifyContent="space-between">
-          <StyledButton onClick={copyResponse}>
+          <StyledButton onClick={onClickCopy}>
             {isCopied ? "COPIED!" : "COPY LAST RESPONSE"}
           </StyledButton>
           <HStack>
             <Input
               width={230}
-              value={additionalChatText}
+              value={state.context.chatText}
               placeholder="ex. Summarize!"
-              onChange={(e) => setAdditionalChatText(e.target.value)}
+              onChange={(e) =>
+                send({ type: "CHANGE_TEXT", data: e.target.value })
+              }
               onKeyDown={handleKeyPress}
             />
-            <StyledButton
-              disabled={additionalChatText.length === 0}
-              isLoading={loading}
-              onClick={requestMoreChat}
-            >
+            <StyledButton isLoading={isLoading} onClick={sendChatQuery}>
               CONTINUE
             </StyledButton>
           </HStack>
@@ -139,6 +162,7 @@ export default function ResponseMessageBox({
   );
 }
 
+// TODO refactor
 const ChatBox = ({
   chat,
   isLastAndResponse,
@@ -224,6 +248,40 @@ const CollapseBox = styled(Box)<{ isShow: boolean }>`
       }
     `}
 `;
+
+function useCopyLastResponse(assistantMessageLength: number) {
+  const [isCopied, setIsCopied] = useState(false);
+
+  useEffect(() => {
+    setIsCopied(false);
+  }, [assistantMessageLength]);
+
+  const copyLastResponse = async (lastResponseText: string) => {
+    await copyToClipboard(lastResponseText);
+    setIsCopied(true);
+  };
+
+  return {
+    isCopied,
+    copyLastResponse,
+  };
+}
+
+function useScrollDownEffect(deps?: DependencyList) {
+  const scrollDownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!scrollDownRef.current) {
+      return;
+    }
+    scrollDownRef.current.scrollTo({
+      top: scrollDownRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, deps);
+
+  return { scrollDownRef };
+}
 
 async function copyToClipboard(text: string) {
   await navigator.clipboard.writeText(text);

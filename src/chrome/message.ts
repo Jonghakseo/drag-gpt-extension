@@ -1,4 +1,3 @@
-import Logger from "@pages/background/lib/utils/logger";
 import { AxiosError } from "axios";
 
 export async function sendMessageToBackgroundAsync(message: Message) {

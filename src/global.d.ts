@@ -54,7 +54,7 @@ declare global {
   type CommonMessageType =
     | "SelectSlot"
     | "DeleteSlot"
-    | "RequestSelectionMessage"
+    | "RequestOnetimeChatGPTResponse"
     | "SaveAPIKey";
   type RequestMessageType = "GetAPIKey" | "GetSlots" | "ResetAPIKey";
 
@@ -89,8 +89,8 @@ declare global {
         data: Slot;
       }
     | {
-        type: "RequestAdditionalChat";
-        data: { input: string; histories: ChatCompletionRequestMessage[] };
+        type: "RequestOngoingChatGPTResponse";
+        data: ChatCompletionRequestMessage[];
       }
     | ResponseMessages
     | CommonMessages

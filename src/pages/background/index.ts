@@ -74,7 +74,7 @@ chrome.runtime.onConnect.addListener((port) => {
           await ApiKeyStorage.setApiKey(null);
           sendResponse({ type: "Response", data: "success" });
           break;
-        case "RequestSelectionMessage": {
+        case "RequestOnetimeChatGPTResponse": {
           const selectedSlot = await SlotStorage.getSelectedSlot();
           const apiKey = await ApiKeyStorage.getApiKey();
 
@@ -94,14 +94,13 @@ chrome.runtime.onConnect.addListener((port) => {
           }
           break;
         }
-        case "RequestAdditionalChat": {
+        case "RequestOngoingChatGPTResponse": {
           const selectedSlot = await SlotStorage.getSelectedSlot();
           const apiKey = await ApiKeyStorage.getApiKey();
           switch (selectedSlot.type) {
             case "ChatGPT": {
               const response = await chatGPT({
-                input: message.data.input,
-                histories: message.data.histories,
+                chats: message.data,
                 slot: selectedSlot,
                 apiKey: String(apiKey),
               });

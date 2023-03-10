@@ -33,9 +33,9 @@ export interface Typegen0 {
   };
   matchesStates:
     | "checking_api_key"
-    | "has_api_key"
     | "init"
     | "no_api_key"
-    | "quick_chat";
+    | "quick_chat"
+    | "slot_list_page";
   tags: "noApiKeyPage";
 }

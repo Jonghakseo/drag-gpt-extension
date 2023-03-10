@@ -8,6 +8,7 @@ import {
   sendMessageToBackgroundAsync,
 } from "@src/chrome/message";
 import MainLayout from "@pages/popup/components/layout/MainLayout";
+import QuickChattingPage from "@pages/popup/pages/QuickChattingPage";
 
 const saveApiKeyToBackground = async (apiKey: string) => {
   await sendMessageToBackgroundAsync({
@@ -43,24 +44,16 @@ export default function App() {
     },
   });
 
-  const resetOpenApiKey = () => {
-    send("RESET_API_KEY");
-  };
-
   const checkApiKey = (apiKey: string) => {
     send({ type: "CHECK_API_KEY", data: apiKey });
   };
 
-  const changeQuickChat = () => {
-    send("CHANGE_QUICK_CHAT");
-  };
-
   return (
     <MainLayout>
-      {state.matches("has_api_key") && (
+      {state.matches("slot_list_page") && (
         <SlotListPage
-          onClickChangeApiKey={resetOpenApiKey}
-          onClickQuickChatButton={changeQuickChat}
+          onClickChangeApiKey={() => send("RESET_API_KEY")}
+          onClickQuickChatButton={() => send("GO_TO_QUICK_CHAT")}
         />
       )}
       {state.hasTag("noApiKeyPage") && (
@@ -70,7 +63,9 @@ export default function App() {
           checkApiKey={checkApiKey}
         />
       )}
-      {state.matches("quick_chat") && <div>quck</div>}
+      {state.matches("quick_chat") && (
+        <QuickChattingPage onClickBackButton={() => send("EXIT_QUICK_CHAT")} />
+      )}
     </MainLayout>
   );
 }
