@@ -1,4 +1,4 @@
-import { SlotsManipulator } from "@pages/background/lib/slotsManipulator";
+import { SlotsManipulatorService } from "@pages/background/lib/service/slotsManipulatorService";
 
 const defaultSlot: Slot = {
   id: "1",
@@ -19,7 +19,7 @@ describe("SlotsManipulator test", () => {
     ];
 
     // when
-    const foundedSlot = SlotsManipulator.getSelectedSlot(MOCK_SLOTS);
+    const foundedSlot = SlotsManipulatorService.getSelectedSlot(MOCK_SLOTS);
 
     // then
     expect(foundedSlot).toEqual(MOCK_SELECTED_SLOT);
@@ -30,10 +30,10 @@ describe("SlotsManipulator test", () => {
     const MOCK_SLOTS: Slot[] = [];
 
     // when
-    const slots = SlotsManipulator.addSlot(MOCK_SLOTS, MOCK_SLOT);
+    const slots = SlotsManipulatorService.addSlot(MOCK_SLOTS, MOCK_SLOT);
 
     // then
-    expect(slots).toHaveLength(1);
+    expect(slots).toEqual(MOCK_SLOTS.concat(MOCK_SLOT));
   });
   test("updateSlot test", () => {
     // given
@@ -52,7 +52,10 @@ describe("SlotsManipulator test", () => {
     ];
 
     // when
-    const updatedSlots = SlotsManipulator.updateSlot(MOCK_SLOTS, UPDATED_SLOT);
+    const updatedSlots = SlotsManipulatorService.updateSlot(
+      MOCK_SLOTS,
+      UPDATED_SLOT
+    );
 
     // then
     const updatedSlot = updatedSlots.find(({ id }) => id === MOCK_SLOT_ID);
@@ -67,7 +70,7 @@ describe("SlotsManipulator test", () => {
     ];
 
     // when
-    const deletedSlots = SlotsManipulator.deleteSlot(
+    const deletedSlots = SlotsManipulatorService.deleteSlot(
       MOCK_SLOTS,
       DELETED_SLOT_ID
     );
