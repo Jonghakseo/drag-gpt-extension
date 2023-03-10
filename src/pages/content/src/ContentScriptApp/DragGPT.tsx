@@ -8,7 +8,7 @@ import ResponseMessageBox from "@pages/content/src/ContentScriptApp/components/m
 import ErrorMessageBox from "@pages/content/src/ContentScriptApp/components/messageBox/ErrorMessageBox";
 import { useMachine } from "@xstate/react";
 import delayPromise from "@pages/content/src/ContentScriptApp/utils/delayPromise";
-import dragStateMachine from "@pages/content/src/ContentScriptApp/stateMachine/dragStateMachine";
+import dragStateMachine from "@pages/content/src/ContentScriptApp/xState/dragStateMachine";
 import { sendMessageToBackgroundAsync } from "@src/chrome/message";
 import styled from "@emotion/styled";
 

@@ -77,37 +77,36 @@ chrome.runtime.onConnect.addListener((port) => {
         case "RequestOnetimeChatGPTResponse": {
           const selectedSlot = await SlotStorage.getSelectedSlot();
           const apiKey = await ApiKeyStorage.getApiKey();
-
-          switch (selectedSlot.type) {
-            case "ChatGPT": {
-              const response = await chatGPT({
-                input: message.data,
-                slot: selectedSlot,
-                apiKey: String(apiKey),
-              });
-              sendResponse({
-                type: "ResponseGPT",
-                data: response,
-              });
-              break;
-            }
-          }
+          const response = await chatGPT({
+            input: message.data,
+            slot: selectedSlot,
+            apiKey: String(apiKey),
+          });
+          sendResponse({
+            type: "ResponseGPT",
+            data: response,
+          });
+          break;
+        }
+        case "RequestQuickChatGPTResponse": {
+          const apiKey = await ApiKeyStorage.getApiKey();
+          const response = await chatGPT({
+            chats: message.data,
+            slot: { type: "ChatGPT" },
+            apiKey: String(apiKey),
+          });
+          sendResponse({ type: "ResponseGPT", data: response });
           break;
         }
         case "RequestOngoingChatGPTResponse": {
           const selectedSlot = await SlotStorage.getSelectedSlot();
           const apiKey = await ApiKeyStorage.getApiKey();
-          switch (selectedSlot.type) {
-            case "ChatGPT": {
-              const response = await chatGPT({
-                chats: message.data,
-                slot: selectedSlot,
-                apiKey: String(apiKey),
-              });
-              sendResponse({ type: "ResponseGPT", data: response });
-              break;
-            }
-          }
+          const response = await chatGPT({
+            chats: message.data,
+            slot: selectedSlot,
+            apiKey: String(apiKey),
+          });
+          sendResponse({ type: "ResponseGPT", data: response });
           break;
         }
         default:

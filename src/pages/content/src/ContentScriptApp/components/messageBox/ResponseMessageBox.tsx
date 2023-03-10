@@ -4,34 +4,23 @@ import MessageBox, {
 import StyledButton from "@pages/popup/components/StyledButton";
 import {
   DependencyList,
-  KeyboardEventHandler,
+  FormEventHandler,
   useEffect,
   useRef,
   useState,
 } from "react";
-import {
-  Box,
-  Collapse,
-  HStack,
-  Input,
-  StatUpArrow,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
-import styled from "@emotion/styled";
-import { COLORS } from "@src/constant/style";
-import { css } from "@emotion/react";
+import { HStack, Input, Text, VStack } from "@chakra-ui/react";
 import DraggableBox from "@pages/content/src/ContentScriptApp/components/DraggableBox";
 import { useMachine } from "@xstate/react";
-import chatStateMachine, {
-  Chat,
-} from "@pages/content/src/ContentScriptApp/stateMachine/chatStateMachine";
+import chatStateMachine, { Chat } from "@src/shared/xState/chatStateMachine";
 import { ChatCompletionRequestMessage } from "openai";
 import { sendMessageToBackgroundAsync } from "@src/chrome/message";
+import ChatText from "@src/shared/component/ChatText";
+import AssistantChat from "@src/shared/component/AssistantChat";
+import UserChat from "@src/shared/component/UserChat";
+import ChatCollapse from "@src/shared/component/ChatCollapse";
 
-async function getAdditionalGPTResponse(
-  messages: ChatCompletionRequestMessage[]
-) {
+async function getGPTResponse(messages: ChatCompletionRequestMessage[]) {
   return await sendMessageToBackgroundAsync({
     type: "RequestOngoingChatGPTResponse",
     data: messages,
@@ -59,7 +48,7 @@ export default function ResponseMessageBox({
         const chatsWithoutError = context.chats.filter(
           (chat) => chat.role !== "error"
         );
-        return getAdditionalGPTResponse(
+        return getGPTResponse(
           chatsWithoutError as ChatCompletionRequestMessage[]
         );
       },
@@ -78,24 +67,12 @@ export default function ResponseMessageBox({
     chats.filter(({ role }) => role === "assistant").length
   );
 
-  const sendChatQuery = () => {
-    send({ type: "QUERY" });
-  };
-
   const onClickCopy = async () => {
     const lastResponseText = findLastResponseChat(chats);
     if (lastResponseText) {
       await copyLastResponse(lastResponseText.content);
     }
   };
-
-  const handleKeyPress: KeyboardEventHandler<HTMLInputElement> = (event) => {
-    event.stopPropagation();
-    if (event.key === "Enter") {
-      sendChatQuery();
-    }
-  };
-
   // TODO refactor
   const lastResponseIndex: number = (() => {
     if (isLoading) {
@@ -103,6 +80,11 @@ export default function ResponseMessageBox({
     }
     return chats.length - 1;
   })();
+
+  const onChatSubmit: FormEventHandler = (event) => {
+    event.preventDefault();
+    send({ type: "QUERY" });
+  };
 
   return (
     <MessageBox
@@ -141,7 +123,7 @@ export default function ResponseMessageBox({
           <StyledButton onClick={onClickCopy}>
             {isCopied ? "COPIED!" : "COPY LAST RESPONSE"}
           </StyledButton>
-          <HStack>
+          <HStack as="form" onSubmit={onChatSubmit}>
             <Input
               width={230}
               value={state.context.chatText}
@@ -149,10 +131,10 @@ export default function ResponseMessageBox({
               onChange={(e) =>
                 send({ type: "CHANGE_TEXT", data: e.target.value })
               }
-              onKeyDown={handleKeyPress}
+              onKeyDown={(e) => e.stopPropagation()}
             />
-            <StyledButton isLoading={isLoading} onClick={sendChatQuery}>
-              CONTINUE
+            <StyledButton type="submit" isLoading={isLoading}>
+              SEND
             </StyledButton>
           </HStack>
         </HStack>
@@ -170,84 +152,37 @@ const ChatBox = ({
   chat: Chat;
   isLastAndResponse: boolean;
 }) => {
-  const [show, setShow] = useState(false);
-
-  const openCollapse = () => setShow(true);
-  const closeCollapse = () => setShow(false);
-
-  const textNode = (
-    <Text
-      borderRadius={4}
-      border="1px solid #f0ffff2e"
-      padding={6}
-      color={chat.role === "error" ? "red" : "white"}
-      fontWeight={chat.role === "user" ? "bold" : "normal"}
-    >
-      {chat.content.trim()}
-    </Text>
-  );
-
   if (isLastAndResponse) {
     return (
-      <Box alignSelf={chat.role === "user" ? "end" : "start"}>{textNode}</Box>
+      <AssistantChat>
+        <ChatText>{chat.content.trim()}</ChatText>
+      </AssistantChat>
+    );
+  }
+  if (chat.role === "error") {
+    return (
+      <AssistantChat>
+        <ChatText isError>{chat.content.trim()}</ChatText>
+      </AssistantChat>
     );
   }
 
   if (chat.role === "assistant") {
     return (
-      <CollapseBox isShow={show} onClick={openCollapse}>
-        <Collapse startingHeight={24} in={show} animateOpacity>
-          <Text
-            borderRadius={4}
-            border="1px solid #f0ffff2e"
-            padding={6}
-            color="white"
-            fontWeight="normal"
-          >
-            {chat.content.trim()}
-            <VStack
-              margin="4px auto 0"
-              cursor="pointer"
-              width="100%"
-              onClick={(e) => {
-                closeCollapse();
-                e.stopPropagation();
-              }}
-            >
-              <StatUpArrow color="white" />
-            </VStack>
-          </Text>
-        </Collapse>
-      </CollapseBox>
+      <ChatCollapse>
+        <AssistantChat>
+          <ChatText>{chat.content.trim()}</ChatText>
+        </AssistantChat>
+      </ChatCollapse>
     );
   }
 
-  return <Box alignSelf="end">{textNode}</Box>;
+  return (
+    <UserChat>
+      <ChatText bold>{chat.content.trim()}</ChatText>
+    </UserChat>
+  );
 };
-
-const CollapseBox = styled(Box)<{ isShow: boolean }>`
-  align-self: start;
-  position: relative;
-  ${(p) =>
-    p.isShow ||
-    css`
-      cursor: pointer;
-      &:before {
-        content: "";
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        height: 100%;
-
-        background-image: linear-gradient(
-          0deg,
-          ${COLORS.CONTENT_BACKGROUND} 0%,
-          rgba(0, 0, 0, 0) 100%
-        );
-      }
-    `}
-`;
 
 function useCopyLastResponse(assistantMessageLength: number) {
   const [isCopied, setIsCopied] = useState(false);

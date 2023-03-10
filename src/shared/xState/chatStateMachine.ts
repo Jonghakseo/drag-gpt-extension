@@ -40,7 +40,8 @@ const chatStateMachine = createMachine(
       events: {} as Events,
       services: {} as Services,
     },
-    tsTypes: {} as import("./chatStateMachine.typegen").Typegen0,
+    tsTypes:
+      {} as import("./chatStateMachine.typegen").Typegen0,
     states: {
       idle: {
         on: {

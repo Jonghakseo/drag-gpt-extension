@@ -1,6 +1,6 @@
 import { HStack, Text, VStack } from "@chakra-ui/react";
 import { useMachine } from "@xstate/react";
-import slotListPageStateMachine from "@pages/popup/stateMachine/slotListPageStateMachine";
+import slotListPageStateMachine from "@pages/popup/xState/slotListPageStateMachine";
 import SlotDetail from "@pages/popup/components/SlotDetail";
 import StyledButton from "@pages/popup/components/StyledButton";
 import Footer from "@pages/popup/components/layout/Footer";

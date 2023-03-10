@@ -2,7 +2,7 @@ import React from "react";
 import { NoApiKeyPage } from "@pages/popup/pages/NoApiKeyPage";
 import SlotListPage from "@pages/popup/pages/SlotListPage";
 import { useMachine } from "@xstate/react";
-import popupStateMachine from "@pages/popup/stateMachine/popupStateMachine";
+import popupStateMachine from "@pages/popup/xState/popupStateMachine";
 import {
   sendMessageToBackground,
   sendMessageToBackgroundAsync,

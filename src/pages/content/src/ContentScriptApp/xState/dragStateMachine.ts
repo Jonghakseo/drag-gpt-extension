@@ -3,7 +3,7 @@ import {
   PositionOnScreen,
 } from "@pages/content/src/ContentScriptApp/utils/getPositionOnScreen";
 import { assign, createMachine } from "xstate";
-import { Chat } from "@pages/content/src/ContentScriptApp/stateMachine/chatStateMachine";
+import { Chat } from "@src/shared/xState/chatStateMachine";
 
 type NodeRect = { left: number; width: number; height: number; top: number };
 type RequestButtonPosition = { top: number; left: number };

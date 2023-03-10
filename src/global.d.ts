@@ -89,7 +89,7 @@ declare global {
         data: Slot;
       }
     | {
-        type: "RequestOngoingChatGPTResponse";
+        type: "RequestOngoingChatGPTResponse" | "RequestQuickChatGPTResponse";
         data: ChatCompletionRequestMessage[];
       }
     | ResponseMessages
