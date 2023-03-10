@@ -7,7 +7,7 @@ import Footer from "@pages/popup/components/Footer";
 import {
   sendMessageToBackground,
   sendMessageToBackgroundAsync,
-} from "@pages/chrome/message";
+} from "@src/chrome/message";
 import SlotListItem from "@pages/popup/components/SlotListItem";
 import { COLORS } from "@src/constant/style";
 
