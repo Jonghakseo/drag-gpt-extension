@@ -59,15 +59,21 @@ declare global {
   type RequestMessageType = "GetAPIKey" | "GetSlots" | "ResetAPIKey";
 
   type ErrorResponseMessage = { type: "Error"; data: Error };
+  type ResponseGPTMessage = {
+    type: "ResponseGPT";
+    data: { result: string; tokenUsage: number };
+  };
+  type ResponseSlotsMessage = {
+    type: "ResponseSlots";
+    data: Slot[];
+  };
   type DoneResponseMessage =
     | {
         type: "Response";
         data: any;
       }
-    | {
-        type: "ResponseSlots";
-        data: Slot[];
-      };
+    | ResponseSlotsMessage
+    | ResponseGPTMessage;
   type ResponseMessages = ErrorResponseMessage | DoneResponseMessage;
 
   type CommonMessages = { type: CommonMessageType; data: string };

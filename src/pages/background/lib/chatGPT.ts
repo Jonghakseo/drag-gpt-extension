@@ -16,7 +16,7 @@ export async function chatGPT({
   histories?: ChatCompletionRequestMessage[];
   input: string;
   apiKey: string;
-}): Promise<string> {
+}): Promise<{ result: string; tokenUsage: number }> {
   if (configuration?.apiKey !== apiKey) {
     configuration = null;
   }
@@ -42,7 +42,7 @@ export async function chatGPT({
 
   const completion = await openAiApiInstance.createChatCompletion({
     model: "gpt-3.5-turbo",
-    max_tokens: slot.maxTokens ?? 1500,
+    max_tokens: slot.maxTokens,
     messages: messages.concat({ role: "user", content: input }),
     temperature: slot.temperature,
     top_p: slot.topP,
@@ -50,5 +50,12 @@ export async function chatGPT({
     presence_penalty: slot.presencePenalty,
   });
 
-  return completion.data.choices.at(0)?.message?.content ?? "Unknown Response";
+  const result =
+    completion.data.choices.at(0)?.message?.content ?? "Unknown Response";
+  const tokenUsage = completion.data.usage?.total_tokens ?? 0;
+
+  return {
+    result,
+    tokenUsage,
+  };
 }

@@ -84,7 +84,10 @@ chrome.runtime.onConnect.addListener((port) => {
                 slot: selectedSlot,
                 apiKey: String(apiKey),
               });
-              sendResponse({ type: "Response", data: response });
+              sendResponse({
+                type: "ResponseGPT",
+                data: response,
+              });
               break;
             }
           }
@@ -101,7 +104,7 @@ chrome.runtime.onConnect.addListener((port) => {
                 slot: selectedSlot,
                 apiKey: String(apiKey),
               });
-              sendResponse({ type: "Response", data: response });
+              sendResponse({ type: "ResponseGPT", data: response });
               break;
             }
           }
