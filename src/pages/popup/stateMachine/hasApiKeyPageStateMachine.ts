@@ -11,7 +11,7 @@ type Events =
     }
   | {
       type: "ADD_SLOT";
-      data: Slot;
+      slot: Slot;
     }
   | {
       type: "DELETE_SLOT";
@@ -19,18 +19,18 @@ type Events =
     }
   | {
       type: "UPDATE_SLOT";
-      data: Slot;
+      slot: Slot;
     }
   | {
       type: "CHANGE_API_KEY";
     }
   | {
-      type: "BACK";
+      type: "EXIT_DETAIL";
     };
 
 interface Context {
   slots: Slot[];
-  selectedSlot?: Slot;
+  editingSlot?: Slot;
 }
 
 type Services = {
@@ -71,44 +71,35 @@ const hasApiKeyPageStateMachine = createMachine(
           SHOW_DETAIL: {
             target: "slot_detail",
             actions: assign({
-              selectedSlot: (context, event) =>
+              editingSlot: (context, event) =>
                 context.slots.find((slot) => slot.id === event.slotId),
             }),
           },
           ADD_SLOT: {
-            actions: "addSlot",
+            actions: ["addSlot", "addSlotMessageSendToBackground"],
           },
           CHANGE_API_KEY: {
             target: "init",
             actions: "exitPage",
           },
           DELETE_SLOT: {
-            actions: assign({
-              slots: (context, event) =>
-                context.slots.filter((slot) => slot.id !== event.slotId),
-            }),
+            actions: ["deleteSlot", "deleteSlotMessageSendToBackground"],
           },
           SELECT_SLOT: {
-            actions: assign({
-              slots: (context, event) =>
-                context.slots.map((slot) => ({
-                  ...slot,
-                  isSelected: slot.id === event.slotId,
-                })),
-            }),
+            actions: ["selectSlot", "selectSlotMessageSendToBackground"],
           },
         },
       },
       slot_detail: {
         on: {
-          BACK: {
+          EXIT_DETAIL: {
             target: "slot_list",
             actions: assign({
-              selectedSlot: () => undefined,
+              editingSlot: () => undefined,
             }),
           },
           UPDATE_SLOT: {
-            actions: "updateSlot",
+            actions: ["updateSlot", "updateSlotMessageSendToBackground"],
           },
         },
       },
@@ -118,17 +109,29 @@ const hasApiKeyPageStateMachine = createMachine(
     actions: {
       setSlots: assign({ slots: (_, event) => event.data }),
       addSlot: assign({
-        slots: (context, event) => context.slots.concat(event.data),
+        slots: (context, event) => context.slots.concat(event.slot),
       }),
       updateSlot: assign({
         slots: (context, event) => {
-          return context.slots.reduce<Slot[]>((tot, slot) => {
-            if (slot.id === event.data.id) {
-              return tot.concat(event.data);
+          return context.slots.reduce<Slot[]>((total, slot) => {
+            const isUpdateTargetSlot = slot.id === event.slot.id;
+            if (isUpdateTargetSlot) {
+              return [...total, event.slot];
             }
-            return tot.concat(slot);
+            return [...total, slot];
           }, []);
         },
+      }),
+      deleteSlot: assign({
+        slots: (context, event) =>
+          context.slots.filter((slot) => slot.id !== event.slotId),
+      }),
+      selectSlot: assign({
+        slots: (context, event) =>
+          context.slots.map((slot) => ({
+            ...slot,
+            isSelected: slot.id === event.slotId,
+          })),
       }),
     },
   }

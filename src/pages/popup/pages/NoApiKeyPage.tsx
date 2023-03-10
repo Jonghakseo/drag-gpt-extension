@@ -1,6 +1,6 @@
 import React, { ChangeEventHandler, useState } from "react";
 import { HStack, Input, Spinner, Text, VStack } from "@chakra-ui/react";
-import Footer from "@pages/popup/components/Footer";
+import Footer from "@pages/popup/components/layout/Footer";
 import StyledButton from "@pages/popup/components/StyledButton";
 import { COLORS } from "@src/constant/style";
 

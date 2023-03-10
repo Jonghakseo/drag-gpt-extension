@@ -36,7 +36,7 @@ export interface Typegen0 {
   };
   eventsCausingActions: {
     addErrorChat: "error.platform.drag-state.chat_loading_message_box:invocation[0]";
-    addRequestChat: "REQUEST_MORE_CHAT";
+    addRequestChat: "REQUEST_ADDITIONAL_CHAT";
     addResponseChat:
       | "done.invoke.drag-state.chat_loading_message_box:invocation[0]"
       | "done.invoke.drag-state.loading:invocation[0]";
@@ -54,7 +54,7 @@ export interface Typegen0 {
     isValidTextSelectedEvent: "TEXT_SELECTED";
   };
   eventsCausingServices: {
-    getAdditionalGPTResponse: "REQUEST_MORE_CHAT";
+    getAdditionalGPTResponse: "REQUEST_ADDITIONAL_CHAT";
     getGPTResponse: "REQUEST";
   };
   matchesStates:

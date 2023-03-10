@@ -30,22 +30,22 @@ type ResponseMessageBoxProps = Omit<
 > & {
   chats: Chat[];
   loading: boolean;
-  onRequestMoreChat: (moreChatText: string) => void;
+  onRequestAdditionalChat: (text: string) => void;
 };
 
 export default function ResponseMessageBox({
   chats,
   loading,
-  onRequestMoreChat,
+  onRequestAdditionalChat,
   ...restProps
 }: ResponseMessageBoxProps) {
   const chatListRef = useRef<HTMLDivElement>(null);
-  const [moreChatText, setMoreChatText] = useState("");
+  const [additionalChatText, setAdditionalChatText] = useState("");
   const [isCopied, setIsCopied] = useState(false);
 
   const requestMoreChat = () => {
-    setMoreChatText("");
-    onRequestMoreChat(moreChatText);
+    setAdditionalChatText("");
+    onRequestAdditionalChat(additionalChatText);
   };
 
   useEffect(() => {
@@ -123,13 +123,13 @@ export default function ResponseMessageBox({
           <HStack>
             <Input
               width={230}
-              value={moreChatText}
+              value={additionalChatText}
               placeholder="ex. Summarize!"
-              onChange={(e) => setMoreChatText(e.target.value)}
+              onChange={(e) => setAdditionalChatText(e.target.value)}
               onKeyDown={handleKeyPress}
             />
             <StyledButton
-              disabled={moreChatText.length === 0}
+              disabled={additionalChatText.length === 0}
               isLoading={loading}
               onClick={requestMoreChat}
             >
