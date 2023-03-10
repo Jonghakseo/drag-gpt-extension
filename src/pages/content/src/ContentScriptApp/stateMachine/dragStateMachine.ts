@@ -39,18 +39,20 @@ interface Context {
   requestButtonPosition: RequestButtonPosition;
   positionOnScreen: PositionOnScreen;
   anchorNodePosition: AnchorNodePosition;
+  leftToken: number;
   error?: Error;
 }
 
 type Services = {
   getGPTResponse: {
-    data: string;
+    data: ResponseGPTMessage["data"];
   };
   getAdditionalGPTResponse: {
-    data: string;
+    data: ResponseGPTMessage["data"];
   };
 };
 
+const MAX_TOKEN = 4096 as const;
 const initialContext: Context = {
   chats: [] as Chat[],
   selectedText: "",
@@ -58,6 +60,7 @@ const initialContext: Context = {
   anchorNodePosition: { top: 0, center: 0, bottom: 0 },
   selectedTextNodeRect: { top: 0, left: 0, height: 0, width: 0 },
   positionOnScreen: PositionOnScreen.topLeft,
+  leftToken: MAX_TOKEN,
   error: undefined,
 } as const;
 
@@ -191,7 +194,11 @@ const dragStateMachine = createMachine(
       }),
       addResponseChat: assign({
         chats: (context, event) =>
-          context.chats.concat({ role: "assistant", content: event.data }),
+          context.chats.concat({
+            role: "assistant",
+            content: event.data.result,
+          }),
+        leftToken: (_, event) => MAX_TOKEN - event.data.tokenUsage,
       }),
       addErrorChat: assign({
         chats: (context, event) => {

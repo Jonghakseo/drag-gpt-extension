@@ -32,6 +32,7 @@ export function sendMessageToBackground({
         break;
       case "Response":
       case "ResponseSlots":
+      case "ResponseGPT":
         handleSuccess?.(message.data);
         break;
       default:

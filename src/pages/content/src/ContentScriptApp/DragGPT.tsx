@@ -111,6 +111,7 @@ export default function DragGPT() {
           anchorCenter={state.context.anchorNodePosition.center}
           anchorBottom={state.context.anchorNodePosition.bottom}
           positionOnScreen={state.context.positionOnScreen}
+          leftToken={state.context.leftToken}
         />
       )}
       {state.matches("error_message_box") && (

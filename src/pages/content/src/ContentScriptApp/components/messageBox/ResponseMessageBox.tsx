@@ -2,13 +2,7 @@ import MessageBox, {
   MessageBoxProps,
 } from "@pages/content/src/ContentScriptApp/components/messageBox/MessageBox";
 import StyledButton from "@pages/popup/components/StyledButton";
-import {
-  KeyboardEventHandler,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { KeyboardEventHandler, useEffect, useRef, useState } from "react";
 import {
   Box,
   Collapse,
@@ -31,12 +25,14 @@ type ResponseMessageBoxProps = Omit<
   chats: Chat[];
   loading: boolean;
   onRequestAdditionalChat: (text: string) => void;
+  leftToken: number;
 };
 
 export default function ResponseMessageBox({
   chats,
   loading,
   onRequestAdditionalChat,
+  leftToken,
   ...restProps
 }: ResponseMessageBoxProps) {
   const chatListRef = useRef<HTMLDivElement>(null);
