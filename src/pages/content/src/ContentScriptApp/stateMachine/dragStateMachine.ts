@@ -25,7 +25,7 @@ type Events =
   | TextSelectedEvent
   | { type: "CLOSE_MESSAGE_BOX" }
   | { type: "REQUEST" }
-  | { type: "REQUEST_MORE_CHAT"; data: string };
+  | { type: "REQUEST_ADDITIONAL_CHAT"; chatText: string };
 
 export type Chat = {
   role: "user" | "assistant" | "error";
@@ -125,7 +125,7 @@ const dragStateMachine = createMachine(
         tags: "showResponseMessages",
         on: {
           CLOSE_MESSAGE_BOX: "idle",
-          REQUEST_MORE_CHAT: {
+          REQUEST_ADDITIONAL_CHAT: {
             target: "chat_loading_message_box",
             actions: "addRequestChat",
           },
@@ -190,7 +190,7 @@ const dragStateMachine = createMachine(
       }),
       addRequestChat: assign({
         chats: (context, event) =>
-          context.chats.concat({ role: "user", content: event.data }),
+          context.chats.concat({ role: "user", content: event.chatText }),
       }),
       addResponseChat: assign({
         chats: (context, event) =>

@@ -1,11 +1,10 @@
-export class SlotsManipulator {
+export class SlotsManipulatorService {
   static getSelectedSlot(slots: Slot[]): Slot | undefined {
     return slots.find(({ isSelected }) => isSelected);
   }
 
   static addSlot(slots: Slot[], slot: Slot): Slot[] {
-    const newSlot: Slot = { ...slot, isSelected: slots.length === 0 };
-    return [...slots, newSlot];
+    return [...slots, slot];
   }
 
   static updateSlot(slots: Slot[], slot: Slot): Slot[] {

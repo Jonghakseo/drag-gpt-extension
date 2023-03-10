@@ -14,16 +14,27 @@ export interface Typegen0 {
     getAllSlots: "done.invoke.has_api_key.init:invocation[0]";
   };
   missingImplementations: {
-    actions: "exitPage";
+    actions:
+      | "addSlotMessageSendToBackground"
+      | "deleteSlotMessageSendToBackground"
+      | "exitPage"
+      | "selectSlotMessageSendToBackground"
+      | "updateSlotMessageSendToBackground";
     delays: never;
     guards: never;
     services: "getAllSlots";
   };
   eventsCausingActions: {
     addSlot: "ADD_SLOT";
+    addSlotMessageSendToBackground: "ADD_SLOT";
+    deleteSlot: "DELETE_SLOT";
+    deleteSlotMessageSendToBackground: "DELETE_SLOT";
     exitPage: "CHANGE_API_KEY";
+    selectSlot: "SELECT_SLOT";
+    selectSlotMessageSendToBackground: "SELECT_SLOT";
     setSlots: "done.invoke.has_api_key.init:invocation[0]";
     updateSlot: "UPDATE_SLOT";
+    updateSlotMessageSendToBackground: "UPDATE_SLOT";
   };
   eventsCausingDelays: {};
   eventsCausingGuards: {};

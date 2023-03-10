@@ -3,13 +3,42 @@ import { useMachine } from "@xstate/react";
 import hasApiKeyPageStateMachine from "@pages/popup/stateMachine/hasApiKeyPageStateMachine";
 import SlotDetail from "@pages/popup/components/SlotDetail";
 import StyledButton from "@pages/popup/components/StyledButton";
-import Footer from "@pages/popup/components/Footer";
+import Footer from "@pages/popup/components/layout/Footer";
 import {
   sendMessageToBackground,
   sendMessageToBackgroundAsync,
-} from "@pages/chrome/message";
+} from "@src/chrome/message";
 import SlotListItem from "@pages/popup/components/SlotListItem";
 import { COLORS } from "@src/constant/style";
+
+const addSlotMessageSendToBackground = (newSlot: Slot) => {
+  sendMessageToBackground({
+    message: { type: "AddNewSlot", data: newSlot },
+  });
+};
+const updateSlotMessageSendToBackground = (updatedSlot: Slot) => {
+  sendMessageToBackground({
+    message: {
+      type: "UpdateSlotData",
+      data: updatedSlot,
+    },
+  });
+};
+
+const selectSlotMessageSendToBackground = (slotId: string) => {
+  sendMessageToBackground({
+    message: { type: "SelectSlot", data: slotId },
+  });
+};
+
+const deleteSlotMessageSendToBackground = (slotId: string) => {
+  sendMessageToBackground({
+    message: {
+      type: "DeleteSlot",
+      data: slotId,
+    },
+  });
+};
 
 type SlotListPageProps = {
   onClickChangeApiKey: () => void;
@@ -20,58 +49,48 @@ export default function SlotListPage({
 }: SlotListPageProps) {
   const [state, send] = useMachine(hasApiKeyPageStateMachine, {
     services: {
-      getAllSlots: async () =>
-        sendMessageToBackgroundAsync({
+      getAllSlots: async () => {
+        return await sendMessageToBackgroundAsync({
           type: "GetSlots",
-        }),
+        });
+      },
     },
     actions: {
       exitPage: onClickChangeApiKey,
+      deleteSlotMessageSendToBackground: (_, event) => {
+        deleteSlotMessageSendToBackground(event.slotId);
+      },
+      updateSlotMessageSendToBackground: (_, event) => {
+        updateSlotMessageSendToBackground(event.slot);
+      },
+      selectSlotMessageSendToBackground: (_, event) => {
+        selectSlotMessageSendToBackground(event.slotId);
+      },
+      addSlotMessageSendToBackground: (_, event) => {
+        addSlotMessageSendToBackground(event.slot);
+      },
     },
   });
 
   const addNewSlot = () => {
-    const newSlot = createNewChatGPTSlot({
-      isSelected: state.context.slots.length === 0,
-    });
+    const newSlot = createNewChatGPTSlot();
     send({
       type: "ADD_SLOT",
-      data: newSlot,
-    });
-    sendMessageToBackground({
-      message: { type: "AddNewSlot", data: newSlot },
+      slot: newSlot,
     });
     goToSlotDetail(newSlot.id);
   };
 
   const selectSlot = (slotId: string) => {
     send({ type: "SELECT_SLOT", slotId });
-    sendMessageToBackground({
-      message: {
-        type: "SelectSlot",
-        data: slotId,
-      },
-    });
   };
 
   const updateSlotData = (slot: Slot) => {
-    send({ type: "UPDATE_SLOT", data: slot });
-    sendMessageToBackground({
-      message: {
-        type: "UpdateSlotData",
-        data: slot,
-      },
-    });
+    send({ type: "UPDATE_SLOT", slot });
   };
 
   const deleteSlot = (slotId: string) => {
     send({ type: "DELETE_SLOT", slotId });
-    sendMessageToBackground({
-      message: {
-        type: "DeleteSlot",
-        data: slotId,
-      },
-    });
   };
 
   const goToSlotDetail = (slotId: string) => {
@@ -105,9 +124,9 @@ export default function SlotListPage({
       )}
       {state.matches("slot_detail") && (
         <SlotDetail
-          initialSlot={state.context.selectedSlot as Slot}
+          initialSlot={state.context.editingSlot as Slot}
           onUpdate={updateSlotData}
-          exitDetail={() => send("BACK")}
+          exitDetail={() => send("EXIT_DETAIL")}
         />
       )}
       <Footer />

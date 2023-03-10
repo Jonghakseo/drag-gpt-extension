@@ -1,36 +1,13 @@
 import React from "react";
-import { Heading } from "@chakra-ui/react";
-import { NoApiKeyPage } from "@pages/popup/components/NoApiKeyPage";
-import SlotListPage from "@pages/popup/components/SlotListPage";
-import "@pages/popup/Popup.css";
-import styled from "@emotion/styled";
+import { NoApiKeyPage } from "@pages/popup/pages/NoApiKeyPage";
+import SlotListPage from "@pages/popup/pages/SlotListPage";
 import { useMachine } from "@xstate/react";
 import popupStateMachine from "@pages/popup/stateMachine/popupStateMachine";
 import {
   sendMessageToBackground,
   sendMessageToBackgroundAsync,
-} from "@pages/chrome/message";
-import { COLORS } from "@src/constant/style";
-
-const Container = styled.div`
-  position: relative;
-  width: fit-content;
-  height: fit-content;
-  min-width: 300px;
-  min-height: 300px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  text-align: center;
-  padding: 24px;
-  background-color: ${COLORS.POPUP_BACKGROUND};
-
-  p {
-    margin: 0;
-  }
-`;
+} from "@src/chrome/message";
+import MainLayout from "@pages/popup/components/layout/MainLayout";
 
 const saveApiKey = async (apiKey: string) => {
   await sendMessageToBackgroundAsync({
@@ -53,7 +30,7 @@ const resetApiKey = () => {
   });
 };
 
-export default function MainPage() {
+export default function App() {
   const [state, send] = useMachine(popupStateMachine, {
     services: {
       saveApiKey: (context) => saveApiKey(context.openAiApiKey ?? ""),
@@ -71,10 +48,7 @@ export default function MainPage() {
   };
 
   return (
-    <Container>
-      <Heading color={COLORS.WHITE} padding={12} fontWeight="bold">
-        Drag GPT
-      </Heading>
+    <MainLayout>
       {state.matches("has_api_key") && (
         <SlotListPage onClickChangeApiKey={resetOpenApiKey} />
       )}
@@ -85,6 +59,6 @@ export default function MainPage() {
           checkApiKey={checkApiKey}
         />
       )}
-    </Container>
+    </MainLayout>
   );
 }
