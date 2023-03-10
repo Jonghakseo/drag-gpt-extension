@@ -11,25 +11,31 @@ export interface Typegen0 {
     "xstate.init": { type: "xstate.init" };
   };
   invokeSrcNameMap: {
-    getApiKey: "done.invoke.popup-state.init:invocation[0]";
-    saveApiKey: "done.invoke.popup-state.checking_api_key:invocation[0]";
+    getApiKeyFromBackground: "done.invoke.popup-state.init:invocation[0]";
+    saveApiKeyToBackground: "done.invoke.popup-state.checking_api_key:invocation[0]";
   };
   missingImplementations: {
-    actions: never;
+    actions: "resetApiKeyFromBackground";
     delays: never;
     guards: never;
-    services: "getApiKey" | "saveApiKey";
+    services: "getApiKeyFromBackground" | "saveApiKeyToBackground";
   };
   eventsCausingActions: {
+    resetApiKeyFromBackground: "RESET_API_KEY";
     resetOpenAiApiKey: "RESET_API_KEY";
     setApiKey: "CHECK_API_KEY" | "done.invoke.popup-state.init:invocation[0]";
   };
   eventsCausingDelays: {};
   eventsCausingGuards: {};
   eventsCausingServices: {
-    getApiKey: "xstate.init";
-    saveApiKey: "CHECK_API_KEY";
+    getApiKeyFromBackground: "xstate.init";
+    saveApiKeyToBackground: "CHECK_API_KEY";
   };
-  matchesStates: "checking_api_key" | "has_api_key" | "init" | "no_api_key";
+  matchesStates:
+    | "checking_api_key"
+    | "has_api_key"
+    | "init"
+    | "no_api_key"
+    | "quick_chat";
   tags: "noApiKeyPage";
 }

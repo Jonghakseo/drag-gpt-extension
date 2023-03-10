@@ -6,15 +6,7 @@ type Events =
       data: string;
     }
   | {
-      type: "RESET_API_KEY";
-    }
-  | {
-      type: "UPDATE_ROLE";
-      data: string;
-    }
-  | {
-      type: "UPDATE_ASSISTANT_PROMPT";
-      data: string;
+      type: "RESET_API_KEY" | "CHANGE_QUICK_CHAT";
     };
 
 interface Context {
@@ -23,10 +15,10 @@ interface Context {
 }
 
 type Services = {
-  getApiKey: {
+  getApiKeyFromBackground: {
     data: string;
   };
-  saveApiKey: {
+  saveApiKeyToBackground: {
     data: void;
   };
 };
@@ -48,7 +40,7 @@ const popupStateMachine = createMachine(
     states: {
       init: {
         invoke: {
-          src: "getApiKey",
+          src: "getApiKeyFromBackground",
           onDone: {
             target: "has_api_key",
             actions: "setApiKey",
@@ -62,8 +54,9 @@ const popupStateMachine = createMachine(
         on: {
           RESET_API_KEY: {
             target: "no_api_key",
-            actions: "resetOpenAiApiKey",
+            actions: ["resetOpenAiApiKey", "resetApiKeyFromBackground"],
           },
+          CHANGE_QUICK_CHAT: "quick_chat",
         },
       },
       no_api_key: {
@@ -75,10 +68,11 @@ const popupStateMachine = createMachine(
           },
         },
       },
+      quick_chat: {},
       checking_api_key: {
         tags: "noApiKeyPage",
         invoke: {
-          src: "saveApiKey",
+          src: "saveApiKeyToBackground",
           onDone: { target: "has_api_key" },
           onError: {
             target: "no_api_key",

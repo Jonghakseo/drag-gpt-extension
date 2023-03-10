@@ -9,20 +9,20 @@ import {
 } from "@src/chrome/message";
 import MainLayout from "@pages/popup/components/layout/MainLayout";
 
-const saveApiKey = async (apiKey: string) => {
+const saveApiKeyToBackground = async (apiKey: string) => {
   await sendMessageToBackgroundAsync({
     type: "SaveAPIKey",
     data: apiKey,
   });
 };
 
-const getApiKey = async () => {
+const getApiKeyFromBackground = async () => {
   return sendMessageToBackgroundAsync({
     type: "GetAPIKey",
   });
 };
 
-const resetApiKey = () => {
+const resetApiKeyFromBackground = () => {
   sendMessageToBackground({
     message: {
       type: "ResetAPIKey",
@@ -33,24 +33,35 @@ const resetApiKey = () => {
 export default function App() {
   const [state, send] = useMachine(popupStateMachine, {
     services: {
-      saveApiKey: (context) => saveApiKey(context.openAiApiKey ?? ""),
-      getApiKey,
+      saveApiKeyToBackground: (context) => {
+        return saveApiKeyToBackground(context.openAiApiKey ?? "");
+      },
+      getApiKeyFromBackground,
+    },
+    actions: {
+      resetApiKeyFromBackground,
     },
   });
 
   const resetOpenApiKey = () => {
     send("RESET_API_KEY");
-    resetApiKey();
   };
 
   const checkApiKey = (apiKey: string) => {
     send({ type: "CHECK_API_KEY", data: apiKey });
   };
 
+  const changeQuickChat = () => {
+    send("CHANGE_QUICK_CHAT");
+  };
+
   return (
     <MainLayout>
       {state.matches("has_api_key") && (
-        <SlotListPage onClickChangeApiKey={resetOpenApiKey} />
+        <SlotListPage
+          onClickChangeApiKey={resetOpenApiKey}
+          onClickQuickChatButton={changeQuickChat}
+        />
       )}
       {state.hasTag("noApiKeyPage") && (
         <NoApiKeyPage
@@ -59,6 +70,7 @@ export default function App() {
           checkApiKey={checkApiKey}
         />
       )}
+      {state.matches("quick_chat") && <div>quck</div>}
     </MainLayout>
   );
 }

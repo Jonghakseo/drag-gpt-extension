@@ -1,6 +1,6 @@
 import { HStack, Text, VStack } from "@chakra-ui/react";
 import { useMachine } from "@xstate/react";
-import hasApiKeyPageStateMachine from "@pages/popup/stateMachine/hasApiKeyPageStateMachine";
+import slotListPageStateMachine from "@pages/popup/stateMachine/slotListPageStateMachine";
 import SlotDetail from "@pages/popup/components/SlotDetail";
 import StyledButton from "@pages/popup/components/StyledButton";
 import Footer from "@pages/popup/components/layout/Footer";
@@ -10,6 +10,12 @@ import {
 } from "@src/chrome/message";
 import SlotListItem from "@pages/popup/components/SlotListItem";
 import { COLORS } from "@src/constant/style";
+
+const getAllSlotsFromBackground = async () => {
+  return await sendMessageToBackgroundAsync({
+    type: "GetSlots",
+  });
+};
 
 const addSlotMessageSendToBackground = (newSlot: Slot) => {
   sendMessageToBackground({
@@ -42,32 +48,30 @@ const deleteSlotMessageSendToBackground = (slotId: string) => {
 
 type SlotListPageProps = {
   onClickChangeApiKey: () => void;
+  onClickQuickChatButton: () => void;
 };
 
 export default function SlotListPage({
   onClickChangeApiKey,
+  onClickQuickChatButton,
 }: SlotListPageProps) {
-  const [state, send] = useMachine(hasApiKeyPageStateMachine, {
+  const [state, send] = useMachine(slotListPageStateMachine, {
     services: {
-      getAllSlots: async () => {
-        return await sendMessageToBackgroundAsync({
-          type: "GetSlots",
-        });
-      },
+      getAllSlotsFromBackground,
     },
     actions: {
       exitPage: onClickChangeApiKey,
       deleteSlotMessageSendToBackground: (_, event) => {
-        deleteSlotMessageSendToBackground(event.slotId);
+        deleteSlotMessageSendToBackground(event.data);
       },
       updateSlotMessageSendToBackground: (_, event) => {
-        updateSlotMessageSendToBackground(event.slot);
+        updateSlotMessageSendToBackground(event.data);
       },
       selectSlotMessageSendToBackground: (_, event) => {
-        selectSlotMessageSendToBackground(event.slotId);
+        selectSlotMessageSendToBackground(event.data);
       },
       addSlotMessageSendToBackground: (_, event) => {
-        addSlotMessageSendToBackground(event.slot);
+        addSlotMessageSendToBackground(event.data);
       },
     },
   });
@@ -76,25 +80,31 @@ export default function SlotListPage({
     const newSlot = createNewChatGPTSlot();
     send({
       type: "ADD_SLOT",
-      slot: newSlot,
+      data: newSlot,
     });
     goToSlotDetail(newSlot.id);
   };
 
   const selectSlot = (slotId: string) => {
-    send({ type: "SELECT_SLOT", slotId });
+    send({ type: "SELECT_SLOT", data: slotId });
   };
 
   const updateSlotData = (slot: Slot) => {
-    send({ type: "UPDATE_SLOT", slot });
+    send({ type: "UPDATE_SLOT", data: slot });
   };
 
   const deleteSlot = (slotId: string) => {
-    send({ type: "DELETE_SLOT", slotId });
+    send({ type: "DELETE_SLOT", data: slotId });
   };
 
   const goToSlotDetail = (slotId: string) => {
-    send({ type: "SHOW_DETAIL", slotId });
+    send({ type: "SHOW_DETAIL", data: slotId });
+  };
+
+  const onClickResetButton = () => {
+    if (confirm("Are you sure?")) {
+      send("CHANGE_API_KEY");
+    }
   };
 
   return (
@@ -105,9 +115,12 @@ export default function SlotListPage({
             Slots
           </Text>
           <HStack width="100%" justifyContent="space-between">
-            <StyledButton onClick={addNewSlot}>ADD NEW SLOT</StyledButton>
-            <StyledButton onClick={() => send("CHANGE_API_KEY")}>
-              CHANGE API KEY
+            <StyledButton onClick={addNewSlot}>NEW SLOT</StyledButton>
+            <StyledButton onClick={onClickQuickChatButton}>
+              QUICK CHAT
+            </StyledButton>
+            <StyledButton onClick={onClickResetButton}>
+              RESET API KEY
             </StyledButton>
           </HStack>
           {state.context.slots.map((slot, index) => (

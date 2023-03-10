@@ -62,7 +62,7 @@ export default function DragGPT() {
       await skipLoopCycleOnce();
       send({
         type: "TEXT_SELECTED",
-        value: {
+        data: {
           selectedText: getSelectionText(),
           selectedNodeRect: getSelectionNodeRect(),
           requestButtonPosition: {
@@ -88,7 +88,7 @@ export default function DragGPT() {
   };
 
   const onRequestAdditionalChat = (additionalChatText: string) => {
-    send({ type: "REQUEST_ADDITIONAL_CHAT", chatText: additionalChatText });
+    send({ type: "REQUEST_ADDITIONAL_CHAT", data: additionalChatText });
   };
 
   return (

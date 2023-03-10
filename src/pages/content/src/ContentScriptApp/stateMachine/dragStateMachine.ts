@@ -14,7 +14,7 @@ type AnchorNodePosition = {
 
 type TextSelectedEvent = {
   type: "TEXT_SELECTED";
-  value: {
+  data: {
     selectedText: string;
     selectedNodeRect?: NodeRect;
     requestButtonPosition: RequestButtonPosition;
@@ -23,9 +23,8 @@ type TextSelectedEvent = {
 
 type Events =
   | TextSelectedEvent
-  | { type: "CLOSE_MESSAGE_BOX" }
-  | { type: "REQUEST" }
-  | { type: "REQUEST_ADDITIONAL_CHAT"; chatText: string };
+  | { type: "CLOSE_MESSAGE_BOX" | "REQUEST" }
+  | { type: "REQUEST_ADDITIONAL_CHAT"; data: string };
 
 export type Chat = {
   role: "user" | "assistant" | "error";
@@ -183,14 +182,14 @@ const dragStateMachine = createMachine(
         },
       }),
       readyRequestButton: assign({
-        selectedText: (_, event) => event.value.selectedText,
+        selectedText: (_, event) => event.data.selectedText,
         selectedTextNodeRect: (context, event) =>
-          event.value.selectedNodeRect ?? context.selectedTextNodeRect,
-        requestButtonPosition: (_, event) => event.value.requestButtonPosition,
+          event.data.selectedNodeRect ?? context.selectedTextNodeRect,
+        requestButtonPosition: (_, event) => event.data.requestButtonPosition,
       }),
       addRequestChat: assign({
         chats: (context, event) =>
-          context.chats.concat({ role: "user", content: event.chatText }),
+          context.chats.concat({ role: "user", content: event.data }),
       }),
       addResponseChat: assign({
         chats: (context, event) =>
@@ -222,10 +221,10 @@ const dragStateMachine = createMachine(
 );
 
 function isValidTextSelectedEvent(event: TextSelectedEvent): boolean {
-  if (!event.value.selectedNodeRect) {
+  if (!event.data.selectedNodeRect) {
     return false;
   }
-  return event.value.selectedText.length > 1;
+  return event.data.selectedText.length > 1;
 }
 
 export default dragStateMachine;
