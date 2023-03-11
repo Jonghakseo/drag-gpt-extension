@@ -1,117 +1,150 @@
-import reloadOnUpdate from "virtual:reload-on-update-in-background-script";
 import "regenerator-runtime/runtime.js";
-import { LocalStorage } from "@pages/background/lib/localStorage";
-import { chatGPT } from "@pages/background/lib/chatGPT";
-import Logger from "@pages/background/lib/logger";
+import reloadOnUpdate from "virtual:reload-on-update-in-background-script";
+import { SlotStorage } from "@pages/background/lib/storage/slotStorage";
+import { ApiKeyStorage } from "@pages/background/lib/storage/apiKeyStorage";
+import { chatGPT } from "@pages/background/lib/infra/chatGPT";
+import Logger from "@pages/background/lib/utils/logger";
 import {
   sendErrorMessageToClient,
   sendMessageToClient,
-} from "@pages/background/lib/message";
+} from "@src/chrome/message";
+import { QuickChatHistoryStorage } from "@pages/background/lib/storage/quickChatHistoryStorage";
+import { exhaustiveMatchingGuard } from "@src/shared/ts-util/exhaustiveMatchingGuard";
 
 reloadOnUpdate("pages/background");
+
+type RequiredDataNullableInput<T extends Message> = {
+  type: T["type"];
+  input?: unknown;
+  data: Exclude<T["data"], undefined>;
+};
 
 chrome.runtime.onConnect.addListener((port) => {
   port.onDisconnect.addListener(() => console.log("Port disconnected"));
   port.onMessage.addListener(async (message: Message) => {
     Logger.receive(message);
 
-    const sendResponse = (responseMessage: DoneResponseMessage) =>
-      sendMessageToClient(port, responseMessage);
+    const sendResponse = <M extends Message>(
+      message: RequiredDataNullableInput<M>
+    ) => {
+      Logger.send(message);
+      sendMessageToClient(port, message);
+    };
 
     try {
       switch (message.type) {
         case "GetSlots": {
-          const slots = await LocalStorage.getAllSlots();
-          sendResponse({ type: "ResponseSlots", data: slots });
+          const slots = await SlotStorage.getAllSlots();
+          sendResponse({ type: "GetSlots", data: slots });
           break;
         }
         case "AddNewSlot": {
-          const slots = await LocalStorage.addSlot(message.data);
-          sendResponse({ type: "ResponseSlots", data: slots });
+          await SlotStorage.addSlot(message.input);
+          sendResponse({ type: "AddNewSlot", data: "success" });
           break;
         }
         case "SelectSlot": {
-          const slots = await LocalStorage.getAllSlots();
+          const slots = await SlotStorage.getAllSlots();
           const updatedSlots = slots.map((slot) => ({
             ...slot,
-            isSelected: message.data === slot.id,
+            isSelected: message.input === slot.id,
           }));
-          await LocalStorage.setAllSlots(updatedSlots);
-          sendResponse({ type: "ResponseSlots", data: slots });
+          await SlotStorage.setAllSlots(updatedSlots);
+          sendResponse({ type: "SelectSlot", data: updatedSlots });
           break;
         }
-        case "UpdateSlotData": {
-          const slots = await LocalStorage.updateSlot(message.data);
-          sendResponse({ type: "ResponseSlots", data: slots });
+        case "UpdateSlot": {
+          const slots = await SlotStorage.updateSlot(message.input);
+          sendResponse({ type: "UpdateSlot", data: slots });
           break;
         }
         case "DeleteSlot": {
-          const slots = await LocalStorage.deleteSlot(message.data);
-          sendResponse({ type: "ResponseSlots", data: slots });
+          const slots = await SlotStorage.deleteSlot(message.input);
+          sendResponse({ type: "DeleteSlot", data: slots });
           break;
         }
         case "GetAPIKey": {
-          const apiKey = await LocalStorage.getApiKey();
-          sendResponse({ type: "Response", data: String(apiKey) });
+          const apiKey = await ApiKeyStorage.getApiKey();
+          sendResponse({ type: "GetAPIKey", data: apiKey });
           break;
         }
         case "SaveAPIKey":
-          try {
-            await chatGPT({
-              input: "hello",
-              apiKey: message.data,
-              slot: { type: "ChatGPT" },
-            });
-            await LocalStorage.setApiKey(message.data);
-            sendResponse({ type: "Response", data: "success" });
-          } catch (e) {
-            await LocalStorage.setApiKey(null);
-            throw e;
-          }
+          await chatGPT({
+            input: "hello",
+            apiKey: message.input,
+            slot: { type: "ChatGPT" },
+          }).catch((error) => {
+            ApiKeyStorage.setApiKey(null);
+            throw error;
+          });
+          await ApiKeyStorage.setApiKey(message.input);
+          sendResponse({ type: "SaveAPIKey", data: "success" });
           break;
         case "ResetAPIKey":
-          await LocalStorage.setApiKey(null);
-          sendResponse({ type: "Response", data: "success" });
+          await ApiKeyStorage.setApiKey(null);
+          sendResponse({ type: "ResetAPIKey", data: "success" });
           break;
-        case "RequestSelectionMessage": {
-          const selectedSlot = await LocalStorage.getSelectedSlot();
-          const apiKey = await LocalStorage.getApiKey();
-
-          switch (selectedSlot.type) {
-            case "ChatGPT": {
-              const response = await chatGPT({
-                input: message.data,
-                slot: selectedSlot,
-                apiKey: String(apiKey),
-              });
-              sendResponse({ type: "Response", data: response });
-              break;
-            }
-          }
+        case "RequestOnetimeChatGPT": {
+          const selectedSlot = await SlotStorage.getSelectedSlot();
+          const apiKey = await ApiKeyStorage.getApiKey();
+          const response = await chatGPT({
+            input: message.input,
+            slot: selectedSlot,
+            apiKey,
+          });
+          sendResponse({
+            type: "RequestOnetimeChatGPT",
+            data: response,
+          });
           break;
         }
-        case "RequestAdditionalChat": {
-          const selectedSlot = await LocalStorage.getSelectedSlot();
-          const apiKey = await LocalStorage.getApiKey();
-          switch (selectedSlot.type) {
-            case "ChatGPT": {
-              const response = await chatGPT({
-                input: message.data.input,
-                histories: message.data.histories,
-                slot: selectedSlot,
-                apiKey: String(apiKey),
-              });
-              sendResponse({ type: "Response", data: response });
-              break;
-            }
-          }
+        case "RequestQuickChatGPT": {
+          const apiKey = await ApiKeyStorage.getApiKey();
+          const response = await chatGPT({
+            chats: message.input,
+            slot: { type: "ChatGPT" },
+            apiKey,
+          });
+          sendResponse({ type: "RequestQuickChatGPT", data: response });
+          await QuickChatHistoryStorage.pushChatHistories([
+            {
+              role: "user",
+              content: message.input?.at(-1)?.content ?? "",
+            },
+            {
+              role: "assistant",
+              content: response.result,
+            },
+          ]);
           break;
         }
-        default:
-          Logger.error("unknown message:" + JSON.stringify(message));
+        case "RequestOngoingChatGPT": {
+          const selectedSlot = await SlotStorage.getSelectedSlot();
+          const apiKey = await ApiKeyStorage.getApiKey();
+          const response = await chatGPT({
+            chats: message.input,
+            slot: selectedSlot,
+            apiKey,
+          });
+          sendResponse({ type: "RequestOngoingChatGPT", data: response });
           break;
+        }
+        case "GetQuickChatHistory": {
+          const chats = await QuickChatHistoryStorage.getChatHistories();
+          sendResponse({ type: "GetQuickChatHistory", data: chats });
+          break;
+        }
+        case "ResetQuickChatHistory": {
+          await QuickChatHistoryStorage.resetChatHistories();
+          sendResponse({ type: "ResetQuickChatHistory", data: "success" });
+          break;
+        }
+        default: {
+          exhaustiveMatchingGuard(message);
+        }
       }
     } catch (error) {
+      Logger.warn(error);
       sendErrorMessageToClient(port, error);
     }
   });

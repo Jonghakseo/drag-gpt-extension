@@ -3,87 +3,88 @@ import MessageBox, {
 } from "@pages/content/src/ContentScriptApp/components/messageBox/MessageBox";
 import StyledButton from "@pages/popup/components/StyledButton";
 import {
-  KeyboardEventHandler,
+  DependencyList,
+  FormEventHandler,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
-import {
-  Box,
-  Collapse,
-  HStack,
-  Input,
-  StatUpArrow,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
-import { Chat } from "@pages/content/src/ContentScriptApp/stateMachine/dragStateMachine";
-import styled from "@emotion/styled";
-import { COLORS } from "@src/constant/style";
-import { css } from "@emotion/react";
+import { HStack, Input, Text, VStack } from "@chakra-ui/react";
 import DraggableBox from "@pages/content/src/ContentScriptApp/components/DraggableBox";
+import { useMachine } from "@xstate/react";
+import chatStateMachine from "@src/shared/xState/chatStateMachine";
+import { ChatCompletionRequestMessage } from "openai";
+import { sendMessageToBackgroundAsync } from "@src/chrome/message";
+import ChatText from "@src/shared/component/ChatText";
+import AssistantChat from "@src/shared/component/AssistantChat";
+import UserChat from "@src/shared/component/UserChat";
+import ChatCollapse from "@src/shared/component/ChatCollapse";
+import { useScrollDownEffect } from "@src/shared/hook/useScrollDownEffect";
+import { useCopyClipboard } from "@src/shared/hook/useCopyClipboard";
+
+async function getGPTResponse(messages: ChatCompletionRequestMessage[]) {
+  return await sendMessageToBackgroundAsync({
+    type: "RequestOngoingChatGPT",
+    input: messages,
+  });
+}
 
 type ResponseMessageBoxProps = Omit<
   MessageBoxProps,
   "header" | "width" | "footer" | "content"
 > & {
-  chats: Chat[];
-  loading: boolean;
-  onRequestMoreChat: (moreChatText: string) => void;
+  initialChats: Chat[];
 };
 
 export default function ResponseMessageBox({
-  chats,
-  loading,
-  onRequestMoreChat,
+  initialChats,
+  onClose,
   ...restProps
 }: ResponseMessageBoxProps) {
-  const chatListRef = useRef<HTMLDivElement>(null);
-  const [moreChatText, setMoreChatText] = useState("");
-  const [isCopied, setIsCopied] = useState(false);
+  const [state, send] = useMachine(chatStateMachine, {
+    services: {
+      getChatHistoryFromBackground: () => Promise.resolve(initialChats),
+      getGPTResponse: (context) => {
+        const chatsWithoutError = context.chats.filter(
+          (chat) => chat.role !== "error"
+        );
+        return getGPTResponse(
+          chatsWithoutError as ChatCompletionRequestMessage[]
+        );
+      },
+    },
+    actions: {
+      onExitChatting: onClose,
+    },
+  });
 
-  const requestMoreChat = () => {
-    setMoreChatText("");
-    onRequestMoreChat(moreChatText);
-  };
+  /** 첫 번째 질문 숨김처리 (드래깅으로 질문) */
+  const [, ...chats] = state.context.chats;
+  const isLoading = state.matches("loading");
 
-  useEffect(() => {
-    setIsCopied(false);
-  }, [chats.length]);
+  const { scrollDownRef } = useScrollDownEffect([chats.length]);
+  const { isCopied, copy } = useCopyClipboard([
+    chats.filter(({ role }) => role === "assistant").length,
+  ]);
 
-  const copyResponse = async () => {
+  const onClickCopy = async () => {
     const lastResponseText = findLastResponseChat(chats);
-    if (!lastResponseText) {
-      return;
+    if (lastResponseText) {
+      await copy(lastResponseText.content);
     }
-    await copyToClipboard(lastResponseText.content);
-    setIsCopied(true);
   };
-
-  const handleKeyPress: KeyboardEventHandler<HTMLInputElement> = (event) => {
-    if (event.key === "Enter") {
-      requestMoreChat();
-    }
-    event.stopPropagation();
-  };
-
-  useEffect(() => {
-    if (!chatListRef.current) {
-      return;
-    }
-    chatListRef.current.scrollTo({
-      top: chatListRef.current.scrollHeight,
-      behavior: "smooth",
-    });
-  }, [chats.length]);
-
+  // TODO refactor
   const lastResponseIndex: number = (() => {
-    if (loading) {
+    if (isLoading) {
       return chats.length - 2;
     }
     return chats.length - 1;
   })();
+
+  const onChatSubmit: FormEventHandler = (event) => {
+    event.preventDefault();
+    send({ type: "QUERY" });
+  };
 
   return (
     <MessageBox
@@ -97,11 +98,12 @@ export default function ResponseMessageBox({
           ✣ Response
         </Text>
       }
+      onClose={() => send("EXIT")}
       width={480}
       isOutsideClickDisabled={chats.length > 1}
       content={
         <VStack
-          ref={chatListRef}
+          ref={scrollDownRef}
           maxHeight={400}
           width="100%"
           overflowY="scroll"
@@ -116,24 +118,23 @@ export default function ResponseMessageBox({
         </VStack>
       }
       footer={
+        // TODO refactor
         <HStack width="100%" pt={8} justifyContent="space-between">
-          <StyledButton onClick={copyResponse}>
+          <StyledButton onClick={onClickCopy}>
             {isCopied ? "COPIED!" : "COPY LAST RESPONSE"}
           </StyledButton>
-          <HStack>
+          <HStack as="form" onSubmit={onChatSubmit}>
             <Input
               width={230}
-              value={moreChatText}
+              value={state.context.chatText}
               placeholder="ex. Summarize!"
-              onChange={(e) => setMoreChatText(e.target.value)}
-              onKeyDown={handleKeyPress}
+              onChange={(e) =>
+                send({ type: "CHANGE_TEXT", data: e.target.value })
+              }
+              onKeyDown={(e) => e.stopPropagation()}
             />
-            <StyledButton
-              disabled={moreChatText.length === 0}
-              isLoading={loading}
-              onClick={requestMoreChat}
-            >
-              CONTINUE
+            <StyledButton type="submit" isLoading={isLoading}>
+              SEND
             </StyledButton>
           </HStack>
         </HStack>
@@ -143,6 +144,7 @@ export default function ResponseMessageBox({
   );
 }
 
+// TODO refactor
 const ChatBox = ({
   chat,
   isLastAndResponse,
@@ -150,88 +152,37 @@ const ChatBox = ({
   chat: Chat;
   isLastAndResponse: boolean;
 }) => {
-  const [show, setShow] = useState(false);
-
-  const openCollapse = () => setShow(true);
-  const closeCollapse = () => setShow(false);
-
-  const textNode = (
-    <Text
-      borderRadius={4}
-      border="1px solid #f0ffff2e"
-      padding={6}
-      color={chat.role === "error" ? "red" : "white"}
-      fontWeight={chat.role === "user" ? "bold" : "normal"}
-    >
-      {chat.content.trim()}
-    </Text>
-  );
-
   if (isLastAndResponse) {
     return (
-      <Box alignSelf={chat.role === "user" ? "end" : "start"}>{textNode}</Box>
+      <AssistantChat>
+        <ChatText>{chat.content.trim()}</ChatText>
+      </AssistantChat>
+    );
+  }
+  if (chat.role === "error") {
+    return (
+      <AssistantChat>
+        <ChatText isError>{chat.content.trim()}</ChatText>
+      </AssistantChat>
     );
   }
 
   if (chat.role === "assistant") {
     return (
-      <CollapseBox isShow={show} onClick={openCollapse}>
-        <Collapse startingHeight={24} in={show} animateOpacity>
-          <Text
-            borderRadius={4}
-            border="1px solid #f0ffff2e"
-            padding={6}
-            color="white"
-            fontWeight="normal"
-          >
-            {chat.content.trim()}
-            <VStack
-              margin="4px auto 0"
-              cursor="pointer"
-              width="100%"
-              onClick={(e) => {
-                closeCollapse();
-                e.stopPropagation();
-              }}
-            >
-              <StatUpArrow color="white" />
-            </VStack>
-          </Text>
-        </Collapse>
-      </CollapseBox>
+      <ChatCollapse>
+        <AssistantChat>
+          <ChatText>{chat.content.trim()}</ChatText>
+        </AssistantChat>
+      </ChatCollapse>
     );
   }
 
-  return <Box alignSelf="end">{textNode}</Box>;
+  return (
+    <UserChat>
+      <ChatText bold>{chat.content.trim()}</ChatText>
+    </UserChat>
+  );
 };
-
-const CollapseBox = styled(Box)<{ isShow: boolean }>`
-  align-self: start;
-  position: relative;
-  ${(p) =>
-    p.isShow ||
-    css`
-      cursor: pointer;
-      &:before {
-        content: "";
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        height: 100%;
-
-        background-image: linear-gradient(
-          0deg,
-          ${COLORS.CONTENT_BACKGROUND} 0%,
-          rgba(0, 0, 0, 0) 100%
-        );
-      }
-    `}
-`;
-
-async function copyToClipboard(text: string) {
-  await navigator.clipboard.writeText(text);
-}
 
 function findLastResponseChat(chats: Chat[]) {
   return chats.filter((chat) => chat.role === "assistant").at(-1);

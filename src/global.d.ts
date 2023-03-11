@@ -51,42 +51,97 @@ declare global {
 
   type Slot = { id: string; name: string; isSelected: boolean } & ChatGPTSlot;
 
-  type CommonMessageType =
-    | "SelectSlot"
-    | "DeleteSlot"
-    | "RequestSelectionMessage"
-    | "SaveAPIKey";
-  type RequestMessageType = "GetAPIKey" | "GetSlots" | "ResetAPIKey";
+  type Chat = {
+    role: "user" | "assistant" | "error";
+    content: string;
+  };
 
-  type ErrorResponseMessage = { type: "Error"; data: Error };
-  type DoneResponseMessage =
-    | {
-        type: "Response";
-        data: any;
-      }
-    | {
-        type: "ResponseSlots";
-        data: Slot[];
-      };
-  type ResponseMessages = ErrorResponseMessage | DoneResponseMessage;
-
-  type CommonMessages = { type: CommonMessageType; data: string };
-  type RequestMessages = { type: RequestMessageType; data?: null };
+  type AddNewSlotMessage = {
+    type: "AddNewSlot";
+    input: Slot;
+    data?: "success";
+  };
+  type SelectSlotMessage = {
+    type: "SelectSlot";
+    input: string;
+    data?: "success";
+  };
+  type UpdateSlotMessage = {
+    type: "UpdateSlot";
+    input: Slot;
+    data?: "success";
+  };
+  type DeleteSlotMessage = {
+    type: "DeleteSlot";
+    input: string;
+    data?: "success";
+  };
+  type RequestOnetimeChatGPTMessage = {
+    type: "RequestOnetimeChatGPT";
+    input: string;
+    data?: { result: string; tokenUsage: number };
+  };
+  type RequestOngoingChatGPTMessage = {
+    type: "RequestOngoingChatGPT";
+    input: ChatCompletionRequestMessage[];
+    data?: { result: string; tokenUsage: number };
+  };
+  type RequestQuickChatGPTMessage = {
+    type: "RequestQuickChatGPT";
+    input?: ChatCompletionRequestMessage[];
+    data?: { result: string; tokenUsage: number };
+  };
+  type SaveAPIKeyMessage = {
+    type: "SaveAPIKey";
+    input: string;
+    data?: "success";
+  };
+  type ResetAPIKeyMessage = {
+    type: "ResetAPIKey";
+    input?: never;
+    data?: "success";
+  };
+  type GetAPIKeyMessage = {
+    type: "GetAPIKey";
+    input?: never;
+    data?: string;
+  };
+  type GetSlotsMessage = {
+    type: "GetSlots";
+    input?: never;
+    data?: Slot[];
+  };
+  type GetQuickChatHistoryMessage = {
+    type: "GetQuickChatHistory";
+    input?: never;
+    data?: Chat[];
+  };
+  type ResetQuickChatHistoryMessage = {
+    type: "ResetQuickChatHistory";
+    input?: never;
+    data?: "success";
+  };
+  type ErrorMessage = {
+    type: "Error";
+    input?: never;
+    error: Error;
+  };
 
   type Message =
-    | {
-        type: "GetSlots";
-        data: Slot[];
-      }
-    | {
-        type: "AddNewSlot" | "UpdateSlotData";
-        data: Slot;
-      }
-    | {
-        type: "RequestAdditionalChat";
-        data: { input: string; histories: ChatCompletionRequestMessage[] };
-      }
-    | ResponseMessages
-    | CommonMessages
-    | RequestMessages;
+    | RequestQuickChatGPTMessage
+    | RequestOngoingChatGPTMessage
+    | ResetQuickChatHistoryMessage
+    | GetQuickChatHistoryMessage
+    | AddNewSlotMessage
+    | UpdateSlotMessage
+    | GetSlotsMessage
+    | GetAPIKeyMessage
+    | ResetAPIKeyMessage
+    | SelectSlotMessage
+    | DeleteSlotMessage
+    | RequestOnetimeChatGPTMessage
+    | SaveAPIKeyMessage;
+
+  type RequestMessage<M = Message> = Omit<M, "data">;
+  type ResponseMessage<M = Message> = Omit<M, "input" | "error">;
 }
