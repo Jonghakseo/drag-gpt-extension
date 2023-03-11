@@ -10,6 +10,7 @@ import {
 } from "@src/chrome/message";
 import { QuickChatHistoryStorage } from "@pages/background/lib/storage/quickChatHistoryStorage";
 import { exhaustiveMatchingGuard } from "@src/shared/ts-util/exhaustiveMatchingGuard";
+import { createNewChatGPTSlot } from "@src/shared/slot/createNewChatGPTSlot";
 
 reloadOnUpdate("pages/background");
 
@@ -35,6 +36,12 @@ chrome.runtime.onConnect.addListener((port) => {
       switch (message.type) {
         case "GetSlots": {
           const slots = await SlotStorage.getAllSlots();
+          /** add default slot when initialize */
+          if (slots.length === 0) {
+            const defaultSlot = createNewChatGPTSlot({ isSelected: true });
+            await SlotStorage.addSlot(defaultSlot);
+            slots.push(defaultSlot);
+          }
           sendResponse({ type: "GetSlots", data: slots });
           break;
         }
