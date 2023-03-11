@@ -28,7 +28,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
-    makeManifest(manifest),
+    makeManifest(manifest, { isDev }),
     customDynamicImport(),
     addHmr({ background: enableHmrInBackgroundScript, view: true }),
   ],
@@ -36,7 +36,7 @@ export default defineConfig({
   build: {
     outDir,
     /** Can slowDown build speed. */
-    // sourcemap: isDev,
+    sourcemap: !isDev,
     minify: isProduction,
     reportCompressedSize: isProduction,
     rollupOptions: {
