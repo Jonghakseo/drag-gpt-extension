@@ -6,7 +6,7 @@ import packageJson from "./package.json";
 const manifest: chrome.runtime.ManifestV3 = {
   manifest_version: 3,
   name: "__MSG_extensionName__",
-  default_locale: "en",
+  default_locale: "ko",
   version: packageJson.version,
   description: "__MSG_extensionDescription__",
   options_page: "src/pages/options/index.html",
