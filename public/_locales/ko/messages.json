@@ -82,5 +82,26 @@
   },
   "slotDetail_backButtonText": {
     "message": "BACK"
+  },
+  "responseMessageBox_responseTitle": {
+    "message": "✣ 답변"
+  },
+  "responseMessageBox_copyButtonText_copy": {
+    "message": "마지막 응답 복사"
+  },
+  "responseMessageBox_copyButtonText_copied": {
+    "message": "복사됨!"
+  },
+  "responseMessageBox_sendButtonText": {
+    "message": "전송"
+  },
+  "responseMessageBox_messageInputPlacepolder": {
+    "message": "ex. 위 내용을 알기 쉽게 요약해줘"
+  },
+  "errorMessageBox_errorTitle": {
+    "message": "에러"
+  },
+  "errorMessageBox_unknownError": {
+    "message": "알 수 없는 에러"
   }
 }

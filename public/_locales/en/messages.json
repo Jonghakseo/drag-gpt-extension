@@ -82,5 +82,26 @@
   },
   "slotDetail_backButtonText": {
     "message": "BACK"
+  },
+  "responseMessageBox_responseTitle": {
+    "message": "✣ Response"
+  },
+  "responseMessageBox_copyButtonText_copy": {
+    "message": "COPY LAST RESPONSE"
+  },
+  "responseMessageBox_copyButtonText_copied": {
+    "message": "COPIED!"
+  },
+  "responseMessageBox_sendButtonText": {
+    "message": "SEND"
+  },
+  "responseMessageBox_messageInputPlacepolder": {
+    "message": "ex. Summarize!"
+  },
+  "errorMessageBox_errorTitle": {
+    "message": "Error"
+  },
+  "errorMessageBox_unknownError": {
+    "message": "Unknown error"
   }
 }

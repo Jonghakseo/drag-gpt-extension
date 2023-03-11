@@ -15,6 +15,7 @@ import UserChat from "@src/shared/component/UserChat";
 import ChatCollapse from "@src/shared/component/ChatCollapse";
 import { useScrollDownEffect } from "@src/shared/hook/useScrollDownEffect";
 import { useCopyClipboard } from "@src/shared/hook/useCopyClipboard";
+import { t } from "@src/chrome/i18n";
 
 async function getGPTResponse(messages: ChatCompletionRequestMessage[]) {
   return await sendMessageToBackgroundAsync({
@@ -89,7 +90,7 @@ export default function ResponseMessageBox({
           cursor="move"
           className={DraggableBox.handlerClassName}
         >
-          ✣ Response
+          {t("responseMessageBox_responseTitle")}
         </Text>
       }
       onClose={() => send("EXIT")}
@@ -115,20 +116,22 @@ export default function ResponseMessageBox({
         // TODO refactor
         <HStack width="100%" pt={8} justifyContent="space-between">
           <StyledButton onClick={onClickCopy}>
-            {isCopied ? "COPIED!" : "COPY LAST RESPONSE"}
+            {isCopied
+              ? t("responseMessageBox_copyButtonText_copied")
+              : t("responseMessageBox_copyButtonText_copy")}
           </StyledButton>
           <HStack as="form" onSubmit={onChatSubmit}>
             <Input
               width={230}
               value={state.context.chatText}
-              placeholder="ex. Summarize!"
+              placeholder={t("responseMessageBox_messageInputPlacepolder")}
               onChange={(e) =>
                 send({ type: "CHANGE_TEXT", data: e.target.value })
               }
               onKeyDown={(e) => e.stopPropagation()}
             />
             <StyledButton type="submit" isLoading={isLoading}>
-              SEND
+              {t("responseMessageBox_sendButtonText")}
             </StyledButton>
           </HStack>
         </HStack>
