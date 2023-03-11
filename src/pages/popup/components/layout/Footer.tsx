@@ -14,7 +14,7 @@ export default function Footer() {
         mt="auto"
       >
         <Text color="white" fontSize={12} fontWeight="bold">
-          {t("footerEmailText")}
+          {t("footer_EmailText")}
         </Text>
       </Link>
     </>

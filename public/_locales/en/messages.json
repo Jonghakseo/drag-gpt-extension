@@ -8,31 +8,58 @@
   "dragGPT": {
     "message": "Drag GPT"
   },
-  "openAIApiKey": {
+  "noApiKeyPage_openAIApiKey": {
     "message": "OpenAI API Key"
   },
-  "checkingApiKey": {
+  "noApiKeyPage_checkingApiKey": {
     "message": "Currently sending a request\nto check for the API key..."
   },
-  "howToGetApiKey": {
+  "noApiKeyPage_howToGetApiKey": {
     "message": "How to get openai api key?"
   },
-  "howToGetApiKeyDetail1": {
+  "noApiKeyPage_howToGetApiKeyDetail1": {
     "message": "{Sign up} for an OpenAI account."
   },
-  "howToGetApiKeyDetail2": {
+  "noApiKeyPage_howToGetApiKeyDetail2": {
     "message": "Navigate to the {API key page}"
   },
-  "howToGetApiKeyDetail3": {
+  "noApiKeyPage_howToGetApiKeyDetail3": {
     "message": "Create a new secret key to generate an API key."
   },
-  "howToGetApiKeyDetail4": {
+  "noApiKeyPage_howToGetApiKeyDetail4": {
     "message": "Copy the key and paste it into the input field, then click save."
   },
-  "footerEmailText": {
+  "footer_EmailText": {
     "message": "feature suggestions / bug reports"
   },
-  "saveButtonText": {
+  "noApiKeyPage_saveButtonText": {
     "message": "SAVE"
+  },
+  "quickChattingPage_sendButtonText": {
+    "message": "SEND"
+  },
+  "quickChattingPage_chattingPlaceholder": {
+    "message": "ex. Hello!"
+  },
+  "quickChattingPage_backButtonText": {
+    "message": "BACK"
+  },
+  "quickChattingPage_resetButtonText": {
+    "message": "RESET"
+  },
+  "slotListPage_newSlotButtonText": {
+    "message": "NEW SLOT"
+  },
+  "slotListPage_quickChatButtonText": {
+    "message": "QUICK CHAT"
+  },
+  "slotListPage_resetApiKeyButtonText": {
+    "message": "RESET API KEY"
+  },
+  "slotListPage_promptSlotsTitle": {
+    "message": "Prompt Slots"
+  },
+  "slotListPage_resetApiKeyConfirmMessage": {
+    "message": "Are you sure?"
   }
 }

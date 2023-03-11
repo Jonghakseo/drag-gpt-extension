@@ -3,36 +3,63 @@
     "message": "드래그 GPT - 드래그로 쉽게 AI를 시작해보세요!"
   },
   "extensionDescription": {
-    "message": "드래그 후 버튼 클릭만으로 간단하게 선택한 내용을 ChatGPT에게 물어보거나 요청할 수 있습니다."
+    "message": "드래그 후 버튼 클릭만으로 간단하게 선택한 내용을 ChatGPT에게 물어보거나 요청할 수 있어요!"
   },
   "dragGPT": {
     "message": "드래그 GPT"
   },
-  "openAIApiKey": {
+  "noApiKeyPage_openAIApiKey_placeholder": {
     "message": "OpenAI API 키"
   },
-  "checkingApiKey": {
+  "noApiKeyPage_checkingApiKey": {
     "message": "API 키 확인을 위해\n테스트 요청을 날려보는 중..."
   },
-  "howToGetApiKey": {
+  "noApiKeyPage_howToGetApiKey": {
     "message": "OpenAI의 API 키는 어떻게 얻나요?"
   },
-  "howToGetApiKeyDetail1": {
+  "noApiKeyPage_howToGetApiKeyDetail1": {
     "message": "OpenAI 계정이 없다면 {회원가입}이 필요합니다."
   },
-  "howToGetApiKeyDetail2": {
+  "noApiKeyPage_howToGetApiKeyDetail2": {
     "message": "{API Key 페이지}로 이동하세요."
   },
-  "howToGetApiKeyDetail3": {
+  "noApiKeyPage_howToGetApiKeyDetail3": {
     "message": "API key 생성을 위해 Create a new secret key 버튼을 눌러주세요."
   },
-  "howToGetApiKeyDetail4": {
+  "noApiKeyPage_howToGetApiKeyDetail4": {
     "message": "키를 복사하고 입력 후 저장 버튼을 누르면 시작할 수 있습니다!"
   },
-  "footerEmailText": {
+  "footer_EmailText": {
     "message": "기능 제안 / 버그 제보"
   },
-  "saveButtonText": {
+  "noApiKeyPage_saveButtonText": {
     "message": "저장"
+  },
+  "quickChattingPage_sendButtonText": {
+    "message": "전송"
+  },
+  "quickChattingPage_chattingPlaceholder": {
+    "message": "ex. 안녕!"
+  },
+  "quickChattingPage_backButtonText": {
+    "message": "뒤로가기"
+  },
+  "quickChattingPage_resetButtonText": {
+    "message": "대화 초기화"
+  },
+  "slotListPage_newSlotButtonText": {
+    "message": "슬롯 추가"
+  },
+  "slotListPage_quickChatButtonText": {
+    "message": "빠른 대화"
+  },
+  "slotListPage_resetApiKeyButtonText": {
+    "message": "API키 초기화"
+  },
+  "slotListPage_promptSlotsTitle": {
+    "message": "프롬프트 슬롯"
+  },
+  "slotListPage_resetApiKeyConfirmMessage": {
+    "message": "정말 API 키를 초기화 하시겠어요?"
   }
 }

@@ -40,7 +40,7 @@ export const NoApiKeyPage = ({
           <VStack spacing={20}>
             <Spinner width={30} height={30} color={COLORS.WHITE} />
             <Text color={COLORS.WHITE} whiteSpace="pre-wrap" lineHeight={1.4}>
-              {t("checkingApiKey")}
+              {t("noApiKeyPage_checkingApiKey")}
             </Text>
           </VStack>
         ) : (
@@ -50,11 +50,11 @@ export const NoApiKeyPage = ({
                 value={apiKey}
                 type="password"
                 onChange={handleChange}
-                placeholder={t("openAIApiKey")}
+                placeholder={t("noApiKeyPage_openAIApiKey_placeholder")}
                 size="sm"
               />
               <StyledButton onClick={onClickSaveButton}>
-                {t("saveButtonText")}
+                {t("noApiKeyPage_saveButtonText")}
               </StyledButton>
             </HStack>
 
@@ -65,7 +65,7 @@ export const NoApiKeyPage = ({
               color={COLORS.WHITE}
               alignSelf="center"
             >
-              {t("howToGetApiKey")}
+              {t("noApiKeyPage_howToGetApiKey")}
             </Text>
             <OrderedList
               spacing={6}
@@ -77,18 +77,18 @@ export const NoApiKeyPage = ({
             >
               <li>
                 {separateI18nAndAddLink(
-                  t("howToGetApiKeyDetail1"),
+                  t("noApiKeyPage_howToGetApiKeyDetail1"),
                   "https://platform.openai.com/signup"
                 )}
               </li>
               <li>
                 {separateI18nAndAddLink(
-                  t("howToGetApiKeyDetail2"),
+                  t("noApiKeyPage_howToGetApiKeyDetail2"),
                   "https://platform.openai.com/account/api-keys"
                 )}
               </li>
-              <li>{t("howToGetApiKeyDetail3")}</li>
-              <li>{t("howToGetApiKeyDetail4")}</li>
+              <li>{t("noApiKeyPage_howToGetApiKeyDetail3")}</li>
+              <li>{t("noApiKeyPage_howToGetApiKeyDetail4")}</li>
             </OrderedList>
           </>
         )}
