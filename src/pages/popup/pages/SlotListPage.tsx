@@ -11,6 +11,7 @@ import {
 import SlotListItem from "@pages/popup/components/SlotListItem";
 import { COLORS } from "@src/constant/style";
 import { createNewChatGPTSlot } from "@src/shared/slot/createNewChatGPTSlot";
+import { t } from "@src/chrome/i18n";
 
 const getAllSlotsFromBackground = async () => {
   return await sendMessageToBackgroundAsync({
@@ -103,7 +104,7 @@ export default function SlotListPage({
   };
 
   const onClickResetButton = () => {
-    if (confirm("Are you sure?")) {
+    if (confirm(t("slotListPage_resetApiKeyConfirmMessage"))) {
       send("CHANGE_API_KEY");
     }
   };
@@ -113,16 +114,18 @@ export default function SlotListPage({
       {state.matches("slot_list") && (
         <VStack spacing={12} width="100%">
           <HStack width="100%" justifyContent="space-between">
-            <StyledButton onClick={addNewSlot}>NEW SLOT</StyledButton>
+            <StyledButton onClick={addNewSlot}>
+              {t("slotListPage_newSlotButtonText")}
+            </StyledButton>
             <StyledButton onClick={onClickQuickChatButton}>
-              QUICK CHAT
+              {t("slotListPage_quickChatButtonText")}
             </StyledButton>
             <StyledButton onClick={onClickResetButton}>
-              RESET API KEY
+              {t("slotListPage_resetApiKeyButtonText")}
             </StyledButton>
           </HStack>
           <Text color={COLORS.WHITE} fontWeight="bold" alignSelf="flex-start">
-            Prompt Slots
+            {t("slotListPage_promptSlotsTitle")}
           </Text>
           {state.context.slots.map((slot, index) => (
             <SlotListItem

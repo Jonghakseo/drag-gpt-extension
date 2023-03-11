@@ -1,4 +1,4 @@
-import { HStack, Input, VStack } from "@chakra-ui/react";
+import { HStack, Textarea, VStack } from "@chakra-ui/react";
 import StyledButton from "@pages/popup/components/StyledButton";
 import { useMachine } from "@xstate/react";
 import chatStateMachine from "@src/shared/xState/chatStateMachine";
@@ -7,12 +7,12 @@ import {
   sendMessageToBackground,
   sendMessageToBackgroundAsync,
 } from "@src/chrome/message";
-import { FormEventHandler } from "react";
+import { FormEventHandler, KeyboardEventHandler } from "react";
 import UserChat from "@src/shared/component/UserChat";
 import ChatText from "@src/shared/component/ChatText";
 import AssistantChat from "@src/shared/component/AssistantChat";
 import { useScrollDownEffect } from "@src/shared/hook/useScrollDownEffect";
-import { useCopyClipboard } from "@src/shared/hook/useCopyClipboard";
+import { t } from "@src/chrome/i18n";
 
 async function getGPTResponse(messages: ChatCompletionRequestMessage[]) {
   return await sendMessageToBackgroundAsync({
@@ -74,18 +74,34 @@ export default function QuickChattingPage({
     send("RESET");
   };
 
+  const onChatInputKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (
+    event
+  ) => {
+    if (event.nativeEvent.isComposing) {
+      return;
+    }
+    if (event.key === "Enter" && !event.shiftKey) {
+      (event.target as HTMLTextAreaElement).form?.requestSubmit();
+      event.preventDefault();
+    }
+  };
+
   return (
     <VStack w="100%" minH={400} justifyContent="space-between">
       <HStack w="100%" justifyContent="space-between">
-        <StyledButton onClick={onClickBackButton}>BACK</StyledButton>
-        <StyledButton onClick={onClickResetButton}>RESET</StyledButton>
+        <StyledButton onClick={onClickBackButton}>
+          {t("quickChattingPage_backButtonText")}
+        </StyledButton>
+        <StyledButton onClick={onClickResetButton}>
+          {t("quickChattingPage_resetButtonText")}
+        </StyledButton>
       </HStack>
       <VStack
         ref={scrollDownRef}
         flexGrow={1}
         w="100%"
         overflowY="scroll"
-        maxHeight={340}
+        maxHeight={300}
         fontSize={13}
       >
         {state.context.chats.map((chat, index) => {
@@ -112,14 +128,17 @@ export default function QuickChattingPage({
         })}
       </VStack>
       <HStack as="form" onSubmit={onChatSubmit} mt="auto">
-        <Input
+        <Textarea
+          resize="none"
           width={226}
+          height={50}
           value={state.context.chatText}
-          placeholder="ex. Hello!"
+          placeholder={t("quickChattingPage_chattingPlaceholder")}
           onChange={(e) => send({ type: "CHANGE_TEXT", data: e.target.value })}
+          onKeyDown={onChatInputKeyDown}
         />
         <StyledButton type="submit" isLoading={isLoading}>
-          SEND
+          {t("quickChattingPage_sendButtonText")}
         </StyledButton>
       </HStack>
     </VStack>

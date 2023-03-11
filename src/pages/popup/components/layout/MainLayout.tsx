@@ -2,6 +2,7 @@ import React, { ReactNode } from "react";
 import { Heading } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { COLORS } from "@src/constant/style";
+import { t } from "@src/chrome/i18n";
 
 const Container = styled.div`
   position: relative;
@@ -31,7 +32,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <Container>
       <Heading color={COLORS.WHITE} padding={12} fontWeight="bold">
-        Drag GPT
+        {t("dragGPT")}
       </Heading>
       {children}
     </Container>

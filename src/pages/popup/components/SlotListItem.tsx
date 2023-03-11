@@ -1,6 +1,7 @@
 import { Box, HStack, Text } from "@chakra-ui/react";
 import StyledButton from "@pages/popup/components/StyledButton";
 import { COLORS } from "@src/constant/style";
+import { t } from "@src/chrome/i18n";
 
 type SlotListItemProps = {
   slotName: string;
@@ -41,7 +42,7 @@ export default function SlotListItem({
               onDetail();
             }}
           >
-            <Text fontSize={11}>EDIT</Text>
+            <Text fontSize={11}>{t("slotListItem_editButtonText")}</Text>
           </StyledButton>
           <StyledButton
             isDisabled={isSelected}
@@ -50,7 +51,7 @@ export default function SlotListItem({
               onDelete();
             }}
           >
-            <Text fontSize={11}>DEL</Text>
+            <Text fontSize={11}>{t("slotListItem_deleteButtonText")}</Text>
           </StyledButton>
         </HStack>
       </HStack>

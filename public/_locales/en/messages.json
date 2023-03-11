@@ -1,0 +1,110 @@
+{
+  "extensionName": {
+    "message": "Drag GPT - easy start AI with Drag!"
+  },
+  "extensionDescription": {
+    "message": "You can easily ask or request the selected content to ChatGPT by dragging and clicking the button."
+  },
+  "dragGPT": {
+    "message": "Drag GPT"
+  },
+  "noApiKeyPage_openAIApiKey": {
+    "message": "OpenAI API Key"
+  },
+  "noApiKeyPage_checkingApiKey": {
+    "message": "Currently sending a request\nto check for the API key..."
+  },
+  "noApiKeyPage_howToGetApiKey": {
+    "message": "How to get openai api key?"
+  },
+  "noApiKeyPage_howToGetApiKeyDetail1": {
+    "message": "{Sign up} for an OpenAI account."
+  },
+  "noApiKeyPage_howToGetApiKeyDetail2": {
+    "message": "Navigate to the {API key page}"
+  },
+  "noApiKeyPage_howToGetApiKeyDetail3": {
+    "message": "Create a new secret key to generate an API key."
+  },
+  "noApiKeyPage_howToGetApiKeyDetail4": {
+    "message": "Copy the key and paste it into the input field, then click save."
+  },
+  "footer_EmailText": {
+    "message": "feature suggestions / bug reports"
+  },
+  "noApiKeyPage_saveButtonText": {
+    "message": "SAVE"
+  },
+  "quickChattingPage_sendButtonText": {
+    "message": "SEND"
+  },
+  "quickChattingPage_chattingPlaceholder": {
+    "message": "ex. Hello!"
+  },
+  "quickChattingPage_backButtonText": {
+    "message": "BACK"
+  },
+  "quickChattingPage_resetButtonText": {
+    "message": "RESET"
+  },
+  "slotListPage_newSlotButtonText": {
+    "message": "NEW SLOT"
+  },
+  "slotListPage_quickChatButtonText": {
+    "message": "QUICK CHAT"
+  },
+  "slotListPage_resetApiKeyButtonText": {
+    "message": "RESET API KEY"
+  },
+  "slotListPage_promptSlotsTitle": {
+    "message": "Prompt Slots"
+  },
+  "slotListPage_resetApiKeyConfirmMessage": {
+    "message": "Are you sure?"
+  },
+  "slotListItem_deleteButtonText": {
+    "message": "DEL"
+  },
+  "slotListItem_editButtonText": {
+    "message": "EDIT"
+  },
+  "slotDetail_promptSlotName": {
+    "message": "Prompt Slot name"
+  },
+  "slotDetail_promptSlotName_placeholder": {
+    "message": "ex. Code Review"
+  },
+  "slotDetail_writePromptTitle": {
+    "message": "Write a prompt for ChatGPT (MAX 2000)"
+  },
+  "slotDetail_promptInputPlaceholder": {
+    "message": "ex. You are a code reviewer."
+  },
+  "slotDetail_saveButtonText": {
+    "message": "SAVE"
+  },
+  "slotDetail_cancelButtonText": {
+    "message": "CANCEL"
+  },
+  "responseMessageBox_responseTitle": {
+    "message": "✣ Response"
+  },
+  "responseMessageBox_copyButtonText_copy": {
+    "message": "COPY LAST RESPONSE"
+  },
+  "responseMessageBox_copyButtonText_copied": {
+    "message": "COPIED!"
+  },
+  "responseMessageBox_sendButtonText": {
+    "message": "SEND"
+  },
+  "responseMessageBox_messageInputPlacepolder": {
+    "message": "ex. Summarize!"
+  },
+  "errorMessageBox_errorTitle": {
+    "message": "Error"
+  },
+  "errorMessageBox_unknownError": {
+    "message": "Unknown error"
+  }
+}
