@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import App from "@src/pages/content/src/ContentScriptApp/app";
+import App from "@src/pages/content/src/ContentScriptApp/App";
 import refreshOnUpdate from "virtual:reload-on-update-in-view";
 import {
   ROOT_ID,
