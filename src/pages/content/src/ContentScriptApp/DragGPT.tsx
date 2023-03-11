@@ -11,6 +11,7 @@ import delayPromise from "@pages/content/src/ContentScriptApp/utils/delayPromise
 import dragStateMachine from "@pages/content/src/ContentScriptApp/xState/dragStateMachine";
 import { sendMessageToBackgroundAsync } from "@src/chrome/message";
 import styled from "@emotion/styled";
+import { getPositionOnScreen } from "@pages/content/src/ContentScriptApp/utils/getPositionOnScreen";
 
 const Container = styled.div`
   * {
@@ -29,6 +30,17 @@ async function getGPTResponse(userInput: string) {
 
 export default function DragGPT() {
   const [state, send] = useMachine(dragStateMachine, {
+    actions: {
+      setPositionOnScreen: (context) => {
+        const { left, width, height, top } = context.selectedTextNodeRect;
+        const verticalCenter = left + width / 2;
+        const horizontalCenter = top + height / 2;
+        context.positionOnScreen = getPositionOnScreen({
+          horizontalCenter,
+          verticalCenter,
+        });
+      },
+    },
     services: {
       getGPTResponse: (context) => getGPTResponse(context.selectedText),
     },

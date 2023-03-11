@@ -1,7 +1,4 @@
-import {
-  getPositionOnScreen,
-  PositionOnScreen,
-} from "@pages/content/src/ContentScriptApp/utils/getPositionOnScreen";
+import type { PositionOnScreen } from "@pages/content/src/ContentScriptApp/utils/getPositionOnScreen";
 import { assign, createMachine } from "xstate";
 
 type NodeRect = { left: number; width: number; height: number; top: number };
@@ -45,7 +42,7 @@ const initialContext: Context = {
   requestButtonPosition: { top: 0, left: 0 },
   anchorNodePosition: { top: 0, center: 0, bottom: 0 },
   selectedTextNodeRect: { top: 0, left: 0, height: 0, width: 0 },
-  positionOnScreen: PositionOnScreen.topLeft,
+  positionOnScreen: "topLeft",
   error: undefined,
 } as const;
 
@@ -131,19 +128,6 @@ const dragStateMachine = createMachine(
             bottom: top + height + window.scrollY,
             center: verticalCenter + window.scrollX,
           };
-        },
-      }),
-      setPositionOnScreen: assign({
-        positionOnScreen: (context) => {
-          const { left, width, height, top } = context.selectedTextNodeRect;
-          const verticalCenter = left + width / 2;
-          const horizontalCenter = top + height / 2;
-
-          // warn: side effect can occur by window.innerWidth / window.innerHeight
-          return getPositionOnScreen({
-            verticalCenter,
-            horizontalCenter,
-          });
         },
       }),
       readyRequestButton: assign({

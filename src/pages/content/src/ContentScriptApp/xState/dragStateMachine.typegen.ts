@@ -19,7 +19,7 @@ export interface Typegen0 {
     getGPTResponse: "done.invoke.drag-state.loading:invocation[0]";
   };
   missingImplementations: {
-    actions: never;
+    actions: "setPositionOnScreen";
     delays: never;
     guards: never;
     services: "getGPTResponse";

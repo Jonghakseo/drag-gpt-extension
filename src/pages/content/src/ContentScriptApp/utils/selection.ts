@@ -4,10 +4,9 @@ export function getSelectionText(): string {
 
 export function getSelectionNodeRect(): DOMRect | undefined {
   try {
-    const rect =
-      window.getSelection()?.getRangeAt(0)?.getBoundingClientRect() ??
-      undefined;
-    return rect;
+    return (
+      window.getSelection()?.getRangeAt(0)?.getBoundingClientRect() ?? undefined
+    );
   } catch {
     return undefined;
   }
