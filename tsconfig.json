@@ -15,6 +15,7 @@
       "vite/client",
       "node"
     ],
+    "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
     "lib": [

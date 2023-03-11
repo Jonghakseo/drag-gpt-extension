@@ -22,8 +22,8 @@ const skipLoopCycleOnce = async () => await delayPromise(1);
 
 async function getGPTResponse(userInput: string) {
   return sendMessageToBackgroundAsync({
-    type: "RequestOnetimeChatGPTResponse",
-    data: userInput,
+    type: "RequestOnetimeChatGPT",
+    input: userInput,
   });
 }
 

@@ -1,13 +1,8 @@
 import { assign, createMachine } from "xstate";
 
 type Events =
-  | { type: "EXIT" | "QUERY" }
+  | { type: "EXIT" | "QUERY" | "RESET" }
   | { type: "CHANGE_TEXT"; data: string };
-
-export type Chat = {
-  role: "user" | "assistant" | "error";
-  content: string;
-};
 
 interface Context {
   chatText: string;
@@ -18,7 +13,10 @@ interface Context {
 
 type Services = {
   getGPTResponse: {
-    data: ResponseGPTMessage["data"];
+    data: { result: string; tokenUsage: number };
+  };
+  getChatHistoryFromBackground: {
+    data: Chat[];
   };
 };
 
@@ -32,7 +30,7 @@ const initialContext: Context = {
 const chatStateMachine = createMachine(
   {
     id: "chat-state",
-    initial: "idle",
+    initial: "init",
     predictableActionArguments: true,
     context: initialContext,
     schema: {
@@ -40,9 +38,15 @@ const chatStateMachine = createMachine(
       events: {} as Events,
       services: {} as Services,
     },
-    tsTypes:
-      {} as import("./chatStateMachine.typegen").Typegen0,
+    tsTypes: {} as import("./chatStateMachine.typegen").Typegen0,
     states: {
+      init: {
+        invoke: {
+          src: "getChatHistoryFromBackground",
+          onDone: { target: "idle", actions: "setChats" },
+          onError: { target: "idle" },
+        },
+      },
       idle: {
         on: {
           QUERY: {
@@ -51,6 +55,7 @@ const chatStateMachine = createMachine(
             cond: "isValidText",
           },
           EXIT: "finish",
+          RESET: { actions: "resetChatData" },
           CHANGE_TEXT: {
             actions: "updateChatText",
           },
@@ -64,6 +69,7 @@ const chatStateMachine = createMachine(
         },
         on: {
           EXIT: "finish",
+          RESET: { actions: "resetChatData" },
           CHANGE_TEXT: {
             actions: "updateChatText",
           },
@@ -77,6 +83,9 @@ const chatStateMachine = createMachine(
   },
   {
     actions: {
+      setChats: assign({
+        chats: (_, event) => event.data,
+      }),
       addUserChat: assign({
         chats: (context) =>
           context.chats.concat({ role: "user", content: context.chatText }),
@@ -104,6 +113,7 @@ const chatStateMachine = createMachine(
       resetChatText: assign({
         chatText: () => "",
       }),
+      resetChatData: assign({ chats: () => [] }),
     },
     guards: {
       isValidText: (context) => context.chatText.length > 0,

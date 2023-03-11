@@ -3,16 +3,33 @@ import StyledButton from "@pages/popup/components/StyledButton";
 import { useMachine } from "@xstate/react";
 import chatStateMachine from "@src/shared/xState/chatStateMachine";
 import { ChatCompletionRequestMessage } from "openai";
-import { sendMessageToBackgroundAsync } from "@src/chrome/message";
+import {
+  sendMessageToBackground,
+  sendMessageToBackgroundAsync,
+} from "@src/chrome/message";
 import { FormEventHandler } from "react";
 import UserChat from "@src/shared/component/UserChat";
 import ChatText from "@src/shared/component/ChatText";
 import AssistantChat from "@src/shared/component/AssistantChat";
+import { useScrollDownEffect } from "@src/shared/hook/useScrollDownEffect";
+import { useCopyClipboard } from "@src/shared/hook/useCopyClipboard";
 
 async function getGPTResponse(messages: ChatCompletionRequestMessage[]) {
   return await sendMessageToBackgroundAsync({
-    type: "RequestQuickChatGPTResponse",
-    data: messages,
+    type: "RequestQuickChatGPT",
+    input: messages,
+  });
+}
+async function getChatHistoryFromBackground() {
+  return await sendMessageToBackgroundAsync({
+    type: "GetQuickChatHistory",
+  });
+}
+function resetChatHistoriesFromBackground() {
+  sendMessageToBackground({
+    message: {
+      type: "ResetQuickChatHistory",
+    },
   });
 }
 
@@ -25,6 +42,7 @@ export default function QuickChattingPage({
 }: QuickChattingPageProps) {
   const [state, send] = useMachine(chatStateMachine, {
     services: {
+      getChatHistoryFromBackground,
       getGPTResponse: (context) => {
         const chatsWithoutError = context.chats.filter(
           (chat) => chat.role !== "error"
@@ -36,8 +54,14 @@ export default function QuickChattingPage({
     },
     actions: {
       onExitChatting: onClickBackButton,
+      resetChatData: (context) => {
+        context.chats = [];
+        resetChatHistoriesFromBackground();
+      },
     },
   });
+
+  const { scrollDownRef } = useScrollDownEffect([state.context.chats.length]);
 
   const isLoading = state.matches("loading");
 
@@ -45,14 +69,25 @@ export default function QuickChattingPage({
     event.preventDefault();
     send({ type: "QUERY" });
   };
+
+  const onClickResetButton = () => {
+    send("RESET");
+  };
+
   return (
     <VStack w="100%" minH={400} justifyContent="space-between">
-      <VStack w="100%" overflowY="scroll" maxHeight={300} fontSize={13}>
-        <HStack w="100%" justifyContent="space-between">
-          <StyledButton onClick={onClickBackButton}>BACK</StyledButton>
-          {/* TODO */}
-          <StyledButton>RESET</StyledButton>
-        </HStack>
+      <HStack w="100%" justifyContent="space-between">
+        <StyledButton onClick={onClickBackButton}>BACK</StyledButton>
+        <StyledButton onClick={onClickResetButton}>RESET</StyledButton>
+      </HStack>
+      <VStack
+        ref={scrollDownRef}
+        flexGrow={1}
+        w="100%"
+        overflowY="scroll"
+        maxHeight={340}
+        fontSize={13}
+      >
         {state.context.chats.map((chat, index) => {
           switch (chat.role) {
             case "user":

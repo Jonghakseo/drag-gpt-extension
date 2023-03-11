@@ -12,18 +12,20 @@ import {
 import { HStack, Input, Text, VStack } from "@chakra-ui/react";
 import DraggableBox from "@pages/content/src/ContentScriptApp/components/DraggableBox";
 import { useMachine } from "@xstate/react";
-import chatStateMachine, { Chat } from "@src/shared/xState/chatStateMachine";
+import chatStateMachine from "@src/shared/xState/chatStateMachine";
 import { ChatCompletionRequestMessage } from "openai";
 import { sendMessageToBackgroundAsync } from "@src/chrome/message";
 import ChatText from "@src/shared/component/ChatText";
 import AssistantChat from "@src/shared/component/AssistantChat";
 import UserChat from "@src/shared/component/UserChat";
 import ChatCollapse from "@src/shared/component/ChatCollapse";
+import { useScrollDownEffect } from "@src/shared/hook/useScrollDownEffect";
+import { useCopyClipboard } from "@src/shared/hook/useCopyClipboard";
 
 async function getGPTResponse(messages: ChatCompletionRequestMessage[]) {
   return await sendMessageToBackgroundAsync({
-    type: "RequestOngoingChatGPTResponse",
-    data: messages,
+    type: "RequestOngoingChatGPT",
+    input: messages,
   });
 }
 
@@ -40,10 +42,8 @@ export default function ResponseMessageBox({
   ...restProps
 }: ResponseMessageBoxProps) {
   const [state, send] = useMachine(chatStateMachine, {
-    context: {
-      chats: initialChats,
-    },
     services: {
+      getChatHistoryFromBackground: () => Promise.resolve(initialChats),
       getGPTResponse: (context) => {
         const chatsWithoutError = context.chats.filter(
           (chat) => chat.role !== "error"
@@ -63,14 +63,14 @@ export default function ResponseMessageBox({
   const isLoading = state.matches("loading");
 
   const { scrollDownRef } = useScrollDownEffect([chats.length]);
-  const { isCopied, copyLastResponse } = useCopyLastResponse(
-    chats.filter(({ role }) => role === "assistant").length
-  );
+  const { isCopied, copy } = useCopyClipboard([
+    chats.filter(({ role }) => role === "assistant").length,
+  ]);
 
   const onClickCopy = async () => {
     const lastResponseText = findLastResponseChat(chats);
     if (lastResponseText) {
-      await copyLastResponse(lastResponseText.content);
+      await copy(lastResponseText.content);
     }
   };
   // TODO refactor
@@ -183,44 +183,6 @@ const ChatBox = ({
     </UserChat>
   );
 };
-
-function useCopyLastResponse(assistantMessageLength: number) {
-  const [isCopied, setIsCopied] = useState(false);
-
-  useEffect(() => {
-    setIsCopied(false);
-  }, [assistantMessageLength]);
-
-  const copyLastResponse = async (lastResponseText: string) => {
-    await copyToClipboard(lastResponseText);
-    setIsCopied(true);
-  };
-
-  return {
-    isCopied,
-    copyLastResponse,
-  };
-}
-
-function useScrollDownEffect(deps?: DependencyList) {
-  const scrollDownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!scrollDownRef.current) {
-      return;
-    }
-    scrollDownRef.current.scrollTo({
-      top: scrollDownRef.current.scrollHeight,
-      behavior: "smooth",
-    });
-  }, deps);
-
-  return { scrollDownRef };
-}
-
-async function copyToClipboard(text: string) {
-  await navigator.clipboard.writeText(text);
-}
 
 function findLastResponseChat(chats: Chat[]) {
   return chats.filter((chat) => chat.role === "assistant").at(-1);

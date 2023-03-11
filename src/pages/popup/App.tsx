@@ -13,7 +13,7 @@ import QuickChattingPage from "@pages/popup/pages/QuickChattingPage";
 const saveApiKeyToBackground = async (apiKey: string) => {
   await sendMessageToBackgroundAsync({
     type: "SaveAPIKey",
-    data: apiKey,
+    input: apiKey,
   });
 };
 

@@ -3,7 +3,6 @@ import {
   PositionOnScreen,
 } from "@pages/content/src/ContentScriptApp/utils/getPositionOnScreen";
 import { assign, createMachine } from "xstate";
-import { Chat } from "@src/shared/xState/chatStateMachine";
 
 type NodeRect = { left: number; width: number; height: number; top: number };
 type RequestButtonPosition = { top: number; left: number };
@@ -36,7 +35,7 @@ interface Context {
 
 type Services = {
   getGPTResponse: {
-    data: ResponseGPTMessage["data"];
+    data: { result: string; tokenUsage: number };
   };
 };
 
@@ -86,12 +85,12 @@ const dragStateMachine = createMachine(
               cond: "isInvalidTextSelectedEvent",
             },
           ],
-          REQUEST: "loading",
+          REQUEST: { target: "loading", actions: "addRequestChat" },
         },
       },
       loading: {
         tags: "showRequestButton",
-        entry: ["setAnchorNodePosition", "addRequestChat"],
+        entry: ["setAnchorNodePosition"],
         exit: ["setPositionOnScreen"],
         invoke: {
           src: "getGPTResponse",

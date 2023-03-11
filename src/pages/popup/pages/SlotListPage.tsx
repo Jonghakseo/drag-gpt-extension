@@ -19,21 +19,21 @@ const getAllSlotsFromBackground = async () => {
 
 const addSlotMessageSendToBackground = (newSlot: Slot) => {
   sendMessageToBackground({
-    message: { type: "AddNewSlot", data: newSlot },
+    message: { type: "AddNewSlot", input: newSlot },
   });
 };
 const updateSlotMessageSendToBackground = (updatedSlot: Slot) => {
   sendMessageToBackground({
     message: {
-      type: "UpdateSlotData",
-      data: updatedSlot,
+      type: "UpdateSlot",
+      input: updatedSlot,
     },
   });
 };
 
 const selectSlotMessageSendToBackground = (slotId: string) => {
   sendMessageToBackground({
-    message: { type: "SelectSlot", data: slotId },
+    message: { type: "SelectSlot", input: slotId },
   });
 };
 
@@ -41,7 +41,7 @@ const deleteSlotMessageSendToBackground = (slotId: string) => {
   sendMessageToBackground({
     message: {
       type: "DeleteSlot",
-      data: slotId,
+      input: slotId,
     },
   });
 };
@@ -111,9 +111,6 @@ export default function SlotListPage({
     <>
       {state.matches("slot_list") && (
         <VStack spacing={12} width="100%">
-          <Text color={COLORS.WHITE} fontWeight="bold">
-            Slots
-          </Text>
           <HStack width="100%" justifyContent="space-between">
             <StyledButton onClick={addNewSlot}>NEW SLOT</StyledButton>
             <StyledButton onClick={onClickQuickChatButton}>
@@ -123,6 +120,9 @@ export default function SlotListPage({
               RESET API KEY
             </StyledButton>
           </HStack>
+          <Text color={COLORS.WHITE} fontWeight="bold" alignSelf="flex-start">
+            Prompt Slots
+          </Text>
           {state.context.slots.map((slot, index) => (
             <SlotListItem
               key={slot.id}
