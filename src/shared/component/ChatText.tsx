@@ -18,6 +18,7 @@ export default function ChatText({
   return (
     <Text
       borderRadius={4}
+      whiteSpace="pre-wrap"
       border={border ? "1px solid #f0ffff2e" : undefined}
       padding={padding}
       textAlign="start"
