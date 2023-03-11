@@ -1157,7 +1157,7 @@
   dependencies:
     "@chakra-ui/utils" "2.0.15"
 
-"@chakra-ui/react@^2.5.1":
+"@chakra-ui/react@2.5.1":
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/@chakra-ui/react/-/react-2.5.1.tgz#05414db2b512bd4402e42eecc6b915d85102c576"
   integrity sha512-ugkaqfcNMb9L4TkalWiF3rnqfr0TlUUD46JZaDIZiORVisaSwXTZTQrVfG40VghhaJT28rnC5WtiE8kd567ZBQ==
@@ -1432,7 +1432,7 @@
     source-map "^0.5.7"
     stylis "4.1.3"
 
-"@emotion/cache@^11.10.5":
+"@emotion/cache@11.10.5", "@emotion/cache@^11.10.5":
   version "11.10.5"
   resolved "https://registry.yarnpkg.com/@emotion/cache/-/cache-11.10.5.tgz#c142da9351f94e47527ed458f7bbbbe40bb13c12"
   integrity sha512-dGYHWyzTdmK+f2+EnIGBpkz1lKc4Zbj2KHd4cX3Wi8/OWr5pKslNjc3yABKH4adRGCvSX4VDC0i04mrrq0aiRA==
@@ -1472,7 +1472,7 @@
   resolved "https://registry.yarnpkg.com/@emotion/memoize/-/memoize-0.8.0.tgz#f580f9beb67176fa57aae70b08ed510e1b18980f"
   integrity sha512-G/YwXTkv7Den9mXDO7AhLWkE3q+I92B+VqAE+dYG4NGPaHZGvt3G8Q0p9vmE+sq7rTGphUbAvmQ9YpbfMQGGlA==
 
-"@emotion/react@^11.10.6":
+"@emotion/react@11.10.6":
   version "11.10.6"
   resolved "https://registry.yarnpkg.com/@emotion/react/-/react-11.10.6.tgz#dbe5e650ab0f3b1d2e592e6ab1e006e75fd9ac11"
   integrity sha512-6HT8jBmcSkfzO7mc+N1L9uwvOnlcGoix8Zn7srt+9ga0MjREo6lRpuVX0kzo6Jp6oTqDhREOFsygN6Ew4fEQbw==
@@ -1502,7 +1502,7 @@
   resolved "https://registry.yarnpkg.com/@emotion/sheet/-/sheet-1.2.1.tgz#0767e0305230e894897cadb6c8df2c51e61a6c2c"
   integrity sha512-zxRBwl93sHMsOj4zs+OslQKg/uhF38MB+OMKoCrVuS0nyTkqnau+BM3WGEoOptg9Oz45T/aIGs1qbVAsEFo3nA==
 
-"@emotion/styled@^11.10.6":
+"@emotion/styled@11.10.6":
   version "11.10.6"
   resolved "https://registry.yarnpkg.com/@emotion/styled/-/styled-11.10.6.tgz#d886afdc51ef4d66c787ebde848f3cc8b117ebba"
   integrity sha512-OXtBzOmDSJo5Q0AFemHCfl+bUueT8BIcPSxu0EGTpGk6DmI5dnhSzQANm1e1ze0YZL7TDyAyy6s/b/zmGOS3Og==
@@ -2248,7 +2248,7 @@
     "@typescript-eslint/types" "5.38.1"
     eslint-visitor-keys "^3.3.0"
 
-"@vespaiach/axios-fetch-adapter@^0.3.1":
+"@vespaiach/axios-fetch-adapter@0.3.1":
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@vespaiach/axios-fetch-adapter/-/axios-fetch-adapter-0.3.1.tgz#b0c08167bec9cc558f578a1b9ccff52ead1cf1cb"
   integrity sha512-+1F52VWXmQHSRFSv4/H0wtnxfvjRMPK5531e880MIjypPdUSX6QZuoDgEVeCE1vjhzDdxCVX7rOqkub7StEUwQ==
@@ -2288,7 +2288,7 @@
     "@babel/types" "^7.19.4"
     recast "^0.21.2"
 
-"@xstate/react@^3.2.1":
+"@xstate/react@3.2.1":
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/@xstate/react/-/react-3.2.1.tgz#ac7b78e8c1d6d3802dfb29a6499f18e48b3dfdb3"
   integrity sha512-L/mqYRxyBWVdIdSaXBHacfvS8NKn3sTKbPb31aRADbE9spsJ1p+tXil0GVQHPlzrmjGeozquLrxuYGiXsFNU7g==
@@ -3579,7 +3579,7 @@ form-data@^4.0.0:
     combined-stream "^1.0.8"
     mime-types "^2.1.12"
 
-framer-motion@^10.0.1:
+framer-motion@10.0.1:
   version "10.0.1"
   resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-10.0.1.tgz#62cadfb9ed80599ac9b1c1699dc4e1164c3133c5"
   integrity sha512-/N7gBA9gH8PkStyNQ67P/lx8UhL/7Y8z9Ku7FfgOF77sSG8wu8781kX7I5ZUgflRRtQXo8qH4Rev23004G1zcQ==
@@ -4562,12 +4562,7 @@ json-stable-stringify-without-jsonify@^1.0.1:
   resolved "https://registry.yarnpkg.com/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz#9db7b59496ad3f3cfef30a75142d2d930ad72651"
   integrity sha1-nbe1lJatPzz+8wp1FC0tkwrXJlE=
 
-json5@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/json5/-/json5-2.2.1.tgz#655d50ed1e6f95ad1a3caababd2b0efda10b395c"
-  integrity sha512-1hqLFMSrGHRHxav9q9gNjJ5EXznIxGVO09xQRrwplcS8qs28pZ8s8hupZAmqDwZUmVZ2Qb2jnyPOWcDH8m8dlA==
-
-json5@^2.2.2:
+json5@^2.2.1, json5@^2.2.2:
   version "2.2.3"
   resolved "https://registry.yarnpkg.com/json5/-/json5-2.2.3.tgz#78cd6f1a19bdc12b73db5ad0c61efd66c1e29283"
   integrity sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==
@@ -4924,7 +4919,7 @@ onetime@^5.1.2:
   dependencies:
     mimic-fn "^2.1.0"
 
-openai@^3.2.1:
+openai@3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/openai/-/openai-3.2.1.tgz#1fa35bdf979cbde8453b43f2dd3a7d401ee40866"
   integrity sha512-762C9BNlJPbjjlWZi4WYK9iM2tAVAv0uUp1UmI34vb0CN5T2mjB/qM6RYBmNKMh/dN9fC+bxqPwWJZUTWW052A==
@@ -5186,7 +5181,7 @@ react-dom@18.2.0:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
 
-react-draggable@^4.4.5:
+react-draggable@4.4.5:
   version "4.4.5"
   resolved "https://registry.yarnpkg.com/react-draggable/-/react-draggable-4.4.5.tgz#9e37fe7ce1a4cf843030f521a0a4cc41886d7e7c"
   integrity sha512-OMHzJdyJbYTZo4uQE393fHcqqPYsEtkjfMgvCHr6rejT+Ezn4OZbNyGH50vv+SunC1RMvwOTSWkEODQLzw1M9g==
@@ -5292,7 +5287,7 @@ recast@^0.21.2:
     source-map "~0.6.1"
     tslib "^2.0.1"
 
-regenerator-runtime@^0.13.11:
+regenerator-runtime@0.13.11, regenerator-runtime@^0.13.11:
   version "0.13.11"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz#f6dca3e7ceec20590d07ada785636a90cdca17f9"
   integrity sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==
@@ -6110,7 +6105,7 @@ xmlchars@^2.2.0:
   resolved "https://registry.yarnpkg.com/xmlchars/-/xmlchars-2.2.0.tgz#060fe1bcb7f9c76fe2a17db86a9bc3ab894210cb"
   integrity sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==
 
-xstate@^4.33.4, xstate@^4.37.0:
+xstate@4.37.0, xstate@^4.33.4:
   version "4.37.0"
   resolved "https://registry.yarnpkg.com/xstate/-/xstate-4.37.0.tgz#2f253ccbfc2dc6954ff975b8102714bde9751726"
   integrity sha512-YC+JCerRclKS9ixQTuw8l3vs3iFqWzNzOGR0ID5XsSlieMXIV9nNPE43h9CGr7VdxA1QYhMwhCZA0EdpOd17Bg==
