@@ -2,30 +2,15 @@ import { assign, createMachine } from "xstate";
 
 type Events =
   | {
-      type: "SHOW_DETAIL";
-      slotId: string;
+      type: "SHOW_DETAIL" | "SELECT_SLOT" | "DELETE_SLOT";
+      data: string;
     }
   | {
-      type: "SELECT_SLOT";
-      slotId: string;
+      type: "ADD_SLOT" | "UPDATE_SLOT";
+      data: Slot;
     }
   | {
-      type: "ADD_SLOT";
-      slot: Slot;
-    }
-  | {
-      type: "DELETE_SLOT";
-      slotId: string;
-    }
-  | {
-      type: "UPDATE_SLOT";
-      slot: Slot;
-    }
-  | {
-      type: "CHANGE_API_KEY";
-    }
-  | {
-      type: "EXIT_DETAIL";
+      type: "CHANGE_API_KEY" | "EXIT_DETAIL";
     };
 
 interface Context {
@@ -34,14 +19,14 @@ interface Context {
 }
 
 type Services = {
-  getAllSlots: {
+  getAllSlotsFromBackground: {
     data: Slot[];
   };
 };
 
-const hasApiKeyPageStateMachine = createMachine(
+const slotListPageStateMachine = createMachine(
   {
-    id: "has_api_key",
+    id: "slot_list_page",
     initial: "init",
     predictableActionArguments: true,
     schema: {
@@ -52,11 +37,11 @@ const hasApiKeyPageStateMachine = createMachine(
     context: {
       slots: [],
     },
-    tsTypes: {} as import("./hasApiKeyPageStateMachine.typegen").Typegen0,
+    tsTypes: {} as import("./slotListPageStateMachine.typegen").Typegen0,
     states: {
       init: {
         invoke: {
-          src: "getAllSlots",
+          src: "getAllSlotsFromBackground",
           onDone: {
             target: "slot_list",
             actions: "setSlots",
@@ -72,7 +57,7 @@ const hasApiKeyPageStateMachine = createMachine(
             target: "slot_detail",
             actions: assign({
               editingSlot: (context, event) =>
-                context.slots.find((slot) => slot.id === event.slotId),
+                context.slots.find((slot) => slot.id === event.data),
             }),
           },
           ADD_SLOT: {
@@ -109,14 +94,14 @@ const hasApiKeyPageStateMachine = createMachine(
     actions: {
       setSlots: assign({ slots: (_, event) => event.data }),
       addSlot: assign({
-        slots: (context, event) => context.slots.concat(event.slot),
+        slots: (context, event) => context.slots.concat(event.data),
       }),
       updateSlot: assign({
         slots: (context, event) => {
           return context.slots.reduce<Slot[]>((total, slot) => {
-            const isUpdateTargetSlot = slot.id === event.slot.id;
+            const isUpdateTargetSlot = slot.id === event.data.id;
             if (isUpdateTargetSlot) {
-              return [...total, event.slot];
+              return [...total, event.data];
             }
             return [...total, slot];
           }, []);
@@ -124,17 +109,17 @@ const hasApiKeyPageStateMachine = createMachine(
       }),
       deleteSlot: assign({
         slots: (context, event) =>
-          context.slots.filter((slot) => slot.id !== event.slotId),
+          context.slots.filter((slot) => slot.id !== event.data),
       }),
       selectSlot: assign({
         slots: (context, event) =>
           context.slots.map((slot) => ({
             ...slot,
-            isSelected: slot.id === event.slotId,
+            isSelected: slot.id === event.data,
           })),
       }),
     },
   }
 );
 
-export default hasApiKeyPageStateMachine;
+export default slotListPageStateMachine;

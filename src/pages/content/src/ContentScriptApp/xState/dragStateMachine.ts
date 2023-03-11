@@ -14,23 +14,14 @@ type AnchorNodePosition = {
 
 type TextSelectedEvent = {
   type: "TEXT_SELECTED";
-  value: {
+  data: {
     selectedText: string;
     selectedNodeRect?: NodeRect;
     requestButtonPosition: RequestButtonPosition;
   };
 };
 
-type Events =
-  | TextSelectedEvent
-  | { type: "CLOSE_MESSAGE_BOX" }
-  | { type: "REQUEST" }
-  | { type: "REQUEST_ADDITIONAL_CHAT"; chatText: string };
-
-export type Chat = {
-  role: "user" | "assistant" | "error";
-  content: string;
-};
+type Events = TextSelectedEvent | { type: "CLOSE_MESSAGE_BOX" | "REQUEST" };
 
 interface Context {
   chats: Chat[];
@@ -39,20 +30,15 @@ interface Context {
   requestButtonPosition: RequestButtonPosition;
   positionOnScreen: PositionOnScreen;
   anchorNodePosition: AnchorNodePosition;
-  leftToken: number;
   error?: Error;
 }
 
 type Services = {
   getGPTResponse: {
-    data: ResponseGPTMessage["data"];
-  };
-  getAdditionalGPTResponse: {
-    data: ResponseGPTMessage["data"];
+    data: { result: string; tokenUsage: number };
   };
 };
 
-const MAX_TOKEN = 4096 as const;
 const initialContext: Context = {
   chats: [] as Chat[],
   selectedText: "",
@@ -60,7 +46,6 @@ const initialContext: Context = {
   anchorNodePosition: { top: 0, center: 0, bottom: 0 },
   selectedTextNodeRect: { top: 0, left: 0, height: 0, width: 0 },
   positionOnScreen: PositionOnScreen.topLeft,
-  leftToken: MAX_TOKEN,
   error: undefined,
 } as const;
 
@@ -100,7 +85,7 @@ const dragStateMachine = createMachine(
               cond: "isInvalidTextSelectedEvent",
             },
           ],
-          REQUEST: "loading",
+          REQUEST: { target: "loading", actions: "addRequestChat" },
         },
       },
       loading: {
@@ -123,27 +108,6 @@ const dragStateMachine = createMachine(
       },
       response_message_box: {
         tags: "showResponseMessages",
-        on: {
-          CLOSE_MESSAGE_BOX: "idle",
-          REQUEST_ADDITIONAL_CHAT: {
-            target: "chat_loading_message_box",
-            actions: "addRequestChat",
-          },
-        },
-      },
-      chat_loading_message_box: {
-        tags: "showResponseMessages",
-        invoke: {
-          src: "getAdditionalGPTResponse",
-          onDone: {
-            target: "response_message_box",
-            actions: "addResponseChat",
-          },
-          onError: {
-            target: "response_message_box",
-            actions: "addErrorChat",
-          },
-        },
         on: {
           CLOSE_MESSAGE_BOX: "idle",
         },
@@ -183,14 +147,14 @@ const dragStateMachine = createMachine(
         },
       }),
       readyRequestButton: assign({
-        selectedText: (_, event) => event.value.selectedText,
+        selectedText: (_, event) => event.data.selectedText,
         selectedTextNodeRect: (context, event) =>
-          event.value.selectedNodeRect ?? context.selectedTextNodeRect,
-        requestButtonPosition: (_, event) => event.value.requestButtonPosition,
+          event.data.selectedNodeRect ?? context.selectedTextNodeRect,
+        requestButtonPosition: (_, event) => event.data.requestButtonPosition,
       }),
       addRequestChat: assign({
-        chats: (context, event) =>
-          context.chats.concat({ role: "user", content: event.chatText }),
+        chats: (context) =>
+          context.chats.concat({ role: "user", content: context.selectedText }),
       }),
       addResponseChat: assign({
         chats: (context, event) =>
@@ -198,16 +162,6 @@ const dragStateMachine = createMachine(
             role: "assistant",
             content: event.data.result,
           }),
-        leftToken: (_, event) => MAX_TOKEN - event.data.tokenUsage,
-      }),
-      addErrorChat: assign({
-        chats: (context, event) => {
-          const error: Error = event.data as Error;
-          return context.chats.concat({
-            role: "error",
-            content: `${error?.name}\n${error?.message}`,
-          });
-        },
       }),
     },
     guards: {
@@ -222,10 +176,10 @@ const dragStateMachine = createMachine(
 );
 
 function isValidTextSelectedEvent(event: TextSelectedEvent): boolean {
-  if (!event.value.selectedNodeRect) {
+  if (!event.data.selectedNodeRect) {
     return false;
   }
-  return event.value.selectedText.length > 1;
+  return event.data.selectedText.length > 1;
 }
 
 export default dragStateMachine;

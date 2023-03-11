@@ -9,12 +9,12 @@ let configuration: Configuration | null = null;
 export async function chatGPT({
   input,
   slot,
-  histories,
+  chats,
   apiKey,
 }: {
   slot: ChatGPTSlot;
-  histories?: ChatCompletionRequestMessage[];
-  input: string;
+  chats?: ChatCompletionRequestMessage[];
+  input?: string;
   apiKey: string;
 }): Promise<{ result: string; tokenUsage: number }> {
   if (configuration?.apiKey !== apiKey) {
@@ -36,14 +36,17 @@ export async function chatGPT({
       content: slot.system,
     });
   }
-  if (histories && histories.length > 0) {
-    messages.push(...histories);
+  if (chats && chats.length > 0) {
+    messages.push(...chats);
+  }
+  if (input) {
+    messages.push({ role: "user", content: input });
   }
 
   const completion = await openAiApiInstance.createChatCompletion({
     model: "gpt-3.5-turbo",
     max_tokens: slot.maxTokens,
-    messages: messages.concat({ role: "user", content: input }),
+    messages,
     temperature: slot.temperature,
     top_p: slot.topP,
     frequency_penalty: slot.frequencyPenalty,

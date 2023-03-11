@@ -2,27 +2,28 @@ import React from "react";
 import { NoApiKeyPage } from "@pages/popup/pages/NoApiKeyPage";
 import SlotListPage from "@pages/popup/pages/SlotListPage";
 import { useMachine } from "@xstate/react";
-import popupStateMachine from "@pages/popup/stateMachine/popupStateMachine";
+import popupStateMachine from "@pages/popup/xState/popupStateMachine";
 import {
   sendMessageToBackground,
   sendMessageToBackgroundAsync,
 } from "@src/chrome/message";
 import MainLayout from "@pages/popup/components/layout/MainLayout";
+import QuickChattingPage from "@pages/popup/pages/QuickChattingPage";
 
-const saveApiKey = async (apiKey: string) => {
+const saveApiKeyToBackground = async (apiKey: string) => {
   await sendMessageToBackgroundAsync({
     type: "SaveAPIKey",
-    data: apiKey,
+    input: apiKey,
   });
 };
 
-const getApiKey = async () => {
+const getApiKeyFromBackground = async () => {
   return sendMessageToBackgroundAsync({
     type: "GetAPIKey",
   });
 };
 
-const resetApiKey = () => {
+const resetApiKeyFromBackground = () => {
   sendMessageToBackground({
     message: {
       type: "ResetAPIKey",
@@ -33,15 +34,15 @@ const resetApiKey = () => {
 export default function App() {
   const [state, send] = useMachine(popupStateMachine, {
     services: {
-      saveApiKey: (context) => saveApiKey(context.openAiApiKey ?? ""),
-      getApiKey,
+      saveApiKeyToBackground: (context) => {
+        return saveApiKeyToBackground(context.openAiApiKey ?? "");
+      },
+      getApiKeyFromBackground,
+    },
+    actions: {
+      resetApiKeyFromBackground,
     },
   });
-
-  const resetOpenApiKey = () => {
-    send("RESET_API_KEY");
-    resetApiKey();
-  };
 
   const checkApiKey = (apiKey: string) => {
     send({ type: "CHECK_API_KEY", data: apiKey });
@@ -49,8 +50,11 @@ export default function App() {
 
   return (
     <MainLayout>
-      {state.matches("has_api_key") && (
-        <SlotListPage onClickChangeApiKey={resetOpenApiKey} />
+      {state.matches("slot_list_page") && (
+        <SlotListPage
+          onClickChangeApiKey={() => send("RESET_API_KEY")}
+          onClickQuickChatButton={() => send("GO_TO_QUICK_CHAT")}
+        />
       )}
       {state.hasTag("noApiKeyPage") && (
         <NoApiKeyPage
@@ -58,6 +62,9 @@ export default function App() {
           loading={state.matches("checking_api_key")}
           checkApiKey={checkApiKey}
         />
+      )}
+      {state.matches("quick_chat") && (
+        <QuickChattingPage onClickBackButton={() => send("EXIT_QUICK_CHAT")} />
       )}
     </MainLayout>
   );

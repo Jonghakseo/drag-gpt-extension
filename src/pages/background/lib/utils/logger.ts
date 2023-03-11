@@ -3,11 +3,11 @@ const Logger = {
     console.log(
       "Message Receive:",
       `${message.type}\ndata: ${
-        message.data ? JSON.stringify(message.data) : "none"
+        message.input ? JSON.stringify(message.input) : "none"
       }`
     );
   },
-  send: (message: Message) => {
+  send: (message: { type: any; data?: any }) => {
     console.log(
       "Message Sending:",
       `${message.type}\ndata: ${

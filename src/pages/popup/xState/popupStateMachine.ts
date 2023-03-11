@@ -6,15 +6,7 @@ type Events =
       data: string;
     }
   | {
-      type: "RESET_API_KEY";
-    }
-  | {
-      type: "UPDATE_ROLE";
-      data: string;
-    }
-  | {
-      type: "UPDATE_ASSISTANT_PROMPT";
-      data: string;
+      type: "RESET_API_KEY" | "GO_TO_QUICK_CHAT" | "EXIT_QUICK_CHAT";
     };
 
 interface Context {
@@ -23,10 +15,10 @@ interface Context {
 }
 
 type Services = {
-  getApiKey: {
+  getApiKeyFromBackground: {
     data: string;
   };
-  saveApiKey: {
+  saveApiKeyToBackground: {
     data: void;
   };
 };
@@ -48,9 +40,9 @@ const popupStateMachine = createMachine(
     states: {
       init: {
         invoke: {
-          src: "getApiKey",
+          src: "getApiKeyFromBackground",
           onDone: {
-            target: "has_api_key",
+            target: "slot_list_page",
             actions: "setApiKey",
           },
           onError: {
@@ -58,12 +50,13 @@ const popupStateMachine = createMachine(
           },
         },
       },
-      has_api_key: {
+      slot_list_page: {
         on: {
           RESET_API_KEY: {
             target: "no_api_key",
-            actions: "resetOpenAiApiKey",
+            actions: ["resetOpenAiApiKey", "resetApiKeyFromBackground"],
           },
+          GO_TO_QUICK_CHAT: "quick_chat",
         },
       },
       no_api_key: {
@@ -75,11 +68,16 @@ const popupStateMachine = createMachine(
           },
         },
       },
+      quick_chat: {
+        on: {
+          EXIT_QUICK_CHAT: "slot_list_page",
+        },
+      },
       checking_api_key: {
         tags: "noApiKeyPage",
         invoke: {
-          src: "saveApiKey",
-          onDone: { target: "has_api_key" },
+          src: "saveApiKeyToBackground",
+          onDone: { target: "slot_list_page" },
           onError: {
             target: "no_api_key",
             actions: assign({ apiKeyCheckError: (_, event) => event.data }),
