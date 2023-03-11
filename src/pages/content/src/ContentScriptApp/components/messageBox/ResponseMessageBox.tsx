@@ -49,7 +49,7 @@ export default function ResponseMessageBox({
       },
     },
     actions: {
-      onExitChatting: onClose,
+      exitChatting: onClose,
     },
   });
 
@@ -123,7 +123,7 @@ export default function ResponseMessageBox({
           <HStack as="form" onSubmit={onChatSubmit}>
             <Input
               width={230}
-              value={state.context.chatText}
+              value={state.context.inputText}
               placeholder={t("responseMessageBox_messageInputPlacepolder")}
               onChange={(e) =>
                 send({ type: "CHANGE_TEXT", data: e.target.value })

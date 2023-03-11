@@ -6,6 +6,29 @@ let openAiApiInstance: OpenAIApi | null = null;
 let axiosInstance: AxiosInstance | null = null;
 let configuration: Configuration | null = null;
 
+function checkIsSameApiKey(apiKey: string): boolean {
+  return configuration?.apiKey === apiKey;
+}
+
+function resetAuthInfoInstance(): void {
+  configuration = null;
+  openAiApiInstance = null;
+}
+
+function createInstancesIfNotExists(apiKey: string) {
+  axiosInstance ??= axios.create({
+    adapter: fetchAdapter,
+  });
+  configuration ??= new Configuration({
+    apiKey,
+  });
+  openAiApiInstance ??= new OpenAIApi(configuration, undefined, axiosInstance);
+
+  return {
+    openAiApiInstance,
+  };
+}
+
 export async function chatGPT({
   input,
   slot,
@@ -17,18 +40,11 @@ export async function chatGPT({
   input?: string;
   apiKey: string;
 }): Promise<{ result: string; tokenUsage: number }> {
-  axiosInstance ??= axios.create({
-    adapter: fetchAdapter,
-  });
-
-  if (configuration?.apiKey !== apiKey) {
-    configuration = null;
-    openAiApiInstance = null;
+  if (!checkIsSameApiKey(apiKey)) {
+    resetAuthInfoInstance();
   }
-  configuration ??= new Configuration({
-    apiKey,
-  });
-  openAiApiInstance ??= new OpenAIApi(configuration, undefined, axiosInstance);
+
+  const { openAiApiInstance } = createInstancesIfNotExists(apiKey);
 
   const messages: ChatCompletionRequestMessage[] = [];
 
@@ -38,7 +54,7 @@ export async function chatGPT({
       content: slot.system,
     });
   }
-  if (chats && chats.length > 0) {
+  if (hasChats(chats)) {
     messages.push(...chats);
   }
   if (input) {
@@ -63,4 +79,10 @@ export async function chatGPT({
     result,
     tokenUsage,
   };
+}
+
+function hasChats(
+  chats?: ChatCompletionRequestMessage[]
+): chats is ChatCompletionRequestMessage[] {
+  return chats !== undefined && chats.length > 0;
 }

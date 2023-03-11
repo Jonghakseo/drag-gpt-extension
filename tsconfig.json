@@ -48,7 +48,8 @@
     "src",
     "utils",
     "vite.config.ts",
-    "node_modules/@types"
+    "node_modules/@types",
+    "test-utils"
   ],
   "exclude": [
     "node_modules/ts-jest"

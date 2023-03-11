@@ -5,7 +5,7 @@ type Events =
   | { type: "CHANGE_TEXT"; data: string };
 
 interface Context {
-  chatText: string;
+  inputText: string;
   chats: Chat[];
   leftToken: number;
   error?: Error;
@@ -22,10 +22,10 @@ type Services = {
 
 const MAX_TOKEN = 4096 as const;
 const initialContext: Context = {
-  chatText: "",
-  chats: [] as Chat[],
+  inputText: "",
+  chats: [],
   leftToken: MAX_TOKEN,
-} as const;
+};
 
 const chatStateMachine = createMachine(
   {
@@ -77,7 +77,7 @@ const chatStateMachine = createMachine(
       },
       finish: {
         type: "final",
-        entry: "onExitChatting",
+        entry: "exitChatting",
       },
     },
   },
@@ -88,7 +88,10 @@ const chatStateMachine = createMachine(
       }),
       addUserChat: assign({
         chats: (context) =>
-          context.chats.concat({ role: "user", content: context.chatText }),
+          context.chats.concat({
+            role: "user",
+            content: context.inputText,
+          }),
       }),
       addAssistantChat: assign({
         chats: (context, event) =>
@@ -108,15 +111,15 @@ const chatStateMachine = createMachine(
         },
       }),
       updateChatText: assign({
-        chatText: (_, event) => event.data,
+        inputText: (_, event) => event.data,
       }),
       resetChatText: assign({
-        chatText: () => "",
+        inputText: () => "",
       }),
       resetChatData: assign({ chats: () => [] }),
     },
     guards: {
-      isValidText: (context) => context.chatText.length > 0,
+      isValidText: (context) => context.inputText.length > 0,
     },
   }
 );

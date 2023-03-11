@@ -23,11 +23,11 @@ export default function ChatCollapse({
 }: ChatCollapseProps) {
   const [show, setShow] = useState(false);
 
+  const closeCollapse = () => setShow(false);
   const openCollapse: MouseEventHandler<HTMLDivElement> = (event) => {
     setShow(true);
     onClick?.(event);
   };
-  const closeCollapse = () => setShow(false);
 
   return (
     <CollapseBox isShow={show} onClick={openCollapse} {...restProps}>

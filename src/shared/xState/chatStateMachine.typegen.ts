@@ -24,7 +24,7 @@ export interface Typegen0 {
     getGPTResponse: "done.invoke.chat-state.loading:invocation[0]";
   };
   missingImplementations: {
-    actions: "onExitChatting";
+    actions: "exitChatting";
     delays: never;
     guards: never;
     services: "getChatHistoryFromBackground" | "getGPTResponse";
@@ -33,7 +33,7 @@ export interface Typegen0 {
     addAssistantChat: "done.invoke.chat-state.loading:invocation[0]";
     addErrorChat: "error.platform.chat-state.loading:invocation[0]";
     addUserChat: "QUERY";
-    onExitChatting: "EXIT";
+    exitChatting: "EXIT";
     resetChatData: "RESET";
     resetChatText: "QUERY";
     setChats: "done.invoke.chat-state.init:invocation[0]";
