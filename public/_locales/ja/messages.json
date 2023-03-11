@@ -8,7 +8,7 @@
   "dragGPT": {
     "message": "Drag GPT"
   },
-  "noApiKeyPage_openAIApiKey": {
+  "noApiKeyPage_openAIApiKey_placeholder": {
     "message": "OpenAI APIキー"
   },
   "noApiKeyPage_checkingApiKey": {
