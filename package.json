@@ -15,7 +15,7 @@
     "wss": "node utils/reload/initReloadServer.js",
     "dev": "npm run build:hmr && (run-p wss build:watch)",
     "test": "jest",
-    "patch": "npm version patch -m \"Upgrade to %s\" && git push && git push --tags"
+    "patch": "npm version patch -m \"version %s\""
   },
   "type": "module",
   "dependencies": {
