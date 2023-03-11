@@ -5,7 +5,9 @@ import packageJson from "./package.json";
  */
 const manifest: chrome.runtime.ManifestV3 = {
   manifest_version: 3,
-  name: "Drag GPT - easy start AI with Drag!",
+  // name: "Drag GPT - easy start AI with Drag!",
+  name: "__MSG_extensionName__",
+  default_locale: "en",
   version: packageJson.version,
   description: packageJson.description,
   options_page: "src/pages/options/index.html",
