@@ -61,5 +61,26 @@
   },
   "slotListPage_resetApiKeyConfirmMessage": {
     "message": "정말 API 키를 초기화 하시겠어요?"
+  },
+  "slotListItem_deleteButtonText": {
+    "message": "수정"
+  },
+  "slotListItem_editButtonText": {
+    "message": "삭제"
+  },
+  "slotDetail_promptSlotName": {
+    "message": "Prompt Slot name"
+  },
+  "slotDetail_writePromptTitle": {
+    "message": "Write a prompt for ChatGPT (MAX 2000)"
+  },
+  "slotDetail_promptInputPlaceholder": {
+    "message": "ex. You are a code reviewer."
+  },
+  "slotDetail_saveButtonText": {
+    "message": "SAVE"
+  },
+  "slotDetail_backButtonText": {
+    "message": "BACK"
   }
 }

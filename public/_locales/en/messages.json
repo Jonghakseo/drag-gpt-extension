@@ -61,5 +61,26 @@
   },
   "slotListPage_resetApiKeyConfirmMessage": {
     "message": "Are you sure?"
+  },
+  "slotListItem_deleteButtonText": {
+    "message": "EDIT"
+  },
+  "slotListItem_editButtonText": {
+    "message": "DEL"
+  },
+  "slotDetail_promptSlotName": {
+    "message": "Prompt Slot name"
+  },
+  "slotDetail_writePromptTitle": {
+    "message": "Write a prompt for ChatGPT (MAX 2000)"
+  },
+  "slotDetail_promptInputPlaceholder": {
+    "message": "ex. You are a code reviewer."
+  },
+  "slotDetail_saveButtonText": {
+    "message": "SAVE"
+  },
+  "slotDetail_backButtonText": {
+    "message": "BACK"
   }
 }
