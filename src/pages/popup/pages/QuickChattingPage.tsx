@@ -13,6 +13,7 @@ import ChatText from "@src/shared/component/ChatText";
 import AssistantChat from "@src/shared/component/AssistantChat";
 import { useScrollDownEffect } from "@src/shared/hook/useScrollDownEffect";
 import { t } from "@src/chrome/i18n";
+import { useCopyClipboard } from "@src/shared/hook/useCopyClipboard";
 
 async function getGPTResponse(messages: ChatCompletionRequestMessage[]) {
   return await sendMessageToBackgroundAsync({
@@ -62,6 +63,16 @@ export default function QuickChattingPage({
   });
 
   const { scrollDownRef } = useScrollDownEffect([state.context.chats.length]);
+  const { isCopied, copy } = useCopyClipboard([
+    state.context.chats.filter(({ role }) => role === "assistant").length,
+  ]);
+
+  const onClickCopy = async () => {
+    const lastResponseText = findLastResponseChat(state.context.chats);
+    if (lastResponseText) {
+      await copy(lastResponseText.content);
+    }
+  };
 
   const isLoading = state.matches("loading");
 
@@ -87,7 +98,7 @@ export default function QuickChattingPage({
   };
 
   return (
-    <VStack w="100%" minH={400} justifyContent="space-between">
+    <VStack w={400} minH={400} justifyContent="space-between">
       <HStack w="100%" justifyContent="space-between">
         <StyledButton onClick={onClickBackButton}>
           {t("quickChattingPage_backButtonText")}
@@ -98,6 +109,7 @@ export default function QuickChattingPage({
       </HStack>
       <VStack
         ref={scrollDownRef}
+        spacing={16}
         flexGrow={1}
         w="100%"
         overflowY="scroll"
@@ -127,20 +139,31 @@ export default function QuickChattingPage({
           }
         })}
       </VStack>
-      <HStack as="form" onSubmit={onChatSubmit} mt="auto">
+      <VStack as="form" onSubmit={onChatSubmit} mt="auto" w="100%">
         <Textarea
           resize="none"
-          width={226}
+          width="100%"
           height={50}
           value={state.context.chatText}
           placeholder={t("quickChattingPage_chattingPlaceholder")}
           onChange={(e) => send({ type: "CHANGE_TEXT", data: e.target.value })}
           onKeyDown={onChatInputKeyDown}
         />
-        <StyledButton type="submit" isLoading={isLoading}>
-          {t("quickChattingPage_sendButtonText")}
-        </StyledButton>
-      </HStack>
+        <HStack justifyContent="space-between" w="100%">
+          <StyledButton onClick={onClickCopy}>
+            {isCopied
+              ? t("quickChattingPage_copyButtonText_copied")
+              : t("quickChattingPage_copyButtonText_copy")}
+          </StyledButton>
+          <StyledButton type="submit" isLoading={isLoading}>
+            {t("quickChattingPage_sendButtonText")}
+          </StyledButton>
+        </HStack>
+      </VStack>
     </VStack>
   );
+}
+
+function findLastResponseChat(chats: Chat[]) {
+  return chats.filter((chat) => chat.role === "assistant").at(-1);
 }
