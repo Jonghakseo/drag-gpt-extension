@@ -14,7 +14,8 @@
     "typegen": "xstate typegen \"src/**/*.ts?(x)\"",
     "wss": "node utils/reload/initReloadServer.js",
     "dev": "npm run build:hmr && (run-p wss build:watch)",
-    "test": "jest"
+    "test": "jest",
+    "patch": "npm version patch"
   },
   "type": "module",
   "dependencies": {
