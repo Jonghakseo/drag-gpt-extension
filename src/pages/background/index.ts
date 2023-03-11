@@ -106,23 +106,21 @@ chrome.runtime.onConnect.addListener((port) => {
           break;
         }
         case "RequestQuickChatGPT": {
+          await QuickChatHistoryStorage.pushChatHistories({
+            role: "user",
+            content: message.input?.at(-1)?.content ?? "",
+          });
           const apiKey = await ApiKeyStorage.getApiKey();
           const response = await chatGPT({
             chats: message.input,
             slot: { type: "ChatGPT" },
             apiKey,
           });
+          await QuickChatHistoryStorage.pushChatHistories({
+            role: "assistant",
+            content: response.result,
+          });
           sendResponse({ type: "RequestQuickChatGPT", data: response });
-          await QuickChatHistoryStorage.pushChatHistories([
-            {
-              role: "user",
-              content: message.input?.at(-1)?.content ?? "",
-            },
-            {
-              role: "assistant",
-              content: response.result,
-            },
-          ]);
           break;
         }
         case "RequestOngoingChatGPT": {
