@@ -17,14 +17,16 @@ export async function chatGPT({
   input?: string;
   apiKey: string;
 }): Promise<{ result: string; tokenUsage: number }> {
+  axiosInstance ??= axios.create({
+    adapter: fetchAdapter,
+  });
+
   if (configuration?.apiKey !== apiKey) {
     configuration = null;
+    openAiApiInstance = null;
   }
   configuration ??= new Configuration({
     apiKey,
-  });
-  axiosInstance ??= axios.create({
-    adapter: fetchAdapter,
   });
   openAiApiInstance ??= new OpenAIApi(configuration, undefined, axiosInstance);
 
