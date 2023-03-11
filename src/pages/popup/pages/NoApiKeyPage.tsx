@@ -1,6 +1,5 @@
 import React, { ChangeEventHandler, useState } from "react";
 import {
-  Collapse,
   HStack,
   Input,
   Link,
@@ -12,6 +11,7 @@ import {
 import Footer from "@pages/popup/components/layout/Footer";
 import StyledButton from "@pages/popup/components/StyledButton";
 import { COLORS } from "@src/constant/style";
+import { t } from "@src/chrome/i18n";
 
 type NoApiKeyPageProps = {
   checkApiKey: (key: string) => void;
@@ -39,8 +39,8 @@ export const NoApiKeyPage = ({
         {loading ? (
           <VStack spacing={20}>
             <Spinner width={30} height={30} color={COLORS.WHITE} />
-            <Text color={COLORS.WHITE}>
-              Currently sending a request to check for the API key...
+            <Text color={COLORS.WHITE} whiteSpace="pre-wrap" lineHeight={1.4}>
+              {t("noApiKeyPage_checkingApiKey")}
             </Text>
           </VStack>
         ) : (
@@ -50,10 +50,12 @@ export const NoApiKeyPage = ({
                 value={apiKey}
                 type="password"
                 onChange={handleChange}
-                placeholder="open api key"
+                placeholder={t("noApiKeyPage_openAIApiKey_placeholder")}
                 size="sm"
               />
-              <StyledButton onClick={onClickSaveButton}>SAVE</StyledButton>
+              <StyledButton onClick={onClickSaveButton}>
+                {t("noApiKeyPage_saveButtonText")}
+              </StyledButton>
             </HStack>
 
             <Text
@@ -63,40 +65,30 @@ export const NoApiKeyPage = ({
               color={COLORS.WHITE}
               alignSelf="center"
             >
-              How to get openai api key?
+              {t("noApiKeyPage_howToGetApiKey")}
             </Text>
             <OrderedList
-              spacing={4}
+              spacing={6}
               paddingLeft={8}
               textAlign="start"
               color={COLORS.WHITE}
               fontSize={12}
-              lineHeight="14px"
+              lineHeight="16px"
             >
               <li>
-                <Link
-                  color={COLORS.PRIMARY}
-                  href="https://platform.openai.com/signup"
-                  target="_blank"
-                >
-                  Sign up
-                </Link>{" "}
-                for an OpenAI account.
+                {separateI18nAndAddLink(
+                  t("noApiKeyPage_howToGetApiKeyDetail1"),
+                  "https://platform.openai.com/signup"
+                )}
               </li>
               <li>
-                Navigate to the{" "}
-                <Link
-                  color={COLORS.PRIMARY}
-                  href="https://platform.openai.com/account/api-keys"
-                  target="_blank"
-                >
-                  API key page
-                </Link>
+                {separateI18nAndAddLink(
+                  t("noApiKeyPage_howToGetApiKeyDetail2"),
+                  "https://platform.openai.com/account/api-keys"
+                )}
               </li>
-              <li>Create a new secret key to generate an API key.</li>
-              <li>
-                Copy the key and paste it into the input field, then click save.
-              </li>
+              <li>{t("noApiKeyPage_howToGetApiKeyDetail3")}</li>
+              <li>{t("noApiKeyPage_howToGetApiKeyDetail4")}</li>
             </OrderedList>
           </>
         )}
@@ -112,6 +104,20 @@ export const NoApiKeyPage = ({
         )}
       </VStack>
       <Footer />
+    </>
+  );
+};
+
+const separateI18nAndAddLink = (text: string, link: string) => {
+  const [prev, rest] = text.split("{");
+  const [linkText, next] = rest.split("}");
+  return (
+    <>
+      {prev}
+      <Link color={COLORS.PRIMARY} href={link} target="_blank">
+        {linkText}
+      </Link>
+      {next}
     </>
   );
 };

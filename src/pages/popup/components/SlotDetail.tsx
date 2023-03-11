@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import styled from "@emotion/styled";
 import StyledButton from "@pages/popup/components/StyledButton";
 import { COLORS } from "@src/constant/style";
+import { t } from "@src/chrome/i18n";
 
 const StyledTextArea = styled(Textarea)`
   padding: 4px;
@@ -36,18 +37,23 @@ export default function SlotDetail({
   return (
     <VStack spacing={12} alignItems="flex-start">
       <Text color={COLORS.WHITE} fontSize={12}>
-        Prompt Slot name
+        {t("slotDetail_promptSlotName")}
       </Text>
       <Input
         fontSize={12}
         value={slot.name}
-        placeholder="ex. Code Review"
-        onChange={(event) => {
-          updateSlot("name", event.target.value);
-        }}
+        placeholder={t("slotDetail_promptSlotName_placeholder")}
+        onChange={(event) => updateSlot("name", event.target.value)}
       />
-      <Text color={COLORS.WHITE} fontSize={12}>
-        Write a prompt for ChatGPT (MAX 2000)
+
+      <Text
+        color={COLORS.WHITE}
+        textAlign="start"
+        whiteSpace="pre-wrap"
+        fontSize={12}
+        lineHeight={1.3}
+      >
+        {t("slotDetail_writePromptTitle")}
       </Text>
       <StyledTextArea
         fontSize={12}
@@ -56,15 +62,19 @@ export default function SlotDetail({
         height={70}
         maxLength={2000}
         value={slot.system}
-        placeholder="ex. You are a code reviewer."
+        placeholder={t("slotDetail_promptInputPlaceholder")}
         onChange={(event) => {
           updateSlot("system", event.target.value);
         }}
         size="xs"
       />
-      <HStack paddingTop={4} width="100%" justifyContent="space-evenly">
-        <StyledButton onClick={onSaveButtonClick}>SAVE</StyledButton>
-        <StyledButton onClick={exitDetail}>BACK</StyledButton>
+      <HStack paddingTop={4} width="100%" justifyContent="space-between">
+        <StyledButton onClick={onSaveButtonClick}>
+          {t("slotDetail_saveButtonText")}
+        </StyledButton>
+        <StyledButton onClick={exitDetail}>
+          {t("slotDetail_cancelButtonText")}
+        </StyledButton>
       </HStack>
     </VStack>
   );

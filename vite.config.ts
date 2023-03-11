@@ -49,7 +49,7 @@ export default defineConfig({
       },
       watch: {
         include: ["src/**", "vite.config.ts"],
-        exclude: ["node_modules/**", "src/**/*.spec.ts"],
+        exclude: ["node_modules/**", "src/**/*.test.ts"],
       },
       output: {
         entryFileNames: "src/pages/[name]/index.js",
