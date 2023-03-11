@@ -63,25 +63,28 @@
     "message": "정말 API 키를 초기화 하시겠어요?"
   },
   "slotListItem_deleteButtonText": {
-    "message": "수정"
-  },
-  "slotListItem_editButtonText": {
     "message": "삭제"
   },
+  "slotListItem_editButtonText": {
+    "message": "수정"
+  },
   "slotDetail_promptSlotName": {
-    "message": "Prompt Slot name"
+    "message": "프롬프트 슬롯 이름"
+  },
+  "slotDetail_promptSlotName_placeholder": {
+    "message": "ex. 영-한 번역용"
   },
   "slotDetail_writePromptTitle": {
-    "message": "Write a prompt for ChatGPT (MAX 2000)"
+    "message": "ChatGPT 요청에 사용할 사전 프롬프트를\n작성해주세요.(최대 2000자)"
   },
   "slotDetail_promptInputPlaceholder": {
-    "message": "ex. You are a code reviewer."
+    "message": "ex. 영어 문장 혹은 단어의 한국어 뜻을 알려줘."
   },
   "slotDetail_saveButtonText": {
-    "message": "SAVE"
+    "message": "저장"
   },
-  "slotDetail_backButtonText": {
-    "message": "BACK"
+  "slotDetail_cancelButtonText": {
+    "message": "취소"
   },
   "responseMessageBox_responseTitle": {
     "message": "✣ 답변"

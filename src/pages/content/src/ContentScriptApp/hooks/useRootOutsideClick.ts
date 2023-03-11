@@ -1,8 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, RefObject } from "react";
 import { ROOT_ID } from "@pages/content/src/ContentScriptApp/constant/elementId";
 
 type UseOutsideClickArgs = {
-  ref: React.RefObject<HTMLElement>;
+  ref: RefObject<HTMLElement>;
   handler: (event?: MouseEvent) => void;
   isDisabled?: boolean;
 };

@@ -63,13 +63,16 @@
     "message": "Are you sure?"
   },
   "slotListItem_deleteButtonText": {
-    "message": "EDIT"
+    "message": "DEL"
   },
   "slotListItem_editButtonText": {
-    "message": "DEL"
+    "message": "EDIT"
   },
   "slotDetail_promptSlotName": {
     "message": "Prompt Slot name"
+  },
+  "slotDetail_promptSlotName_placeholder": {
+    "message": "ex. Code Review"
   },
   "slotDetail_writePromptTitle": {
     "message": "Write a prompt for ChatGPT (MAX 2000)"
@@ -80,8 +83,8 @@
   "slotDetail_saveButtonText": {
     "message": "SAVE"
   },
-  "slotDetail_backButtonText": {
-    "message": "BACK"
+  "slotDetail_cancelButtonText": {
+    "message": "CANCEL"
   },
   "responseMessageBox_responseTitle": {
     "message": "✣ Response"
