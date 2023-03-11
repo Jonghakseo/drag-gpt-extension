@@ -1,0 +1,116 @@
+{
+  "extensionName": {
+    "message": "Drag GPT - Dragと一緒にAIを簡単に始めましょう！"
+  },
+  "extensionDescription": {
+    "message": "選択したコンテンツをChatGPTに簡単に問い合わせることができます。ドラッグしてボタンをクリックしてください。"
+  },
+  "dragGPT": {
+    "message": "Drag GPT"
+  },
+  "noApiKeyPage_openAIApiKey_placeholder": {
+    "message": "OpenAI APIキー"
+  },
+  "noApiKeyPage_checkingApiKey": {
+    "message": "現在APIキーを確認するためのリクエストを送信中..."
+  },
+  "noApiKeyPage_howToGetApiKey": {
+    "message": "OpenAIのAPIキーの取得方法"
+  },
+  "noApiKeyPage_howToGetApiKeyDetail1": {
+    "message": "{OpenAIアカウント}にサインアップしてください。"
+  },
+  "noApiKeyPage_howToGetApiKeyDetail2": {
+    "message": "{APIキーのページ}に移動してください。"
+  },
+  "noApiKeyPage_howToGetApiKeyDetail3": {
+    "message": "新しいシークレットキーを作成して、APIキーを生成してください。"
+  },
+  "noApiKeyPage_howToGetApiKeyDetail4": {
+    "message": "キーをコピーして、入力欄に貼り付けてから、保存をクリックしてください。"
+  },
+  "footer_EmailText": {
+    "message": "機能提案/バグ報告"
+  },
+  "noApiKeyPage_saveButtonText": {
+    "message": "保存"
+  },
+  "quickChattingPage_sendButtonText": {
+    "message": "送信"
+  },
+  "quickChattingPage_chattingPlaceholder": {
+    "message": "例：こんにちは！"
+  },
+  "quickChattingPage_backButtonText": {
+    "message": "戻る"
+  },
+  "quickChattingPage_resetButtonText": {
+    "message": "リセット"
+  },
+  "quickChattingPage_copyButtonText_copy": {
+    "message": "最後のレスポンスをコピー"
+  },
+  "quickChattingPage_copyButtonText_copied": {
+    "message": "コピーしました！"
+  },
+  "slotListPage_newSlotButtonText": {
+    "message": "新しいスロット"
+  },
+  "slotListPage_quickChatButtonText": {
+    "message": "クイックチャット"
+  },
+  "slotListPage_resetApiKeyButtonText": {
+    "message": "APIキーをリセット"
+  },
+  "slotListPage_promptSlotsTitle": {
+    "message": "プロンプトスロット"
+  },
+  "slotListPage_resetApiKeyConfirmMessage": {
+    "message": "よろしいですか？"
+  },
+  "slotListItem_deleteButtonText": {
+    "message": "削除"
+  },
+  "slotListItem_editButtonText": {
+    "message": "編集"
+  },
+  "slotDetail_promptSlotName": {
+    "message": "プロンプトスロット名"
+  },
+  "slotDetail_promptSlotName_placeholder": {
+    "message": "例：コードレビュー"
+  },
+  "slotDetail_writePromptTitle": {
+    "message": "ChatGPTのプロンプトを書く（最大2000文字）"
+  },
+  "slotDetail_promptInputPlaceholder": {
+    "message": "例：あなたはコードレビュアーです。"
+  },
+  "slotDetail_saveButtonText": {
+    "message": "保存"
+  },
+  "slotDetail_cancelButtonText": {
+    "message": "キャンセル"
+  },
+  "responseMessageBox_responseTitle": {
+    "message": "✣ レスポンス"
+  },
+  "responseMessageBox_copyButtonText_copy": {
+    "message": "最後のレスポンスをコピー"
+  },
+  "responseMessageBox_copyButtonText_copied": {
+    "message": "コピーしました！"
+  },
+  "responseMessageBox_sendButtonText": {
+    "message": "送信"
+  },
+  "responseMessageBox_messageInputPlacepolder": {
+    "message": "例：要約してください！"
+  },
+  "errorMessageBox_errorTitle": {
+    "message": "エラー"
+  },
+  "errorMessageBox_unknownError": {
+    "message": "不明なエラー"
+  }
+}
