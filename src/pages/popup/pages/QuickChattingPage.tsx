@@ -7,7 +7,7 @@ import {
   sendMessageToBackground,
   sendMessageToBackgroundAsync,
 } from "@src/chrome/message";
-import { FormEventHandler, KeyboardEventHandler } from "react";
+import { FormEventHandler, KeyboardEventHandler, useEffect } from "react";
 import UserChat from "@src/shared/component/UserChat";
 import ChatText from "@src/shared/component/ChatText";
 import AssistantChat from "@src/shared/component/AssistantChat";

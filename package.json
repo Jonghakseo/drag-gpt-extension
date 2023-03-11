@@ -1,6 +1,6 @@
 {
   "name": "drag-gpt",
-  "version": "1.3.2",
+  "version": "1.3.4",
   "description": "Drag GPT chrome extension",
   "license": "MIT",
   "repository": {
@@ -15,7 +15,7 @@
     "wss": "node utils/reload/initReloadServer.js",
     "dev": "npm run build:hmr && (run-p wss build:watch)",
     "test": "jest",
-    "patch": "npm version patch"
+    "patch": "npm version patch -m \"version %s\""
   },
   "type": "module",
   "dependencies": {

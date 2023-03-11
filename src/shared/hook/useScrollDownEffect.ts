@@ -9,7 +9,6 @@ export function useScrollDownEffect(deps?: DependencyList) {
     }
     scrollDownRef.current.scrollTo({
       top: scrollDownRef.current.scrollHeight,
-      behavior: "smooth",
     });
   }, deps);
 
