@@ -1,116 +1,116 @@
 {
   "extensionName": {
-    "message": "Drag GPT - easy start AI with Drag!"
+    "message": "Drag GPT - 轻松使用 AI"
   },
   "extensionDescription": {
-    "message": "You can easily ask or request the selected content to ChatGPT by dragging and clicking the button."
+    "message": "通过拖拽和点击按钮，轻松将选定的内容发送到 ChatGPT 进行请求或查询。"
   },
   "dragGPT": {
-    "message": "Drag GPT"
+    "message": "拖拽 GPT"
   },
   "noApiKeyPage_openAIApiKey": {
-    "message": "OpenAI API Key"
+    "message": "OpenAI API 密钥"
   },
   "noApiKeyPage_checkingApiKey": {
-    "message": "Currently sending a request\nto check for the API key..."
+    "message": "正在发送请求\n以检查 API 密钥……"
   },
   "noApiKeyPage_howToGetApiKey": {
-    "message": "How to get openai api key?"
+    "message": "如何获取 OpenAI API 密钥？"
   },
   "noApiKeyPage_howToGetApiKeyDetail1": {
-    "message": "{Sign up} for an OpenAI account."
+    "message": "{注册}一个 OpenAI 帐号。"
   },
   "noApiKeyPage_howToGetApiKeyDetail2": {
-    "message": "Navigate to the {API key page}"
+    "message": "前往 {API 密钥页面}。"
   },
   "noApiKeyPage_howToGetApiKeyDetail3": {
-    "message": "Create a new secret key to generate an API key."
+    "message": "创建新的 secret key 以获取 API 密钥。"
   },
   "noApiKeyPage_howToGetApiKeyDetail4": {
-    "message": "Copy the key and paste it into the input field, then click save."
+    "message": "复制密钥并粘贴到输入框中，然后点击保存。"
   },
   "footer_EmailText": {
-    "message": "feature suggestions / bug reports"
+    "message": "功能建议 / 报告错误"
   },
   "noApiKeyPage_saveButtonText": {
-    "message": "SAVE"
+    "message": "保存"
   },
   "quickChattingPage_sendButtonText": {
-    "message": "SEND"
+    "message": "发送"
   },
   "quickChattingPage_chattingPlaceholder": {
-    "message": "ex. Hello!"
+    "message": "例如：你好！"
   },
   "quickChattingPage_backButtonText": {
-    "message": "BACK"
+    "message": "返回"
   },
   "quickChattingPage_resetButtonText": {
-    "message": "RESET"
-  },
-  "quickChattingPage_copyButtonText_copied": {
-    "message": "COPIED!"
+    "message": "重置"
   },
   "quickChattingPage_copyButtonText_copy": {
-    "message": "COPY LAST RESPONSE"
+    "message": "复制最后的响应"
+  },
+  "quickChattingPage_copyButtonText_copied": {
+    "message": "已复制！"
   },
   "slotListPage_newSlotButtonText": {
-    "message": "NEW SLOT"
+    "message": "新建提示"
   },
   "slotListPage_quickChatButtonText": {
-    "message": "QUICK CHAT"
+    "message": "快速聊天"
   },
   "slotListPage_resetApiKeyButtonText": {
-    "message": "RESET API KEY"
+    "message": "重置 API 密钥"
   },
   "slotListPage_promptSlotsTitle": {
-    "message": "Prompt Slots"
+    "message": "提示列表"
   },
   "slotListPage_resetApiKeyConfirmMessage": {
-    "message": "Are you sure?"
+    "message": "确定吗？"
   },
   "slotListItem_deleteButtonText": {
-    "message": "DEL"
+    "message": "删除"
   },
   "slotListItem_editButtonText": {
-    "message": "EDIT"
+    "message": "编辑"
   },
   "slotDetail_promptSlotName": {
-    "message": "Prompt Slot name"
+    "message": "提示名称"
   },
   "slotDetail_promptSlotName_placeholder": {
-    "message": "ex. Code Review"
+    "message": "例如：代码审查"
   },
   "slotDetail_writePromptTitle": {
-    "message": "Write a prompt for ChatGPT (MAX 2000)"
+    "message": "为 ChatGPT 写下提示 (最多 2000 个字符)"
   },
   "slotDetail_promptInputPlaceholder": {
-    "message": "ex. You are a code reviewer."
+    "message": "例如：你是一个代码审查员。"
   },
   "slotDetail_saveButtonText": {
-    "message": "SAVE"
+    "message": "保存"
   },
   "slotDetail_cancelButtonText": {
-    "message": "CANCEL"
+    "message": "取消"
   },
   "responseMessageBox_responseTitle": {
-    "message": "✣ Response"
+    "message": "✣ 响应"
   },
   "responseMessageBox_copyButtonText_copy": {
-    "message": "COPY LAST RESPONSE"
+    "message": "复制最后的响应"
   },
   "responseMessageBox_copyButtonText_copied": {
-    "message": "COPIED!"
+    "message": "已复制！"
   },
   "responseMessageBox_sendButtonText": {
-    "message": "SEND"
+    "message": "发送"
   },
   "responseMessageBox_messageInputPlacepolder": {
-    "message": "ex. Summarize!"
+    "message": "例如：总结一下！"
   },
   "errorMessageBox_errorTitle": {
-    "message": "Error"
+    "message": "错误"
   },
   "errorMessageBox_unknownError": {
-    "message": "Unknown error"
+    "message": "未知错误"
   }
 }

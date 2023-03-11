@@ -47,6 +47,12 @@
   "quickChattingPage_resetButtonText": {
     "message": "대화 초기화"
   },
+  "quickChattingPage_copyButtonText_copy": {
+    "message": "마지막 응답 복사"
+  },
+  "quickChattingPage_copyButtonText_copied": {
+    "message": "복사됨!"
+  },
   "slotListPage_newSlotButtonText": {
     "message": "슬롯 추가"
   },
