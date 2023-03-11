@@ -1,4 +1,4 @@
-import { HStack, Input, VStack } from "@chakra-ui/react";
+import { HStack, Input, Textarea, VStack } from "@chakra-ui/react";
 import StyledButton from "@pages/popup/components/StyledButton";
 import { useMachine } from "@xstate/react";
 import chatStateMachine from "@src/shared/xState/chatStateMachine";
@@ -7,7 +7,7 @@ import {
   sendMessageToBackground,
   sendMessageToBackgroundAsync,
 } from "@src/chrome/message";
-import { FormEventHandler } from "react";
+import { FormEventHandler, KeyboardEventHandler } from "react";
 import UserChat from "@src/shared/component/UserChat";
 import ChatText from "@src/shared/component/ChatText";
 import AssistantChat from "@src/shared/component/AssistantChat";
@@ -74,6 +74,13 @@ export default function QuickChattingPage({
     send("RESET");
   };
 
+  const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      send("QUERY");
+      event.preventDefault();
+    }
+  };
+
   return (
     <VStack w="100%" minH={400} justifyContent="space-between">
       <HStack w="100%" justifyContent="space-between">
@@ -85,7 +92,7 @@ export default function QuickChattingPage({
         flexGrow={1}
         w="100%"
         overflowY="scroll"
-        maxHeight={340}
+        maxHeight={300}
         fontSize={13}
       >
         {state.context.chats.map((chat, index) => {
@@ -112,11 +119,14 @@ export default function QuickChattingPage({
         })}
       </VStack>
       <HStack as="form" onSubmit={onChatSubmit} mt="auto">
-        <Input
+        <Textarea
+          resize="none"
           width={226}
+          height={50}
           value={state.context.chatText}
           placeholder="ex. Hello!"
           onChange={(e) => send({ type: "CHANGE_TEXT", data: e.target.value })}
+          onKeyDown={handleKeyDown}
         />
         <StyledButton type="submit" isLoading={isLoading}>
           SEND
