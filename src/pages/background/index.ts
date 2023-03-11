@@ -47,10 +47,10 @@ chrome.runtime.onConnect.addListener((port) => {
           const slots = await SlotStorage.getAllSlots();
           const updatedSlots = slots.map((slot) => ({
             ...slot,
-            isSelected: message.data === slot.id,
+            isSelected: message.input === slot.id,
           }));
           await SlotStorage.setAllSlots(updatedSlots);
-          sendResponse({ type: "SelectSlot", data: slots });
+          sendResponse({ type: "SelectSlot", data: updatedSlots });
           break;
         }
         case "UpdateSlot": {

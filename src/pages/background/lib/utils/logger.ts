@@ -2,7 +2,7 @@ const Logger = {
   receive: (message: Message) => {
     console.log(
       "Message Receive:",
-      `${message.type}\ndata: ${
+      `${message.type}\ninput: ${
         message.input ? JSON.stringify(message.input) : "none"
       }`
     );
