@@ -51,7 +51,10 @@ table {
   font-family: "Noto Sans KR", sans-serif;
 }
 
-textarea, input:focus-visible {
-  transition: outline-offset 75ms ease-out;
-  outline-offset: 4px;
+textarea, input {
+  outline: none;
+}
+
+textarea, input:hover {
+  outline: none;
 }
