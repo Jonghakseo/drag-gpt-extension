@@ -1,5 +1,38 @@
 {
   "extensionName": {
-    "message": "Drag GPT - easy start AI with Drag!"
+    "message": "드래그 GPT - 드래그로 쉽게 AI를 시작해보세요!"
+  },
+  "extensionDescription": {
+    "message": "드래그 후 버튼 클릭만으로 간단하게 선택한 내용을 ChatGPT에게 물어보거나 요청할 수 있습니다."
+  },
+  "dragGPT": {
+    "message": "드래그 GPT"
+  },
+  "openAIApiKey": {
+    "message": "OpenAI API 키"
+  },
+  "checkingApiKey": {
+    "message": "API 키 확인을 위해\n테스트 요청을 날려보는 중..."
+  },
+  "howToGetApiKey": {
+    "message": "OpenAI의 API 키는 어떻게 얻나요?"
+  },
+  "howToGetApiKeyDetail1": {
+    "message": "OpenAI 계정이 없다면 {회원가입}이 필요합니다."
+  },
+  "howToGetApiKeyDetail2": {
+    "message": "{API Key 페이지}로 이동하세요."
+  },
+  "howToGetApiKeyDetail3": {
+    "message": "API key 생성을 위해 Create a new secret key 버튼을 눌러주세요."
+  },
+  "howToGetApiKeyDetail4": {
+    "message": "키를 복사하고 입력 후 저장 버튼을 누르면 시작할 수 있습니다!"
+  },
+  "footerEmailText": {
+    "message": "기능 제안 / 버그 제보"
+  },
+  "saveButtonText": {
+    "message": "저장"
   }
 }

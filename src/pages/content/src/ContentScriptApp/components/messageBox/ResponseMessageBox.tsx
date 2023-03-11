@@ -2,13 +2,7 @@ import MessageBox, {
   MessageBoxProps,
 } from "@pages/content/src/ContentScriptApp/components/messageBox/MessageBox";
 import StyledButton from "@pages/popup/components/StyledButton";
-import {
-  DependencyList,
-  FormEventHandler,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { FormEventHandler } from "react";
 import { HStack, Input, Text, VStack } from "@chakra-ui/react";
 import DraggableBox from "@pages/content/src/ContentScriptApp/components/DraggableBox";
 import { useMachine } from "@xstate/react";

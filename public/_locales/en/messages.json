@@ -1,5 +1,38 @@
 {
   "extensionName": {
     "message": "Drag GPT - easy start AI with Drag!"
+  },
+  "extensionDescription": {
+    "message": "You can easily ask or request the selected content to ChatGPT by dragging and clicking the button."
+  },
+  "dragGPT": {
+    "message": "Drag GPT"
+  },
+  "openAIApiKey": {
+    "message": "OpenAI API Key"
+  },
+  "checkingApiKey": {
+    "message": "Currently sending a request\nto check for the API key..."
+  },
+  "howToGetApiKey": {
+    "message": "How to get openai api key?"
+  },
+  "howToGetApiKeyDetail1": {
+    "message": "{Sign up} for an OpenAI account."
+  },
+  "howToGetApiKeyDetail2": {
+    "message": "Navigate to the {API key page}"
+  },
+  "howToGetApiKeyDetail3": {
+    "message": "Create a new secret key to generate an API key."
+  },
+  "howToGetApiKeyDetail4": {
+    "message": "Copy the key and paste it into the input field, then click save."
+  },
+  "footerEmailText": {
+    "message": "feature suggestions / bug reports"
+  },
+  "saveButtonText": {
+    "message": "SAVE"
   }
 }

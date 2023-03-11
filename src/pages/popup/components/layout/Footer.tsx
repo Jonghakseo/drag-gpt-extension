@@ -1,5 +1,6 @@
 import { Link, Spacer, Text } from "@chakra-ui/react";
 import React from "react";
+import { t } from "@src/chrome/i18n";
 
 export default function Footer() {
   return (
@@ -13,7 +14,7 @@ export default function Footer() {
         mt="auto"
       >
         <Text color="white" fontSize={12} fontWeight="bold">
-          feature suggestions / bug reports
+          {t("footerEmailText")}
         </Text>
       </Link>
     </>
