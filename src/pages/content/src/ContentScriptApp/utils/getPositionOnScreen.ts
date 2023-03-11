@@ -1,9 +1,9 @@
-export enum PositionOnScreen {
-  topLeft,
-  topRight,
-  bottomLeft,
-  bottomRight,
-}
+export type PositionOnScreen =
+  | "topLeft"
+  | "topRight"
+  | "bottomLeft"
+  | "bottomRight";
+
 export function getPositionOnScreen(position: {
   horizontalCenter: number;
   verticalCenter: number;
@@ -14,16 +14,14 @@ export function getPositionOnScreen(position: {
   const isTop = viewportHeight / 2 > position.horizontalCenter;
 
   if (isTop && isLeft) {
-    return PositionOnScreen.topLeft;
+    return "topLeft";
   }
   if (isTop && !isLeft) {
-    return PositionOnScreen.topRight;
+    return "topRight";
   }
   if (!isTop && isLeft) {
-    return PositionOnScreen.bottomLeft;
+    return "bottomLeft";
   }
-  if (!isTop && !isLeft) {
-    return PositionOnScreen.bottomRight;
-  }
-  throw Error("UnExpected Position case");
+  // !isTop && !isLeft
+  return "bottomRight";
 }

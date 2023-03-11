@@ -7,7 +7,7 @@ import {
 } from "react";
 import styled from "@emotion/styled";
 import { CloseButton, HStack, Stack, Text } from "@chakra-ui/react";
-import { PositionOnScreen } from "@pages/content/src/ContentScriptApp/utils/getPositionOnScreen";
+import type { PositionOnScreen } from "@pages/content/src/ContentScriptApp/utils/getPositionOnScreen";
 import useRootOutsideClick from "@pages/content/src/ContentScriptApp/hooks/useRootOutsideClick";
 import getSafePixel from "@pages/content/src/ContentScriptApp/utils/getSafePixel";
 import { COLORS, Z_INDEX } from "@src/constant/style";
@@ -60,10 +60,10 @@ export type MessageBoxProps = {
   anchorBottom: number;
   header: ReactNode;
   content: ReactNode;
+  footer?: ReactNode;
   width: number;
   onClose: () => void;
   positionOnScreen: PositionOnScreen;
-  footer?: ReactNode;
 } & ComponentPropsWithRef<"div">;
 
 export default function MessageBox({
@@ -95,14 +95,14 @@ export default function MessageBox({
     const height = containerRef.current.getBoundingClientRect().height;
 
     switch (positionOnScreen) {
-      case PositionOnScreen.topLeft:
-      case PositionOnScreen.topRight: {
+      case "topLeft":
+      case "topRight": {
         containerRef.current.style.top = getSafePixel(anchorBottom + GAP);
         containerRef.current.style.left = getSafePixel(boxCenterPosition);
         return;
       }
-      case PositionOnScreen.bottomLeft:
-      case PositionOnScreen.bottomRight: {
+      case "bottomLeft":
+      case "bottomRight": {
         containerRef.current.style.top = getSafePixel(anchorTop - GAP - height);
         containerRef.current.style.left = getSafePixel(boxCenterPosition);
         return;

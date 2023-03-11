@@ -52,4 +52,23 @@ describe("QuickChatHistoryStorage test", () => {
     // then
     expect(storageSaveFunction).toBeCalledWith("QUICK_CHAT_HISTORY", []);
   });
+  test("pushChatHistories", async () => {
+    // given
+    const chat: Chat = {
+      role: "user",
+      content: "content",
+    };
+    jest
+      .spyOn(QuickChatHistoryStorage, "getChatHistories")
+      .mockImplementationOnce(() => Promise.resolve([]));
+    const storageSaveFunction = jest
+      .spyOn(QuickChatHistoryStorage.storage, "save")
+      .mockImplementationOnce(() => Promise.resolve());
+
+    // when
+    await QuickChatHistoryStorage.pushChatHistories(chat);
+
+    // then
+    expect(storageSaveFunction).toBeCalledWith("QUICK_CHAT_HISTORY", [chat]);
+  });
 });

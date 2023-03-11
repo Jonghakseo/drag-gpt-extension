@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef, useEffect, useRef } from "react";
+import { ComponentPropsWithRef } from "react";
 import styled from "@emotion/styled";
 import { Spinner, Text } from "@chakra-ui/react";
 import { COLORS, Z_INDEX } from "@src/constant/style";
@@ -42,23 +42,18 @@ export default function GPTRequestButton({
   top,
   left,
   loading,
+  style,
   ...restProps
 }: GPTRequestButtonProps) {
-  const buttonRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (!buttonRef.current) {
-      return;
-    }
-    buttonRef.current.style.top = `${top + GAP}px`;
-    buttonRef.current.style.left = `${left + GAP}px`;
-  }, [buttonRef, top, left]);
-
   return (
     <StyledRequestButton
       aria-busy={loading}
       disabled={loading}
-      ref={buttonRef}
+      style={{
+        ...style,
+        top: `${top + GAP}px`,
+        left: `${left + GAP}px`,
+      }}
       {...restProps}
     >
       {loading ? (

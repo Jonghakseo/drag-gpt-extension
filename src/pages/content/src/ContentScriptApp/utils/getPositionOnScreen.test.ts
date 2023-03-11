@@ -1,7 +1,4 @@
-import {
-  getPositionOnScreen,
-  PositionOnScreen,
-} from "@pages/content/src/ContentScriptApp/utils/getPositionOnScreen";
+import { getPositionOnScreen } from "@pages/content/src/ContentScriptApp/utils/getPositionOnScreen";
 
 declare let window: {
   innerWidth: number;
@@ -29,7 +26,7 @@ describe("getPositionOnScreen test", () => {
     });
 
     // then
-    expect(position).toEqual(PositionOnScreen.topLeft);
+    expect(position).toEqual("topLeft");
   });
   test("수평의 중간값이 화면의 중앙보다 위에 가깝고, 수직 중앙값이 화면의 중간보다 오른쪽에 가까우면 > 우측 상단이다", () => {
     // given
@@ -43,7 +40,7 @@ describe("getPositionOnScreen test", () => {
     });
 
     // then
-    expect(position).toEqual(PositionOnScreen.topRight);
+    expect(position).toEqual("topRight");
   });
   test("수평의 중간값이 화면의 중앙보다 아래에 가깝고, 수직 중앙값이 화면의 중간보다 왼쪽에 가까우면 > 좌측 하단이다", () => {
     // given
@@ -57,7 +54,7 @@ describe("getPositionOnScreen test", () => {
     });
 
     // then
-    expect(position).toEqual(PositionOnScreen.bottomLeft);
+    expect(position).toEqual("bottomLeft");
   });
   test("수평의 중간값이 화면의 중앙보다 위에 가깝고, 수직 중앙값이 화면의 중간보다 왼쪽에 가까우면 > 좌측 상단이다", () => {
     // given
@@ -71,6 +68,6 @@ describe("getPositionOnScreen test", () => {
     });
 
     // then
-    expect(position).toEqual(PositionOnScreen.bottomRight);
+    expect(position).toEqual("bottomRight");
   });
 });

@@ -54,7 +54,7 @@ export default function QuickChattingPage({
       },
     },
     actions: {
-      onExitChatting: onClickBackButton,
+      exitChatting: onClickBackButton,
       resetChatData: (context) => {
         context.chats = [];
         resetChatHistoriesFromBackground();
@@ -144,7 +144,7 @@ export default function QuickChattingPage({
           resize="none"
           width="100%"
           height={50}
-          value={state.context.chatText}
+          value={state.context.inputText}
           placeholder={t("quickChattingPage_chattingPlaceholder")}
           onChange={(e) => send({ type: "CHANGE_TEXT", data: e.target.value })}
           onKeyDown={onChatInputKeyDown}
