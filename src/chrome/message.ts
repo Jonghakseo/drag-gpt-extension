@@ -46,14 +46,22 @@ export function sendMessageToBackground<M extends Message>({
     }
   });
   port.onDisconnect.addListener(() => console.log("Port disconnected"));
-  port.postMessage(message);
+  try {
+    port.postMessage(message);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export function sendMessageToClient(
   port: chrome.runtime.Port,
   message: { type: Message["type"]; data: Message["data"] } | ErrorMessage
 ) {
-  port.postMessage(message);
+  try {
+    port.postMessage(message);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export function sendErrorMessageToClient(
