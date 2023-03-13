@@ -59,7 +59,7 @@ export default function GPTRequestButton({
       {loading ? (
         <Spinner color="white" width={8} height={8} />
       ) : (
-        <Text m={0} pt={2} fontWeight="bold" color="white">
+        <Text m={0} pb={2} fontWeight="bold" color="white">
           D
         </Text>
       )}
