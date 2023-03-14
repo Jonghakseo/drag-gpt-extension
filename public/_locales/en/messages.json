@@ -93,7 +93,7 @@
     "message": "CANCEL"
   },
   "responseMessageBox_responseTitle": {
-    "message": "✣ Response"
+    "message": "Response"
   },
   "responseMessageBox_copyButtonText_copy": {
     "message": "COPY LAST RESPONSE"

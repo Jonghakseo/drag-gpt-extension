@@ -93,7 +93,7 @@
     "message": "キャンセル"
   },
   "responseMessageBox_responseTitle": {
-    "message": "✣ レスポンス"
+    "message": "レスポンス"
   },
   "responseMessageBox_copyButtonText_copy": {
     "message": "最後のレスポンスをコピー"
