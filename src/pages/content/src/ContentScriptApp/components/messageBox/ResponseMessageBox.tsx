@@ -16,6 +16,7 @@ import ChatCollapse from "@src/shared/component/ChatCollapse";
 import { useScrollDownEffect } from "@src/shared/hook/useScrollDownEffect";
 import { useCopyClipboard } from "@src/shared/hook/useCopyClipboard";
 import { t } from "@src/chrome/i18n";
+import { DragHandleIcon } from "@chakra-ui/icons";
 
 async function getGPTResponse(messages: ChatCompletionRequestMessage[]) {
   return await sendMessageToBackgroundAsync({
@@ -85,11 +86,17 @@ export default function ResponseMessageBox({
     <MessageBox
       header={
         <Text
+          as="header"
+          display="flex"
+          alignItems="center"
+          width="100%"
+          height={24}
           color="white"
           fontWeight="bold"
           cursor="move"
           className={DraggableBox.handlerClassName}
         >
+          <DragHandleIcon mr={4} boxSize={12} />
           {t("responseMessageBox_responseTitle")}
         </Text>
       }
