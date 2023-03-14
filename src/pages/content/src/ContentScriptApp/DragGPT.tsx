@@ -12,7 +12,7 @@ import dragStateMachine from "@pages/content/src/ContentScriptApp/xState/dragSta
 import { sendMessageToBackgroundAsync } from "@src/chrome/message";
 import styled from "@emotion/styled";
 import { getPositionOnScreen } from "@pages/content/src/ContentScriptApp/utils/getPositionOnScreen";
-import useSelectedSlot from "@pages/content/src/ContentScriptApp/hooks/useSelectedSlotInfo";
+import useSelectedSlot from "@pages/content/src/ContentScriptApp/hooks/useSelectedSlot";
 
 const Container = styled.div`
   * {

@@ -14,6 +14,10 @@ export default function useSelectedSlot(pollIntervalMs = 1500) {
   };
 
   const getSelectedSlot = async (): Promise<Slot | undefined> => {
+    if (window.document.hidden) {
+      return;
+    }
+
     try {
       const slots = await sendMessageToBackgroundAsync({ type: "GetSlots" });
       return SlotsManipulatorService.getSelectedSlot(slots);
