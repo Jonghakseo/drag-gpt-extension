@@ -93,7 +93,7 @@
     "message": "取消"
   },
   "responseMessageBox_responseTitle": {
-    "message": "✣ 响应"
+    "message": "响应"
   },
   "responseMessageBox_copyButtonText_copy": {
     "message": "复制最后的响应"
