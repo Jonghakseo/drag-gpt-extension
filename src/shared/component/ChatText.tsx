@@ -13,6 +13,7 @@ export default function ChatText({
   bold,
   padding = 6,
   border = true,
+  children,
   ...restProps
 }: ChatTextProps) {
   return (
@@ -26,6 +27,8 @@ export default function ChatText({
       lineHeight={1.3}
       fontWeight={bold ? "bold" : "normal"}
       {...restProps}
-    />
+    >
+      {typeof children === "string" ? children.trim() : children}
+    </Text>
   );
 }
