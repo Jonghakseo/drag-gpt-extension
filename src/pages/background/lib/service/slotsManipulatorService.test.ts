@@ -24,6 +24,37 @@ describe("SlotsManipulator test", () => {
     // then
     expect(foundedSlot).toEqual(MOCK_SELECTED_SLOT);
   });
+  describe("getSelectedSlotIndex test", () => {
+    test("선택된 슬롯의 index를 반환한다.", () => {
+      // given
+      const MOCK_SELECTED_SLOT: Slot = { ...defaultSlot, isSelected: true };
+      const MOCK_SLOTS: Slot[] = [
+        defaultSlot,
+        defaultSlot,
+        defaultSlot,
+        MOCK_SELECTED_SLOT,
+      ];
+
+      // when
+      const selectedSlotIndex =
+        SlotsManipulatorService.getSelectedSlotIndex(MOCK_SLOTS);
+
+      // then
+      expect(selectedSlotIndex).toEqual(3);
+    });
+    test("선택된 슬롯이 없으면 undefined를 반환한다", () => {
+      // given
+      const MOCK_SLOTS: Slot[] = [defaultSlot, defaultSlot, defaultSlot];
+
+      // when
+      const selectedSlotIndex =
+        SlotsManipulatorService.getSelectedSlotIndex(MOCK_SLOTS);
+
+      // then
+      expect(selectedSlotIndex).toEqual(undefined);
+    });
+  });
+
   test("addSlot test", () => {
     // given
     const MOCK_SLOT: Slot = { ...defaultSlot };

@@ -1,7 +1,8 @@
 import { ComponentPropsWithRef } from "react";
 import styled from "@emotion/styled";
-import { Spinner, Text } from "@chakra-ui/react";
+import { Spinner, Text, Tooltip } from "@chakra-ui/react";
 import { COLORS, Z_INDEX } from "@src/constant/style";
+import { ChatIcon } from "@chakra-ui/icons";
 
 const GAP = 4;
 
@@ -36,6 +37,7 @@ type GPTRequestButtonProps = {
   top: number;
   left: number;
   loading: boolean;
+  selectedSlot?: Slot;
 } & ComponentPropsWithRef<"button">;
 
 export default function GPTRequestButton({
@@ -43,26 +45,27 @@ export default function GPTRequestButton({
   left,
   loading,
   style,
+  selectedSlot,
   ...restProps
 }: GPTRequestButtonProps) {
   return (
-    <StyledRequestButton
-      aria-busy={loading}
-      disabled={loading}
-      style={{
-        ...style,
-        top: `${top + GAP}px`,
-        left: `${left + GAP}px`,
-      }}
-      {...restProps}
-    >
-      {loading ? (
-        <Spinner color="white" width={8} height={8} />
-      ) : (
-        <Text m={0} pb={2} fontWeight="bold" color="white">
-          D
-        </Text>
-      )}
-    </StyledRequestButton>
+    <Tooltip label={<Text fontSize={12}>{selectedSlot?.name}</Text>}>
+      <StyledRequestButton
+        aria-busy={loading}
+        disabled={loading}
+        style={{
+          ...style,
+          top: `${top + GAP}px`,
+          left: `${left + GAP}px`,
+        }}
+        {...restProps}
+      >
+        {loading ? (
+          <Spinner color="white" width={8} height={8} />
+        ) : (
+          <ChatIcon aria-label="request" color="white" boxSize={12} />
+        )}
+      </StyledRequestButton>
+    </Tooltip>
   );
 }

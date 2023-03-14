@@ -12,6 +12,7 @@ import dragStateMachine from "@pages/content/src/ContentScriptApp/xState/dragSta
 import { sendMessageToBackgroundAsync } from "@src/chrome/message";
 import styled from "@emotion/styled";
 import { getPositionOnScreen } from "@pages/content/src/ContentScriptApp/utils/getPositionOnScreen";
+import useSelectedSlot from "@pages/content/src/ContentScriptApp/hooks/useSelectedSlot";
 
 const Container = styled.div`
   * {
@@ -29,6 +30,7 @@ async function getGPTResponse(userInput: string) {
 }
 
 export default function DragGPT() {
+  const selectedSlot = useSelectedSlot();
   const [state, send] = useMachine(dragStateMachine, {
     actions: {
       setPositionOnScreen: (context) => {
@@ -85,6 +87,7 @@ export default function DragGPT() {
           loading={state.matches("loading")}
           top={state.context.requestButtonPosition.top}
           left={state.context.requestButtonPosition.left}
+          selectedSlot={selectedSlot}
         />
       )}
       {state.hasTag("showResponseMessages") && (
