@@ -152,14 +152,14 @@ const ChatBox = ({
   if (isLastAndResponse) {
     return (
       <AssistantChat>
-        <ChatText>{chat.content.trim()}</ChatText>
+        <ChatText>{chat.content}</ChatText>
       </AssistantChat>
     );
   }
   if (chat.role === "error") {
     return (
       <AssistantChat>
-        <ChatText isError>{chat.content.trim()}</ChatText>
+        <ChatText isError>{chat.content}</ChatText>
       </AssistantChat>
     );
   }
@@ -168,7 +168,7 @@ const ChatBox = ({
     return (
       <ChatCollapse>
         <AssistantChat>
-          <ChatText>{chat.content.trim()}</ChatText>
+          <ChatText>{chat.content}</ChatText>
         </AssistantChat>
       </ChatCollapse>
     );
