@@ -134,6 +134,24 @@ chrome.runtime.onConnect.addListener((port) => {
           sendResponse({ type: "RequestOngoingChatGPT", data: response });
           break;
         }
+        case "RequestGenerateChatGPTPrompt": {
+          const apiKey = await ApiKeyStorage.getApiKey();
+          const response = await chatGPT({
+            input: message.input,
+            slot: {
+              type: "ChatGPT",
+              system:
+                'Act as a prompt generator for ChatGPT. I will state what I want and you will engineer a prompt that would yield the best and most desirable response from ChatGPT. Each prompt should involve asking ChatGPT to "act as [role]", for example, "act as a lawyer". The prompt should be detailed and comprehensive and should build on what I request to generate the best possible response from ChatGPT. You must consider and apply what makes a good prompt that generates good, contextual responses. Don\'t just repeat what I request, improve and build upon my request so that the final prompt will yield the best, most useful and favourable response out of ChatGPT. Place any variables in square brackets\n' +
+                "Here is the prompt I want",
+            },
+            apiKey,
+          });
+          sendResponse({
+            type: "RequestGenerateChatGPTPrompt",
+            data: response,
+          });
+          break;
+        }
         case "GetQuickChatHistory": {
           const chats = await QuickChatHistoryStorage.getChatHistories();
           sendResponse({ type: "GetQuickChatHistory", data: chats });
