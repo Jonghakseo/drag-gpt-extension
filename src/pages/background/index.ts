@@ -11,6 +11,7 @@ import {
 import { QuickChatHistoryStorage } from "@pages/background/lib/storage/quickChatHistoryStorage";
 import { exhaustiveMatchingGuard } from "@src/shared/ts-util/exhaustiveMatchingGuard";
 import { createNewChatGPTSlot } from "@src/shared/slot/createNewChatGPTSlot";
+import { PROMPT_GENERATE_PROMPT } from "@src/constant/promptGeneratePrompt";
 
 reloadOnUpdate("pages/background");
 
@@ -140,9 +141,7 @@ chrome.runtime.onConnect.addListener((port) => {
             input: message.input,
             slot: {
               type: "ChatGPT",
-              system:
-                'Act as a prompt generator for ChatGPT. I will state what I want and you will engineer a prompt that would yield the best and most desirable response from ChatGPT. Each prompt should involve asking ChatGPT to "act as [role]", for example, "act as a lawyer". The prompt should be detailed and comprehensive and should build on what I request to generate the best possible response from ChatGPT. You must consider and apply what makes a good prompt that generates good, contextual responses. Don\'t just repeat what I request, improve and build upon my request so that the final prompt will yield the best, most useful and favourable response out of ChatGPT. Place any variables in square brackets\n' +
-                "Here is the prompt I want",
+              system: PROMPT_GENERATE_PROMPT,
             },
             apiKey,
           });
