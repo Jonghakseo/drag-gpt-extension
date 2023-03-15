@@ -2,7 +2,7 @@ import { assign, createMachine } from "xstate";
 
 type Events =
   | {
-      type: "SHOW_DETAIL" | "SELECT_SLOT" | "DELETE_SLOT";
+      type: "EDIT_SLOT" | "SELECT_SLOT" | "DELETE_SLOT";
       data: string;
     }
   | {
@@ -10,7 +10,7 @@ type Events =
       data: Slot;
     }
   | {
-      type: "CHANGE_API_KEY" | "EXIT_DETAIL";
+      type: "CHANGE_API_KEY" | "BACK_TO_LIST" | "GO_TO_PROMPT_GENERATOR";
     };
 
 interface Context {
@@ -53,13 +53,14 @@ const slotListPageStateMachine = createMachine(
       },
       slot_list: {
         on: {
-          SHOW_DETAIL: {
+          EDIT_SLOT: {
             target: "slot_detail",
             actions: assign({
               editingSlot: (context, event) =>
                 context.slots.find((slot) => slot.id === event.data),
             }),
           },
+          GO_TO_PROMPT_GENERATOR: "prompt_generator",
           ADD_SLOT: {
             actions: ["addSlot", "addSlotMessageSendToBackground"],
           },
@@ -75,9 +76,14 @@ const slotListPageStateMachine = createMachine(
           },
         },
       },
+      prompt_generator: {
+        on: {
+          BACK_TO_LIST: "slot_list",
+        },
+      },
       slot_detail: {
         on: {
-          EXIT_DETAIL: {
+          BACK_TO_LIST: {
             target: "slot_list",
             actions: assign({
               editingSlot: () => undefined,

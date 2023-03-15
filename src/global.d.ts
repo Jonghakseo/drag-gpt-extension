@@ -81,6 +81,11 @@ declare global {
     input: string;
     data?: { result: string; tokenUsage: number };
   };
+  type RequestGenerateChatGPTPromptMessage = {
+    type: "RequestGenerateChatGPTPrompt";
+    input: string;
+    data?: { result: string; tokenUsage: number };
+  };
   type RequestOngoingChatGPTMessage = {
     type: "RequestOngoingChatGPT";
     input: ChatCompletionRequestMessage[];
@@ -140,6 +145,7 @@ declare global {
     | SelectSlotMessage
     | DeleteSlotMessage
     | RequestOnetimeChatGPTMessage
+    | RequestGenerateChatGPTPromptMessage
     | SaveAPIKeyMessage;
 
   type RequestMessage<M = Message> = Omit<M, "data">;
