@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef } from "react";
+import { ComponentPropsWithRef, CSSProperties } from "react";
 import styled from "@emotion/styled";
 import { Spinner, Text, Tooltip } from "@chakra-ui/react";
 import { COLORS, Z_INDEX } from "@src/constant/style";
@@ -33,6 +33,18 @@ const StyledRequestButton = styled.button`
   }
 `;
 
+const labelTextInlineStyle: CSSProperties = {
+  display: "block",
+  fontSize: "13px",
+  lineHeight: 1,
+  margin: 0,
+  maxWidth: "160px",
+  overflow: "hidden",
+  whiteSpace: "nowrap",
+  textOverflow: "ellipsis",
+  fontFamily: "Noto Sans KR, sans-serif",
+};
+
 type GPTRequestButtonProps = {
   top: number;
   left: number;
@@ -49,7 +61,13 @@ export default function GPTRequestButton({
   ...restProps
 }: GPTRequestButtonProps) {
   return (
-    <Tooltip label={<Text fontSize={12}>{selectedSlot?.name}</Text>}>
+    <Tooltip
+      label={
+        selectedSlot?.name && (
+          <Text style={labelTextInlineStyle}>{selectedSlot.name}</Text>
+        )
+      }
+    >
       <StyledRequestButton
         aria-busy={loading}
         disabled={loading}
