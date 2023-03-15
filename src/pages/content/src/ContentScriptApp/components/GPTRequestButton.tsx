@@ -1,7 +1,8 @@
-import { ComponentPropsWithRef } from "react";
+import { ComponentPropsWithRef, CSSProperties } from "react";
 import styled from "@emotion/styled";
-import { Spinner, Text } from "@chakra-ui/react";
+import { Spinner, Text, Tooltip } from "@chakra-ui/react";
 import { COLORS, Z_INDEX } from "@src/constant/style";
+import { ChatIcon } from "@chakra-ui/icons";
 
 const GAP = 4;
 
@@ -32,10 +33,23 @@ const StyledRequestButton = styled.button`
   }
 `;
 
+const labelTextInlineStyle: CSSProperties = {
+  display: "block",
+  fontSize: "13px",
+  lineHeight: 1,
+  margin: 0,
+  maxWidth: "160px",
+  overflow: "hidden",
+  whiteSpace: "nowrap",
+  textOverflow: "ellipsis",
+  fontFamily: "Noto Sans KR, sans-serif",
+};
+
 type GPTRequestButtonProps = {
   top: number;
   left: number;
   loading: boolean;
+  selectedSlot?: Slot;
 } & ComponentPropsWithRef<"button">;
 
 export default function GPTRequestButton({
@@ -43,26 +57,33 @@ export default function GPTRequestButton({
   left,
   loading,
   style,
+  selectedSlot,
   ...restProps
 }: GPTRequestButtonProps) {
   return (
-    <StyledRequestButton
-      aria-busy={loading}
-      disabled={loading}
-      style={{
-        ...style,
-        top: `${top + GAP}px`,
-        left: `${left + GAP}px`,
-      }}
-      {...restProps}
+    <Tooltip
+      label={
+        selectedSlot?.name && (
+          <Text style={labelTextInlineStyle}>{selectedSlot.name}</Text>
+        )
+      }
     >
-      {loading ? (
-        <Spinner color="white" width={8} height={8} />
-      ) : (
-        <Text m={0} pb={2} fontWeight="bold" color="white">
-          D
-        </Text>
-      )}
-    </StyledRequestButton>
+      <StyledRequestButton
+        aria-busy={loading}
+        disabled={loading}
+        style={{
+          ...style,
+          top: `${top + GAP}px`,
+          left: `${left + GAP}px`,
+        }}
+        {...restProps}
+      >
+        {loading ? (
+          <Spinner color="white" width={8} height={8} />
+        ) : (
+          <ChatIcon aria-label="request" color="white" boxSize={12} />
+        )}
+      </StyledRequestButton>
+    </Tooltip>
   );
 }

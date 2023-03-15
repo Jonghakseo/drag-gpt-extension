@@ -74,6 +74,9 @@
   "slotListItem_editButtonText": {
     "message": "EDIT"
   },
+  "slotListItem_promptGeneratorButton": {
+    "message": "Prompt Generator"
+  },
   "slotDetail_promptSlotName": {
     "message": "Prompt Slot name"
   },
@@ -93,7 +96,7 @@
     "message": "CANCEL"
   },
   "responseMessageBox_responseTitle": {
-    "message": "✣ Response"
+    "message": "Response"
   },
   "responseMessageBox_copyButtonText_copy": {
     "message": "COPY LAST RESPONSE"
@@ -112,5 +115,17 @@
   },
   "errorMessageBox_unknownError": {
     "message": "Unknown error"
+  },
+  "promptGenerator_backButton": {
+    "message": "BACK"
+  },
+  "promptGenerator_guideMessage": {
+    "message": "If you have a desired prompt but don't know how to input it to use, why not entrust the prompt creation to us?"
+  },
+  "promptGenerator_placeholder": {
+    "message": "A prompt that will generate a marketing copy that will increase conversions."
+  },
+  "promptGenerator_generateButton": {
+    "message": "GENERATE"
   }
 }
