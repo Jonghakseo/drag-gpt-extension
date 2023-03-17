@@ -1,4 +1,7 @@
 # DragGPT
+
+Translation Versions: [ENGLISH](./README.md) | [中文简体](./README.zh-CN.md) | [にほんご](./README.ja.md) | [한국어](./README.ko.md)
+
 You can easily ask or request the selected content to ChatGPT by dragging and clicking the button!
 
 Made by [chrome-extension-boilerplate-react-vite](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite)
@@ -40,3 +43,9 @@ Go to the [installation link](https://chrome.google.com/webstore/detail/draggpt-
 ### Procedures <a name="procedures"></a>
 
 [Get your openai API key](https://platform.openai.com/account/api-keys)
+
+---
+
+[CONTRIBUTING](./CONTRIBUTING.md)
+
+[LICENSE](./LICENSE)
