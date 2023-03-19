@@ -42,6 +42,12 @@ const _StyledButton = styled(Button)`
           transition: all ease-in-out 100ms;
           transform: scale(0.95);
         }
+        &:hover {
+          outline: solid 1px white;
+        }
+        &:focus {
+          outline: solid 1px white;
+        }
       `
     );
   }}
