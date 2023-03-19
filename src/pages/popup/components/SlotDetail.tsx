@@ -123,6 +123,7 @@ const TemperatureSlider = ({
         min={0}
         max={2}
         step={0.1}
+        value={temperature}
         aria-label="temperature-slider"
         onChange={(val) => onChangeTemperature(val)}
         onMouseEnter={() => setShowTooltip(true)}
