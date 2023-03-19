@@ -68,7 +68,6 @@ export default function SlotDetail({
         {t("slotDetail_writePromptTitle")}
       </Text>
       <StyledTextArea
-        resize="none"
         width={220}
         height={70}
         maxLength={2000}
