@@ -89,6 +89,9 @@
   "slotDetail_promptInputPlaceholder": {
     "message": "例：あなたはコードレビュアーです。"
   },
+  "slotDetail_temperatureTitle": {
+    "message": "無作為性 (temperature: 0~2)"
+  },
   "slotDetail_saveButtonText": {
     "message": "保存"
   },

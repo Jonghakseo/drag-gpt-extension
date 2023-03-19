@@ -48,8 +48,8 @@ export default function PromptGenerator({ exit }: PromptGeneratorProps) {
       </Text>
       <Textarea
         width="100%"
-        height={80}
-        fontSize={12}
+        height="80px"
+        size="xs"
         lineHeight={1.2}
         value={state.context.inputText}
         placeholder={t("promptGenerator_placeholder")}
@@ -60,8 +60,8 @@ export default function PromptGenerator({ exit }: PromptGeneratorProps) {
       {state.context.outputPrompt && (
         <Textarea
           width="100%"
-          height={80}
-          fontSize={12}
+          size="xs"
+          height="80px"
           lineHeight={1.2}
           value={state.context.outputPrompt}
         />
@@ -72,7 +72,11 @@ export default function PromptGenerator({ exit }: PromptGeneratorProps) {
         </Text>
       )}
       <HStack w="100%" justifyContent="space-between">
-        <StyledButton onClick={() => send("GENERATE")} isLoading={isLoading}>
+        <StyledButton
+          onClick={() => send("GENERATE")}
+          colorScheme="blue"
+          isLoading={isLoading}
+        >
           {t("promptGenerator_generateButton")}
         </StyledButton>
       </HStack>

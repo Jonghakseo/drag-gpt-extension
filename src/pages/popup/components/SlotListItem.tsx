@@ -23,7 +23,7 @@ export default function SlotListItem({
       width="100%"
       backgroundColor={isSelected ? COLORS.PRIMARY : COLORS.WHITE}
       cursor="pointer"
-      padding={8}
+      padding={2}
       borderRadius={4}
       onClick={onSelect}
     >
@@ -37,6 +37,7 @@ export default function SlotListItem({
         </Text>
         <HStack>
           <StyledButton
+            colorScheme={isSelected ? "gray" : "blackAlpha"}
             onClick={(event) => {
               event.stopPropagation();
               onDetail();
@@ -45,6 +46,7 @@ export default function SlotListItem({
             <Text fontSize={11}>{t("slotListItem_editButtonText")}</Text>
           </StyledButton>
           <StyledButton
+            colorScheme={isSelected ? "gray" : "blackAlpha"}
             isDisabled={isSelected}
             onClick={(event) => {
               event.stopPropagation();

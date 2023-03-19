@@ -31,7 +31,7 @@ type MainLayoutProps = {
 export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <Container>
-      <Heading color={COLORS.WHITE} padding={12} fontWeight="bold">
+      <Heading color="gray.50" pb={3} fontSize={18} fontWeight="bold">
         {t("dragGPT")}
       </Heading>
       {children}
