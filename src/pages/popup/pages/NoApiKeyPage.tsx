@@ -1,5 +1,6 @@
 import React, { ChangeEventHandler, useState } from "react";
 import {
+  Button,
   HStack,
   Input,
   Link,
@@ -37,23 +38,25 @@ export const NoApiKeyPage = ({
     <>
       <VStack>
         {loading ? (
-          <VStack spacing={20}>
-            <Spinner width={30} height={30} color={COLORS.WHITE} />
+          <VStack spacing={5}>
+            <Spinner width={7} height={7} color={COLORS.WHITE} />
             <Text color={COLORS.WHITE} whiteSpace="pre-wrap" lineHeight={1.4}>
               {t("noApiKeyPage_checkingApiKey")}
             </Text>
           </VStack>
         ) : (
           <>
-            <HStack mb={12}>
+            <HStack mb={3}>
               <Input
                 value={apiKey}
+                color="gray.50"
                 type="password"
+                h="24px"
                 onChange={handleChange}
                 placeholder={t("noApiKeyPage_openAIApiKey_placeholder")}
                 size="sm"
               />
-              <StyledButton onClick={onClickSaveButton}>
+              <StyledButton h="24px" size="md" onClick={onClickSaveButton}>
                 {t("noApiKeyPage_saveButtonText")}
               </StyledButton>
             </HStack>
@@ -68,8 +71,8 @@ export const NoApiKeyPage = ({
               {t("noApiKeyPage_howToGetApiKey")}
             </Text>
             <OrderedList
-              spacing={6}
-              paddingLeft={8}
+              spacing={1.5}
+              paddingLeft={2}
               textAlign="start"
               color={COLORS.WHITE}
               fontSize={12}

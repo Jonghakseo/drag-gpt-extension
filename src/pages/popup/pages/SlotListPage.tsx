@@ -117,15 +117,15 @@ export default function SlotListPage({
   return (
     <>
       {state.matches("slot_list") && (
-        <VStack spacing={12} width="100%">
+        <VStack spacing={3} width="100%">
           <HStack width="100%" justifyContent="space-between">
-            <StyledButton onClick={addNewSlot}>
+            <StyledButton colorScheme="gray" onClick={addNewSlot}>
               {t("slotListPage_newSlotButtonText")}
             </StyledButton>
-            <StyledButton onClick={onClickQuickChatButton}>
+            <StyledButton colorScheme="gray" onClick={onClickQuickChatButton}>
               {t("slotListPage_quickChatButtonText")}
             </StyledButton>
-            <StyledButton onClick={onClickResetButton}>
+            <StyledButton colorScheme="gray" onClick={onClickResetButton}>
               {t("slotListPage_resetApiKeyButtonText")}
             </StyledButton>
           </HStack>
@@ -133,7 +133,7 @@ export default function SlotListPage({
             <Text color={COLORS.WHITE} fontWeight="bold">
               {t("slotListPage_promptSlotsTitle")}
             </Text>
-            <StyledButton onClick={goToPromptGeneratorPage}>
+            <StyledButton onClick={goToPromptGeneratorPage} colorScheme="blue">
               {t("slotListItem_promptGeneratorButton")}
             </StyledButton>
           </HStack>

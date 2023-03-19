@@ -21,7 +21,7 @@ export default function ChatText({
       borderRadius={4}
       whiteSpace="pre-wrap"
       border={border ? "1px solid #f0ffff2e" : undefined}
-      padding={padding}
+      padding={`${padding}px`}
       textAlign="start"
       color={isError ? "red" : "white"}
       lineHeight={1.3}

@@ -1,5 +1,17 @@
-import { HStack, Input, Text, Textarea, VStack } from "@chakra-ui/react";
-import React, { useState } from "react";
+import {
+  Box,
+  HStack,
+  Input,
+  Slider,
+  SliderFilledTrack,
+  SliderThumb,
+  SliderTrack,
+  Text,
+  Textarea,
+  Tooltip,
+  VStack,
+} from "@chakra-ui/react";
+import { useState } from "react";
 import styled from "@emotion/styled";
 import StyledButton from "@pages/popup/components/StyledButton";
 import { COLORS } from "@src/constant/style";
@@ -35,12 +47,12 @@ export default function SlotDetail({
   };
 
   return (
-    <VStack spacing={12} alignItems="flex-start">
+    <VStack spacing={3} alignItems="flex-start">
       <Text color={COLORS.WHITE} fontSize={12}>
         {t("slotDetail_promptSlotName")}
       </Text>
       <Input
-        fontSize={12}
+        size="xs"
         value={slot.name}
         placeholder={t("slotDetail_promptSlotName_placeholder")}
         onChange={(event) => updateSlot("name", event.target.value)}
@@ -56,7 +68,7 @@ export default function SlotDetail({
         {t("slotDetail_writePromptTitle")}
       </Text>
       <StyledTextArea
-        fontSize={12}
+        resize="none"
         width={220}
         height={70}
         maxLength={2000}
@@ -67,8 +79,24 @@ export default function SlotDetail({
         }}
         size="xs"
       />
+
+      <Text
+        color={COLORS.WHITE}
+        textAlign="start"
+        whiteSpace="pre-wrap"
+        fontSize={12}
+        lineHeight={1.3}
+      >
+        무작위성 (temperature: 0~2)
+      </Text>
+      <TemperatureSlider
+        temperature={slot.temperature ?? 1}
+        onChangeTemperature={(temperature) => {
+          updateSlot("temperature", temperature);
+        }}
+      />
       <HStack paddingTop={4} width="100%" justifyContent="space-between">
-        <StyledButton onClick={onSaveButtonClick}>
+        <StyledButton onClick={onSaveButtonClick} colorScheme="blue">
           {t("slotDetail_saveButtonText")}
         </StyledButton>
         <StyledButton onClick={exitDetail}>
@@ -78,3 +106,42 @@ export default function SlotDetail({
     </VStack>
   );
 }
+
+type TemperatureSliderProps = {
+  temperature: number;
+  onChangeTemperature: (temperature: number) => void;
+};
+const TemperatureSlider = ({
+  temperature,
+  onChangeTemperature,
+}: TemperatureSliderProps) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  return (
+    <Box pt="6px" pb="2px" w="100%">
+      <Slider
+        min={0}
+        max={2}
+        step={0.1}
+        aria-label="temperature-slider"
+        onChange={(val) => onChangeTemperature(val)}
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+      >
+        <SliderTrack>
+          <SliderFilledTrack />
+        </SliderTrack>
+        <Tooltip
+          hasArrow
+          bg="gray.500"
+          color="white"
+          placement="top"
+          isOpen={showTooltip}
+          label={temperature}
+        >
+          <SliderThumb />
+        </Tooltip>
+      </Slider>
+    </Box>
+  );
+};

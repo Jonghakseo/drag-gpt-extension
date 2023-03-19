@@ -5,7 +5,7 @@ import { t } from "@src/chrome/i18n";
 export default function Footer() {
   return (
     <>
-      <Spacer pt={24} />
+      <Spacer pt={6} />
       <Link
         _hover={{ textDecor: "underline" }}
         textDecor="none"

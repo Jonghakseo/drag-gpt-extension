@@ -53,6 +53,7 @@ table {
 
 textarea, input {
   outline: none;
+  background-color: white !important;
 }
 
 textarea, input:hover {
