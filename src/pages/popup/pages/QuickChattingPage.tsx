@@ -98,7 +98,7 @@ export default function QuickChattingPage({
   };
 
   return (
-    <VStack w={400} minH={400} justifyContent="space-between">
+    <VStack w="400px" minH="400px" justifyContent="space-between">
       <HStack w="100%" justifyContent="space-between">
         <StyledButton onClick={onClickBackButton}>
           {t("quickChattingPage_backButtonText")}
@@ -109,24 +109,34 @@ export default function QuickChattingPage({
       </HStack>
       <VStack
         ref={scrollDownRef}
-        spacing={16}
+        spacing={4}
         flexGrow={1}
         w="100%"
         overflowY="scroll"
-        maxHeight={300}
+        maxHeight="300px"
         fontSize={13}
       >
         {state.context.chats.map((chat, index) => {
           switch (chat.role) {
             case "user":
               return (
-                <UserChat key={index}>
+                <UserChat
+                  key={index}
+                  style={{
+                    marginInlineStart: "16px",
+                  }}
+                >
                   <ChatText>{chat.content}</ChatText>
                 </UserChat>
               );
             case "assistant":
               return (
-                <AssistantChat key={index}>
+                <AssistantChat
+                  key={index}
+                  style={{
+                    marginInlineEnd: "16px",
+                  }}
+                >
                   <ChatText>{chat.content}</ChatText>
                 </AssistantChat>
               );
@@ -141,9 +151,10 @@ export default function QuickChattingPage({
       </VStack>
       <VStack as="form" onSubmit={onChatSubmit} mt="auto" w="100%">
         <Textarea
+          size="xs"
           resize="none"
           width="100%"
-          height={50}
+          height="50px"
           value={state.context.inputText}
           placeholder={t("quickChattingPage_chattingPlaceholder")}
           onChange={(e) => send({ type: "CHANGE_TEXT", data: e.target.value })}
@@ -155,7 +166,7 @@ export default function QuickChattingPage({
               ? t("quickChattingPage_copyButtonText_copied")
               : t("quickChattingPage_copyButtonText_copy")}
           </StyledButton>
-          <StyledButton type="submit" isLoading={isLoading}>
+          <StyledButton type="submit" isLoading={isLoading} colorScheme="blue">
             {t("quickChattingPage_sendButtonText")}
           </StyledButton>
         </HStack>

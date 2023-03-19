@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
-import { Button } from "@chakra-ui/react";
+import { Button, ButtonProps } from "@chakra-ui/react";
 import { css } from "@emotion/react";
 
-const StyledButton = styled(Button)`
+const _StyledButton = styled(Button)`
   position: relative;
   cursor: pointer;
   outline: none;
@@ -12,8 +12,6 @@ const StyledButton = styled(Button)`
   font-size: 12px;
   line-height: 14px;
   font-weight: bold;
-  background-color: gainsboro;
-  color: black;
 
   ${(p) => {
     return (
@@ -44,14 +42,29 @@ const StyledButton = styled(Button)`
           transition: all ease-in-out 100ms;
           transform: scale(0.95);
         }
-
         &:hover {
-          transition: all ease-in-out 200ms;
-          background: #86a9ea;
+          outline: solid 1px white;
+        }
+        &:focus {
+          outline: solid 1px white;
         }
       `
     );
   }}
 ` as typeof Button;
+
+type StyledButtonProps = ButtonProps;
+
+const StyledButton = ({ ...restProps }: StyledButtonProps) => {
+  return (
+    <_StyledButton
+      colorScheme="whiteAlpha"
+      variant="solid"
+      size="sm"
+      h="24px"
+      {...restProps}
+    />
+  );
+};
 
 export default StyledButton;
