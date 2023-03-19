@@ -74,6 +74,9 @@
   "slotListItem_editButtonText": {
     "message": "수정"
   },
+  "slotListItem_promptGeneratorButton": {
+    "message": "프롬프트 생성기"
+  },
   "slotDetail_promptSlotName": {
     "message": "프롬프트 슬롯 이름"
   },
@@ -112,5 +115,17 @@
   },
   "errorMessageBox_unknownError": {
     "message": "알 수 없는 에러"
+  },
+  "promptGenerator_backButton": {
+    "message": "뒤로가기"
+  },
+  "promptGenerator_guideMessage": {
+    "message": "원하는 프롬프트가 있는데 어떻게 입력해야 사용할 수 있을지 모르겠다면? 프롬프트 생성을 맡겨보세요!"
+  },
+  "promptGenerator_placeholder": {
+    "message": "전환율을 높이기 위한 마케팅 문구를 생성하는 프롬프트"
+  },
+  "promptGenerator_generateButton": {
+    "message": "생성하기"
   }
 }

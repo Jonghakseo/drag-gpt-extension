@@ -57,7 +57,6 @@ export default function SlotDetail({
       </Text>
       <StyledTextArea
         fontSize={12}
-        resize="none"
         width={220}
         height={70}
         maxLength={2000}

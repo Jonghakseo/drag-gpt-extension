@@ -12,6 +12,7 @@ import SlotListItem from "@pages/popup/components/SlotListItem";
 import { COLORS } from "@src/constant/style";
 import { createNewChatGPTSlot } from "@src/shared/slot/createNewChatGPTSlot";
 import { t } from "@src/chrome/i18n";
+import PromptGenerator from "@pages/popup/components/PromptGenerator";
 
 const getAllSlotsFromBackground = async () => {
   return await sendMessageToBackgroundAsync({
@@ -100,7 +101,11 @@ export default function SlotListPage({
   };
 
   const goToSlotDetail = (slotId: string) => {
-    send({ type: "SHOW_DETAIL", data: slotId });
+    send({ type: "EDIT_SLOT", data: slotId });
+  };
+
+  const goToPromptGeneratorPage = () => {
+    send({ type: "GO_TO_PROMPT_GENERATOR" });
   };
 
   const onClickResetButton = () => {
@@ -124,9 +129,14 @@ export default function SlotListPage({
               {t("slotListPage_resetApiKeyButtonText")}
             </StyledButton>
           </HStack>
-          <Text color={COLORS.WHITE} fontWeight="bold" alignSelf="flex-start">
-            {t("slotListPage_promptSlotsTitle")}
-          </Text>
+          <HStack justifyContent="space-between" w="100%">
+            <Text color={COLORS.WHITE} fontWeight="bold">
+              {t("slotListPage_promptSlotsTitle")}
+            </Text>
+            <StyledButton onClick={goToPromptGeneratorPage}>
+              {t("slotListItem_promptGeneratorButton")}
+            </StyledButton>
+          </HStack>
           {state.context.slots.map((slot, index) => (
             <SlotListItem
               key={slot.id}
@@ -143,8 +153,11 @@ export default function SlotListPage({
         <SlotDetail
           initialSlot={state.context.editingSlot as Slot}
           onUpdate={updateSlotData}
-          exitDetail={() => send("EXIT_DETAIL")}
+          exitDetail={() => send("BACK_TO_LIST")}
         />
+      )}
+      {state.matches("prompt_generator") && (
+        <PromptGenerator exit={() => send("BACK_TO_LIST")} />
       )}
       <Footer />
     </>

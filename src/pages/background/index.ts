@@ -11,6 +11,7 @@ import {
 import { QuickChatHistoryStorage } from "@pages/background/lib/storage/quickChatHistoryStorage";
 import { exhaustiveMatchingGuard } from "@src/shared/ts-util/exhaustiveMatchingGuard";
 import { createNewChatGPTSlot } from "@src/shared/slot/createNewChatGPTSlot";
+import { PROMPT_GENERATE_PROMPT } from "@src/constant/promptGeneratePrompt";
 
 reloadOnUpdate("pages/background");
 
@@ -132,6 +133,22 @@ chrome.runtime.onConnect.addListener((port) => {
             apiKey,
           });
           sendResponse({ type: "RequestOngoingChatGPT", data: response });
+          break;
+        }
+        case "RequestGenerateChatGPTPrompt": {
+          const apiKey = await ApiKeyStorage.getApiKey();
+          const response = await chatGPT({
+            input: message.input,
+            slot: {
+              type: "ChatGPT",
+              system: PROMPT_GENERATE_PROMPT,
+            },
+            apiKey,
+          });
+          sendResponse({
+            type: "RequestGenerateChatGPTPrompt",
+            data: response,
+          });
           break;
         }
         case "GetQuickChatHistory": {
