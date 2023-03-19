@@ -89,6 +89,9 @@
   "slotDetail_promptInputPlaceholder": {
     "message": "例如：你是一个代码审核者。"
   },
+  "slotDetail_temperatureTitle": {
+    "message": "随机性 (temperature: 0~2)"
+  },
   "slotDetail_saveButtonText": {
     "message": "保存"
   },

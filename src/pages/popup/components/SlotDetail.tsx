@@ -87,7 +87,7 @@ export default function SlotDetail({
         fontSize={12}
         lineHeight={1.3}
       >
-        무작위성 (temperature: 0~2)
+        {t("slotDetail_temperatureTitle")}
       </Text>
       <TemperatureSlider
         temperature={slot.temperature ?? 1}

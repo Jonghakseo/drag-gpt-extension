@@ -89,6 +89,9 @@
   "slotDetail_promptInputPlaceholder": {
     "message": "ex. You are a code reviewer."
   },
+  "slotDetail_temperatureTitle": {
+    "message": "Randomness (temperature: 0~2)"
+  },
   "slotDetail_saveButtonText": {
     "message": "SAVE"
   },

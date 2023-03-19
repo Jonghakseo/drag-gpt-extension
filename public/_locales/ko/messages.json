@@ -89,6 +89,9 @@
   "slotDetail_promptInputPlaceholder": {
     "message": "ex. 영어 문장 혹은 단어의 한국어 뜻을 알려줘."
   },
+  "slotDetail_temperatureTitle": {
+    "message": "무작위성 (temperature: 0~2)"
+  },
   "slotDetail_saveButtonText": {
     "message": "저장"
   },
