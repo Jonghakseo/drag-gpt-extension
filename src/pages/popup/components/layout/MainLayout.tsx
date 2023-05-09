@@ -32,7 +32,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <Container>
       <Heading color="gray.50" pb={3} fontSize={18} fontWeight="bold">
-        {t("dragGPT")}
+        {t("casemark")}
       </Heading>
       {children}
     </Container>

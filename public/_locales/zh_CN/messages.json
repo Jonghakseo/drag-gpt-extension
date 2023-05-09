@@ -5,7 +5,7 @@
   "extensionDescription": {
     "message": "您可以通过拖动并单击按钮，轻松地向ChatGPT询问或请求所选内容。"
   },
-  "dragGPT": {
+  "casemark": {
     "message": "Drag GPT"
   },
   "noApiKeyPage_openAIApiKey_placeholder": {

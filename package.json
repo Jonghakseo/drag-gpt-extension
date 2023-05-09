@@ -1,11 +1,11 @@
 {
-  "name": "drag-gpt",
-  "version": "1.3.11",
-  "description": "Drag GPT chrome extension",
+  "name": "casemark-chrome-extension",
+  "version": "0.0.1",
+  "description": "CaseMark AI Legal Assistant Chrome extension",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite.git"
+    "url": "https://github.com/CaseMark/chrome-extension"
   },
   "scripts": {
     "build": "tsc --noEmit && vite build",
@@ -32,6 +32,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-draggable": "4.4.5",
+    "react-svg": "^16.1.11",
     "regenerator-runtime": "0.13.11",
     "xstate": "4.37.0"
   },

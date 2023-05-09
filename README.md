@@ -1,44 +1,41 @@
-# DragGPT
+# CaseMark.ai Chrome Extension
 
-Translation Versions: [ENGLISH](./README.md) | [中文简体](./README.zh-CN.md) | [にほんご](./README.ja.md) | [한국어](./README.ko.md)
+[![GitHub license](https://img.shields.io/github/license/casemark/chrome-extension)]()
+[![GitHub issues](https://img.shields.io/github/issues/casemark/chrome-extension)]()
+[![GitHub stars](https://img.shields.io/github/stars/casemark/chrome-extension)]()
+[![GitHub forks](https://img.shields.io/github/forks/casemark/chrome-extension)]()
 
-You can easily ask or request the selected content to ChatGPT by dragging and clicking the button!
-
-Made by [chrome-extension-boilerplate-react-vite](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite)
-
-[Install Extension](chrome.google.com/webstore/detail/draggpt-easy-start-with-d/akgdgnhlglhelinkmnmiakgccdkghjbh)
+Easy to use Chrome extension for interacting with ChatGPT.
 
 ---
 
 ## Table of Contents
 
-- [Intro](#intro)
-- [Features](#features)
+- [Local Development](#intro)
+- [Usage](#usage)
 - [Installation](#installation)
     - [Procedures](#procedures)
 
-## Intro <a name="intro"></a>
+## Local Development <a name="intro"></a>
 
-This extension program is designed to help users who want to use ChatGPT for various purposes in a friendly way in the web environment.
+Execute the following steps to run the extension locally:
 
-It uses the openai API, and currently, you can instruct what action to take with a simple prompt request, but we plan to add a feature to fine-tune parameters and select models in the future.
+1. Clone the repository
+2. Run `yarn` to install dependencies
+3. Run `yarn dev` to run locally and create `/dist` directory
+4. Open Chrome and go to `chrome://extensions`
+5. Enable developer mode
+6. Click `Load unpacked` and select the `/dist` directory
+7. (optional) Pin the extension to your toolbar for easy access
 
-## Features <a name="features"></a>
-- Easily call ChatGPT by dragging text
-- Can receive a desired response through a pre-set prompt
-- Multiple prompt slots can be created and used when desired
-- Quick chat without a pre-set prompt through the extension pop-up window
-- Feature to create prompt suitable for role (e.g. 'Prompt generator to create short text required for SNS marketing')
+## Usage <a name="usage"></a>
 
-### TODO
-- Fine-tune prompt parameters
-- Select text model (currently fixed to gpt-3.5-turbo)
-- Image input/output feature (for GPT-4)
-- Add a feature to view conversation history
+- Select the text you want to send to ChatGPT and click the extension icon. The extension will send the selected text to ChatGPT and open a Popover dialog with the results and the ability to further interact with ChatGPT.
+
 
 ## Installation <a name="installation"></a>
 
-Go to the [installation link](https://chrome.google.com/webstore/detail/draggpt-easy-start-with-d/akgdgnhlglhelinkmnmiakgccdkghjbh) to install and use.
+Coming soon...
 
 ### Procedures <a name="procedures"></a>
 

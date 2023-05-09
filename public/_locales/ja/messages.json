@@ -5,7 +5,7 @@
   "extensionDescription": {
     "message": "選択したコンテンツをChatGPTに簡単に問い合わせることができます。ドラッグしてボタンをクリックしてください。"
   },
-  "dragGPT": {
+  "casemark": {
     "message": "Drag GPT"
   },
   "noApiKeyPage_openAIApiKey_placeholder": {
