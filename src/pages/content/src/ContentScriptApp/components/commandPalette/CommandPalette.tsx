@@ -1,17 +1,51 @@
+/* eslint-disable react/no-children-prop */
+/* eslint-disable react/jsx-no-undef */
 import {
   ComponentPropsWithRef,
   ReactNode,
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from "react";
+import {
+  Box,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  List,
+  ListItem,
+  CloseButton,
+  HStack,
+  Stack,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { SearchIcon } from "@chakra-ui/icons";
 import styled from "@emotion/styled";
-import { CloseButton, HStack, Stack, Text } from "@chakra-ui/react";
 import type { PositionOnScreen } from "@pages/content/src/ContentScriptApp/utils/getPositionOnScreen";
 import useRootOutsideClick from "@pages/content/src/ContentScriptApp/hooks/useRootOutsideClick";
 import getSafePixel from "@pages/content/src/ContentScriptApp/utils/getSafePixel";
 import { COLORS, Z_INDEX } from "@src/constant/style";
 import DraggableBox from "@pages/content/src/ContentScriptApp/components/DraggableBox";
+
+const commands = [
+  {
+    label: "Create new file",
+    description: "Create a new file in the current directory",
+    onClick: () => {
+      // Code to create new file goes here
+    },
+  },
+  {
+    label: "Open terminal",
+    description: "Open a new terminal window",
+    onClick: () => {
+      // Code to open new terminal window goes here
+    },
+  },
+  // More commands can be added here...
+];
 
 const GAP = 8;
 
@@ -66,7 +100,7 @@ export type MessageBoxProps = {
   positionOnScreen: PositionOnScreen;
 } & ComponentPropsWithRef<"div">;
 
-export default function MessageBox({
+const CommandPalette = ({
   anchorCenter,
   anchorTop,
   anchorBottom,
@@ -78,7 +112,10 @@ export default function MessageBox({
   footer,
   isOutsideClickDisabled,
   ...restProps
-}: MessageBoxProps) {
+}: MessageBoxProps) => {
+  const { isOpen, onOpen, onClose: onClose1 } = useDisclosure();
+  const [searchTerm, setSearchTerm] = useState("");
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   useRootOutsideClick({
@@ -110,10 +147,18 @@ export default function MessageBox({
     }
   }, [containerRef, anchorCenter, anchorBottom, anchorTop, positionOnScreen]);
 
-  // TODO withDraggableBox 등으로 로직 추출
   const containerRefRect = useMemo(() => {
     return containerRef.current?.getBoundingClientRect();
   }, [containerRef.current]);
+
+  const handleInputChange = (event: any) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleCommandClick = (command: any) => {
+    command.onClick();
+    onClose();
+  };
 
   return (
     <DraggableBox
@@ -125,7 +170,7 @@ export default function MessageBox({
           <HStack justifyContent="space-between">
             {typeof header === "string" ? (
               <Text color="black" fontWeight="bold">
-                {header}foobar
+                {header}
               </Text>
             ) : (
               header
@@ -133,10 +178,52 @@ export default function MessageBox({
             <StyledCloseButton color="black" size="sm" onClick={onClose} />
           </HStack>
           <HStack>
-            {typeof content === "string" ? (
-              <Text color="black">{content}</Text>
-            ) : (
-              content
+            <InputGroup>
+              {/* eslint-disable-next-line react/no-children-prop */}
+              <InputLeftElement
+                pointerEvents="none"
+                children={<SearchIcon />}
+              />
+              <Input
+                placeholder="Search commands..."
+                onClick={onOpen}
+                value={searchTerm}
+                onChange={handleInputChange}
+              />
+            </InputGroup>
+          </HStack>
+          <HStack>
+            {isOpen && (
+              <Box
+                position="absolute"
+                top="100%"
+                left="0"
+                right="0"
+                boxShadow="md"
+                border="1px"
+                borderColor="gray.200"
+                borderRadius="md"
+                bg="white"
+                zIndex={999}
+              >
+                <List>
+                  {commands.map((command) => (
+                    <ListItem
+                      key={command.label}
+                      onClick={() => handleCommandClick(command)}
+                      cursor="pointer"
+                      px={4}
+                      py={2}
+                      _hover={{ bg: "gray.100" }}
+                    >
+                      <Text fontWeight="bold">{command.label}</Text>
+                      <Text color="gray.500" fontSize="sm">
+                        {command.description}
+                      </Text>
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
             )}
           </HStack>
           {footer}
@@ -144,4 +231,6 @@ export default function MessageBox({
       </MessageBoxContainer>
     </DraggableBox>
   );
-}
+};
+
+export default CommandPalette;

@@ -18,7 +18,7 @@ const manifest: chrome.runtime.ManifestV3 = {
     default_popup: "src/pages/popup/index.html",
     default_icon: "icon-34.png",
   },
-  permissions: ["storage"],
+  permissions: ["storage", "clipboardWrite", "activeTab"],
   icons: {
     "128": "icon-128.png",
   },

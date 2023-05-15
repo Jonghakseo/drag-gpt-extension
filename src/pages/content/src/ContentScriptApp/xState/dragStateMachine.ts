@@ -18,11 +18,47 @@ type TextSelectedEvent = {
   };
 };
 
-type Events = TextSelectedEvent | { type: "CLOSE_MESSAGE_BOX" | "REQUEST" };
+type CommandPaletteEvent = {
+  type: "COMMAND_PALETTE";
+};
+
+type CommandSelected = {
+  type: "EXECUTE_COMMAND";
+  data: {
+    selectedText: string;
+    command: Command;
+  };
+};
+
+type Events =
+  | TextSelectedEvent
+  | CommandPaletteEvent
+  | CommandSelected
+  | {
+      type:
+        | "CLOSE_MESSAGE_BOX"
+        | "CLOSE_COMMAND_PALETTE"
+        | "EXECUTE_COMMAND"
+        | "copyToClipboard"
+        | "REQUEST";
+    };
+
+// Define command enum
+export enum Command {
+  SUMMARIZE,
+  DRAFT_RECITALS,
+  DRAFT_INTRODUCTION,
+  DRAFT_DEFINITIONS,
+  CITE_GOVERNING_LAW,
+  RESEARCH,
+  GENERATE_LANGUAGE,
+  NONE,
+}
 
 interface Context {
   chats: Chat[];
   selectedText: string;
+  command: Command;
   selectedTextNodeRect: NodeRect;
   requestButtonPosition: RequestButtonPosition;
   positionOnScreen: PositionOnScreen;
@@ -39,6 +75,7 @@ type Services = {
 const initialContext: Context = {
   chats: [] as Chat[],
   selectedText: "",
+  command: Command.NONE,
   requestButtonPosition: { top: 0, left: 0 },
   anchorNodePosition: { top: 0, center: 0, bottom: 0 },
   selectedTextNodeRect: { top: 0, left: 0, height: 0, width: 0 },
@@ -66,6 +103,9 @@ const dragStateMachine = createMachine(
             target: "request_button",
             actions: "readyRequestButton",
             cond: "isValidTextSelectedEvent",
+          },
+          COMMAND_PALETTE: {
+            target: "command_palette",
           },
         },
       },
@@ -103,6 +143,55 @@ const dragStateMachine = createMachine(
           },
         },
       },
+      command_palette: {
+        tags: "showCommandPalette",
+        on: {
+          EXECUTE_COMMAND: {
+            target: "execute_command",
+            actions: "readyCommandExecution",
+          },
+          CLOSE_COMMAND_PALETTE: "idle",
+        },
+      },
+      execute_command: {
+        tags: ["showCommandPalette", "executingCommand"],
+        invoke: {
+          src: "getGPTResponse",
+          onDone: {
+            target: "response_executed_command",
+            actions: "addResponseChat",
+          },
+          onError: {
+            target: "error_message_box",
+            actions: assign({
+              error: (_, event) => event.data,
+            }),
+          },
+        },
+      },
+      response_executed_command: {
+        always: [
+          {
+            target: "clipboard_copy",
+          },
+        ],
+      },
+      clipboard_copy: {
+        exit: "copyToClipboard",
+        always: [
+          {
+            target: "show_toast",
+          },
+        ],
+      },
+      show_toast: {
+        entry: "showToast",
+        always: [
+          {
+            target: "idle",
+          },
+        ],
+      },
       response_message_box: {
         tags: "showResponseMessages",
         on: {
@@ -135,6 +224,9 @@ const dragStateMachine = createMachine(
         selectedTextNodeRect: (context, event) =>
           event.data.selectedNodeRect ?? context.selectedTextNodeRect,
         requestButtonPosition: (_, event) => event.data.requestButtonPosition,
+      }),
+      readyCommandExecution: assign({
+        selectedText: (_, event) => event.data.selectedText,
       }),
       addRequestChat: assign({
         chats: (context) =>

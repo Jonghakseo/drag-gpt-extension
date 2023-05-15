@@ -9,6 +9,7 @@ import {
 } from "@src/chrome/message";
 import MainLayout from "@pages/popup/components/layout/MainLayout";
 import QuickChattingPage from "@pages/popup/pages/QuickChattingPage";
+import { Signin } from "../content/src/ContentScriptApp/components/auth/Signin";
 
 const saveApiKeyToBackground = async (apiKey: string) => {
   await sendMessageToBackgroundAsync({
@@ -62,6 +63,11 @@ export default function Popup() {
           loading={state.matches("checking_api_key")}
           checkApiKey={checkApiKey}
         />
+        // <Signin
+        //   apiKeyError={state.context.apiKeyCheckError}
+        //   loading={state.matches("checking_api_key")}
+        //   checkApiKey={checkApiKey}
+        // />
       )}
       {state.matches("quick_chat") && (
         <QuickChattingPage onClickBackButton={() => send("EXIT_QUICK_CHAT")} />

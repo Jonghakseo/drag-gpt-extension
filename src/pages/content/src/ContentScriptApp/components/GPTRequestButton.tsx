@@ -13,7 +13,7 @@ const StyledRequestButton = styled.button`
   z-index: ${Z_INDEX.ROOT};
   width: 20px;
   height: 20px;
-  background: ${COLORS.CONTENT_BACKGROUND};
+  background: ${COLORS.PRIMARY};
   border-radius: 4px;
   display: flex;
   align-items: center;

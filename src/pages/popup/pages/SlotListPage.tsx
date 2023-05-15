@@ -130,7 +130,7 @@ export default function SlotListPage({
             </StyledButton>
           </HStack>
           <HStack justifyContent="space-between" w="100%">
-            <Text color={COLORS.WHITE} fontWeight="bold">
+            <Text color={COLORS.CHARCOAL} fontWeight="bold">
               {t("slotListPage_promptSlotsTitle")}
             </Text>
             <StyledButton onClick={goToPromptGeneratorPage} colorScheme="blue">

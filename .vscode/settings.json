@@ -1,3 +1,4 @@
 {
-    "svg.preview.background": "dark-transparent"
+    "svg.preview.background": "transparent",
+    "typescript.tsdk": "node_modules/typescript/lib"
 }

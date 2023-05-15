@@ -18,6 +18,7 @@ const Container = styled.div`
   text-align: center;
   padding: 24px;
   background-color: ${COLORS.POPUP_BACKGROUND};
+  border: 4px solid ${COLORS.POPUP_BORDER};
 
   p {
     margin: 0;
@@ -31,7 +32,7 @@ type MainLayoutProps = {
 export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <Container>
-      <Heading color="gray.50" pb={3} fontSize={18} fontWeight="bold">
+      <Heading pb={3} fontSize={18} fontWeight="bold">
         {t("casemark")}
       </Heading>
       {children}

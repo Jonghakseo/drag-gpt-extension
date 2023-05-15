@@ -38,7 +38,7 @@ export default function PromptGenerator({ exit }: PromptGeneratorProps) {
         </StyledButton>
       </HStack>
       <Text
-        color={COLORS.WHITE}
+        color="black"
         fontSize={12}
         lineHeight={1.2}
         textAlign="start"

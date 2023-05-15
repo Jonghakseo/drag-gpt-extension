@@ -54,6 +54,7 @@ table {
 textarea, input {
   outline: none;
   background-color: white !important;
+  color: black !important;
 }
 
 textarea, input:hover {

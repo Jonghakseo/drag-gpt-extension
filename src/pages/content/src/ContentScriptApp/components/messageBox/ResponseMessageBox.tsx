@@ -91,7 +91,7 @@ export default function ResponseMessageBox({
           alignItems="center"
           width="100%"
           height={24}
-          color="white"
+          color="black"
           fontWeight="bold"
           cursor="move"
           className={DraggableBox.handlerClassName}

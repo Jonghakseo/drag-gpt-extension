@@ -1,9 +1,11 @@
 export const COLORS = {
-  CONTENT_BACKGROUND: "#2a4365",
-  POPUP_BACKGROUND: "#282c34", // index css
-  PRIMARY: "#3F75E5FF",
-  WHITE: "#f5f5f5",
-  RED: "#e35353",
+  CONTENT_BACKGROUND: "#F4F5F4",
+  POPUP_BACKGROUND: "#E2E4E2", // index css
+  POPUP_BORDER: "#F9F8F8",
+  CHARCOAL: "#465362",
+  PRIMARY: "#011936",
+  WHITE: "#FFFFFF",
+  RED: "#C42021",
 };
 
 export const Z_INDEX = {

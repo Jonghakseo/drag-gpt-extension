@@ -23,7 +23,7 @@ export default function ChatText({
       border={border ? "1px solid #f0ffff2e" : undefined}
       padding={`${padding}px`}
       textAlign="start"
-      color={isError ? "red" : "white"}
+      color={isError ? "red" : "black"}
       lineHeight={1.3}
       fontWeight={bold ? "bold" : "normal"}
       {...restProps}

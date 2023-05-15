@@ -134,7 +134,7 @@ const TemperatureSlider = ({
         <Tooltip
           hasArrow
           bg="gray.500"
-          color="white"
+          color="black"
           placement="top"
           isOpen={showTooltip}
           label={temperature}

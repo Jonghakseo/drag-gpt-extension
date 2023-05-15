@@ -1,4 +1,5 @@
 import { createRoot } from "react-dom/client";
+import { createStandaloneToast } from "@chakra-ui/react";
 import App from "@src/pages/content/src/ContentScriptApp/App";
 import refreshOnUpdate from "virtual:reload-on-update-in-view";
 import {
@@ -19,4 +20,11 @@ renderIn.id = SHADOW_ROOT_ID;
 const shadow = root.attachShadow({ mode: "open" });
 shadow.appendChild(renderIn);
 
-createRoot(renderIn).render(<App />);
+const { ToastContainer } = createStandaloneToast();
+
+createRoot(renderIn).render(
+  <>
+    <App />
+    <ToastContainer />
+  </>
+);

@@ -13,7 +13,7 @@ export default function Footer() {
         href="mailto:unqocn@gmail.com"
         mt="auto"
       >
-        <Text color="white" fontSize={12} fontWeight="bold">
+        <Text color="black" fontSize={12} fontWeight="bold">
           {t("footer_EmailText")}
         </Text>
       </Link>

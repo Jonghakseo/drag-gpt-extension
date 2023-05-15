@@ -51,6 +51,7 @@ export default defineConfig({
         include: ["src/**", "vite.config.ts"],
         exclude: ["node_modules/**", "src/**/*.test.ts"],
       },
+      external: ["react-command-palette"],
       output: {
         entryFileNames: "src/pages/[name]/index.js",
         chunkFileNames: isDev
