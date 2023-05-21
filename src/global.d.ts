@@ -79,22 +79,22 @@ declare global {
   type RequestOnetimeChatGPTMessage = {
     type: "RequestOnetimeChatGPT";
     input: string;
-    data?: { result: string; tokenUsage: number };
+    data?: { result: string };
   };
   type RequestGenerateChatGPTPromptMessage = {
     type: "RequestGenerateChatGPTPrompt";
     input: string;
-    data?: { result: string; tokenUsage: number };
+    data?: { result: string };
   };
   type RequestOngoingChatGPTMessage = {
     type: "RequestOngoingChatGPT";
     input: ChatCompletionRequestMessage[];
-    data?: { result: string; tokenUsage: number };
+    data?: { result: string };
   };
   type RequestQuickChatGPTMessage = {
     type: "RequestQuickChatGPT";
     input?: ChatCompletionRequestMessage[];
-    data?: { result: string; tokenUsage: number };
+    data?: { result: string };
   };
   type SaveAPIKeyMessage = {
     type: "SaveAPIKey";

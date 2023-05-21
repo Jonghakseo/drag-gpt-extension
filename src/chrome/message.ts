@@ -1,5 +1,3 @@
-import { AxiosError } from "axios";
-
 type GetDataType<T extends Message["type"]> = Exclude<
   Extract<
     Message,
@@ -74,13 +72,5 @@ export function sendErrorMessageToClient(
     sendMessageToClient(port, { type: "Error", error: unknownError });
     return;
   }
-  if ((error as AxiosError).isAxiosError) {
-    const axiosError = error as AxiosError;
-    const customError = new Error();
-    customError.message = axiosError.response?.data?.error?.message;
-    customError.name = axiosError.response?.data?.error?.code ?? error.name;
-    sendMessageToClient(port, { type: "Error", error: customError });
-  } else {
-    sendMessageToClient(port, { type: "Error", error });
-  }
+  sendMessageToClient(port, { type: "Error", error });
 }

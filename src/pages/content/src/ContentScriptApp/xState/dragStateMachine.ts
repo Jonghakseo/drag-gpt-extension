@@ -32,7 +32,7 @@ interface Context {
 
 type Services = {
   getGPTResponse: {
-    data: { result: string; tokenUsage: number };
+    data: { result: string };
   };
 };
 

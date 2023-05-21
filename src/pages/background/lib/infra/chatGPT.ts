@@ -1,51 +1,21 @@
-import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
-import axios, { AxiosInstance } from "axios";
-import fetchAdapter from "@vespaiach/axios-fetch-adapter";
-
-let openAiApiInstance: OpenAIApi | null = null;
-let axiosInstance: AxiosInstance | null = null;
-let configuration: Configuration | null = null;
-
-function checkIsSameApiKey(apiKey: string): boolean {
-  return configuration?.apiKey === apiKey;
-}
-
-function resetAuthInfoInstance(): void {
-  configuration = null;
-  openAiApiInstance = null;
-}
-
-function createInstancesIfNotExists(apiKey: string) {
-  axiosInstance ??= axios.create({
-    adapter: fetchAdapter,
-  });
-  configuration ??= new Configuration({
-    apiKey,
-  });
-  openAiApiInstance ??= new OpenAIApi(configuration, undefined, axiosInstance);
-
-  return {
-    openAiApiInstance,
-  };
-}
+import type {
+  ChatCompletionRequestMessage,
+  CreateChatCompletionRequest,
+} from "openai";
 
 export async function chatGPT({
   input,
   slot,
   chats,
   apiKey,
+  onDelta,
 }: {
   slot: ChatGPTSlot;
   chats?: ChatCompletionRequestMessage[];
   input?: string;
   apiKey: string;
-}): Promise<{ result: string; tokenUsage: number }> {
-  if (!checkIsSameApiKey(apiKey)) {
-    resetAuthInfoInstance();
-  }
-
-  const { openAiApiInstance } = createInstancesIfNotExists(apiKey);
-
+  onDelta?: (chunk: string) => unknown;
+}): Promise<{ result: string }> {
   const messages: ChatCompletionRequestMessage[] = [];
 
   if (slot.system) {
@@ -61,23 +31,52 @@ export async function chatGPT({
     messages.push({ role: "user", content: input });
   }
 
-  const completion = await openAiApiInstance.createChatCompletion({
-    model: "gpt-3.5-turbo",
-    max_tokens: slot.maxTokens,
-    messages,
-    temperature: slot.temperature,
-    top_p: slot.topP,
-    frequency_penalty: slot.frequencyPenalty,
-    presence_penalty: slot.presencePenalty,
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    method: "POST",
+    body: JSON.stringify({
+      model: "gpt-3.5-turbo",
+      max_tokens: slot.maxTokens,
+      messages,
+      stream: true,
+      temperature: slot.temperature,
+      top_p: slot.topP,
+      frequency_penalty: slot.frequencyPenalty,
+      presence_penalty: slot.presencePenalty,
+    } as CreateChatCompletionRequest),
   });
 
-  const result =
-    completion.data.choices.at(0)?.message?.content ?? "Unknown Response";
-  const tokenUsage = completion.data.usage?.total_tokens ?? 0;
+  const reader = response.body
+    ?.pipeThrough(new TextDecoderStream())
+    .getReader();
+
+  let result = "";
+  while (reader) {
+    const { value, done } = await reader.read();
+    if (done) {
+      break;
+    }
+    if (value.includes("data: [DONE]")) {
+      break;
+    }
+    const lines = value.split("\n\n").filter(Boolean);
+    const chunks = lines
+      .map((line) => line.substring(5).trim())
+      .map((line) => JSON.parse(line))
+      .map((data) => data.choices.at(0).delta.content)
+      .filter(Boolean);
+
+    chunks.forEach((chunk) => {
+      result += chunk;
+      onDelta?.(chunk);
+    });
+  }
 
   return {
     result,
-    tokenUsage,
   };
 }
 
