@@ -49,7 +49,6 @@ export const NoApiKeyPage = ({
             <HStack mb={3}>
               <Input
                 value={apiKey}
-                color="gray.50"
                 type="password"
                 h="24px"
                 onChange={handleChange}
