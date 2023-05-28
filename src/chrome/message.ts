@@ -49,6 +49,10 @@ export function sendMessageToBackground<M extends Message>({
   } catch (error) {
     console.log(error);
   }
+  const disconnect = () => {
+    port.disconnect();
+  };
+  return { disconnect };
 }
 
 export function sendMessageToClient(

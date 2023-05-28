@@ -38,6 +38,9 @@
   "quickChattingPage_sendButtonText": {
     "message": "送信"
   },
+  "quickChattingPage_stopButtonText": {
+    "message": "回答中断"
+  },
   "quickChattingPage_chattingPlaceholder": {
     "message": "例：こんにちは！"
   },
@@ -109,6 +112,9 @@
   },
   "responseMessageBox_sendButtonText": {
     "message": "送信"
+  },
+  "responseMessageBox_stopButtonText": {
+    "message": "回答中断"
   },
   "responseMessageBox_messageInputPlacepolder": {
     "message": "例：要約！"

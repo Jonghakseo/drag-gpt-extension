@@ -6,9 +6,7 @@ import { FormEventHandler } from "react";
 import { HStack, Input, Text, VStack } from "@chakra-ui/react";
 import DraggableBox from "@pages/content/src/ContentScriptApp/components/DraggableBox";
 import { useMachine } from "@xstate/react";
-import chatStateMachine from "@src/shared/xState/chatStateMachine";
 import { ChatCompletionRequestMessage } from "openai";
-import { sendMessageToBackgroundAsync } from "@src/chrome/message";
 import ChatText from "@src/shared/component/ChatText";
 import AssistantChat from "@src/shared/component/AssistantChat";
 import UserChat from "@src/shared/component/UserChat";
@@ -17,13 +15,8 @@ import { useScrollDownEffect } from "@src/shared/hook/useScrollDownEffect";
 import { useCopyClipboard } from "@src/shared/hook/useCopyClipboard";
 import { t } from "@src/chrome/i18n";
 import { DragHandleIcon } from "@chakra-ui/icons";
-
-async function getGPTResponse(messages: ChatCompletionRequestMessage[]) {
-  return await sendMessageToBackgroundAsync({
-    type: "RequestOngoingChatGPT",
-    input: messages,
-  });
-}
+import streamChatStateMachine from "@src/shared/xState/streamChatStateMachine";
+import { getGPTResponseAsStream } from "@src/shared/services/getGPTResponseAsStream";
 
 type ResponseMessageBoxProps = Omit<
   MessageBoxProps,
@@ -37,16 +30,19 @@ export default function ResponseMessageBox({
   onClose,
   ...restProps
 }: ResponseMessageBoxProps) {
-  const [state, send] = useMachine(chatStateMachine, {
+  const [state, send] = useMachine(streamChatStateMachine, {
     services: {
       getChatHistoryFromBackground: () => Promise.resolve(initialChats),
       getGPTResponse: (context) => {
-        const chatsWithoutError = context.chats.filter(
-          (chat) => chat.role !== "error"
-        );
-        return getGPTResponse(
-          chatsWithoutError as ChatCompletionRequestMessage[]
-        );
+        return getGPTResponseAsStream({
+          messages: context.chats.filter(
+            (chat) => chat.role !== "error"
+          ) as ChatCompletionRequestMessage[],
+          onDelta: (chunk) => {
+            send("RECEIVE_ING", { data: chunk });
+          },
+          onFinish: (result) => send("RECEIVE_DONE", { data: result }),
+        });
       },
     },
     actions: {
@@ -57,11 +53,16 @@ export default function ResponseMessageBox({
   /** 첫 번째 질문 숨김처리 (드래깅으로 질문) */
   const [, ...chats] = state.context.chats;
   const isLoading = state.matches("loading");
+  const isReceiving = state.matches("receiving");
 
   const { scrollDownRef } = useScrollDownEffect([chats.length]);
   const { isCopied, copy } = useCopyClipboard([
     chats.filter(({ role }) => role === "assistant").length,
   ]);
+
+  const onClickStopButton = () => {
+    send("RECEIVE_CANCEL");
+  };
 
   const onClickCopy = async () => {
     const lastResponseText = findLastResponseChat(chats);
@@ -137,7 +138,12 @@ export default function ResponseMessageBox({
               }
               onKeyDown={(e) => e.stopPropagation()}
             />
-            <StyledButton type="submit" isLoading={isLoading}>
+            {isReceiving && (
+              <StyledButton colorScheme="orange" onClick={onClickStopButton}>
+                {t("responseMessageBox_stopButtonText")}
+              </StyledButton>
+            )}
+            <StyledButton type="submit" isLoading={isLoading || isReceiving}>
               {t("responseMessageBox_sendButtonText")}
             </StyledButton>
           </HStack>

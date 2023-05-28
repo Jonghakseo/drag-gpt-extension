@@ -38,6 +38,9 @@
   "quickChattingPage_sendButtonText": {
     "message": "SEND"
   },
+  "quickChattingPage_stopButtonText": {
+    "message": "STOP"
+  },
   "quickChattingPage_chattingPlaceholder": {
     "message": "ex. Hello!"
   },
@@ -109,6 +112,9 @@
   },
   "responseMessageBox_sendButtonText": {
     "message": "SEND"
+  },
+  "responseMessageBox_stopButtonText": {
+    "message": "STOP"
   },
   "responseMessageBox_messageInputPlacepolder": {
     "message": "ex. Summarize!"

@@ -91,8 +91,13 @@ declare global {
     input: ChatCompletionRequestMessage[];
     data?: { result: string };
   };
+  type RequestInitialDragGPTMessage = {
+    type: "RequestInitialDragGPTStream";
+    input?: string;
+    data?: { result: string; chunk?: string; isDone?: boolean };
+  };
   type RequestQuickChatGPTMessage = {
-    type: "RequestQuickChatGPTStream";
+    type: "RequestChatGPTStream";
     input?: ChatCompletionRequestMessage[];
     data?: { result: string; chunk?: string; isDone?: boolean };
   };
@@ -133,6 +138,7 @@ declare global {
   };
 
   type Message =
+    | RequestInitialDragGPTMessage
     | RequestQuickChatGPTMessage
     | RequestOngoingChatGPTMessage
     | ResetQuickChatHistoryMessage
