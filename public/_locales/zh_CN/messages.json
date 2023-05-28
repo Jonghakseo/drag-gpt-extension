@@ -38,6 +38,9 @@
   "quickChattingPage_sendButtonText": {
     "message": "发送"
   },
+  "quickChattingPage_stopButtonText": {
+    "message": "回答中止"
+  },
   "quickChattingPage_chattingPlaceholder": {
     "message": "例如：你好！"
   },
@@ -109,6 +112,9 @@
   },
   "responseMessageBox_sendButtonText": {
     "message": "发送"
+  },
+  "responseMessageBox_stopButtonText": {
+    "message": "回答中止"
   },
   "responseMessageBox_messageInputPlacepolder": {
     "message": "例如：总结！"

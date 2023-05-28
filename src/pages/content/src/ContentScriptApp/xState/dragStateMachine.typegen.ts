@@ -25,10 +25,15 @@ export interface Typegen0 {
     services: "getGPTResponse";
   };
   eventsCausingActions: {
+    addInitialResponseChat: "done.invoke.drag-state.loading:invocation[0]";
     addRequestChat: "REQUEST";
-    addResponseChat: "done.invoke.drag-state.loading:invocation[0]";
+    addResponseChatChunk: "RECEIVE_ING";
     readyRequestButton: "TEXT_SELECTED";
-    resetAll: "CLOSE_MESSAGE_BOX" | "TEXT_SELECTED" | "xstate.init";
+    resetAll:
+      | "CLOSE_MESSAGE_BOX"
+      | "RECEIVE_CANCEL"
+      | "TEXT_SELECTED"
+      | "xstate.init";
     setAnchorNodePosition: "REQUEST";
     setPositionOnScreen:
       | "done.invoke.drag-state.loading:invocation[0]"
@@ -48,6 +53,7 @@ export interface Typegen0 {
     | "idle"
     | "loading"
     | "request_button"
-    | "response_message_box";
+    | "response_message_box"
+    | "temp_response_message_box";
   tags: "showRequestButton" | "showResponseMessages";
 }

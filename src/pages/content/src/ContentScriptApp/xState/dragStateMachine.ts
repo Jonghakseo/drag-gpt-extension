@@ -18,7 +18,10 @@ type TextSelectedEvent = {
   };
 };
 
-type Events = TextSelectedEvent | { type: "CLOSE_MESSAGE_BOX" | "REQUEST" };
+type Events =
+  | TextSelectedEvent
+  | { type: "CLOSE_MESSAGE_BOX" | "REQUEST" | "RECEIVE_END" | "RECEIVE_CANCEL" }
+  | { type: "RECEIVE_ING"; data: string };
 
 interface Context {
   chats: Chat[];
@@ -32,7 +35,7 @@ interface Context {
 
 type Services = {
   getGPTResponse: {
-    data: { result: string; tokenUsage: number };
+    data: { firstChunk: string };
   };
 };
 
@@ -92,8 +95,8 @@ const dragStateMachine = createMachine(
         invoke: {
           src: "getGPTResponse",
           onDone: {
-            target: "response_message_box",
-            actions: "addResponseChat",
+            target: "temp_response_message_box",
+            actions: "addInitialResponseChat",
           },
           onError: {
             target: "error_message_box",
@@ -101,6 +104,15 @@ const dragStateMachine = createMachine(
               error: (_, event) => event.data,
             }),
           },
+        },
+      },
+      temp_response_message_box: {
+        on: {
+          RECEIVE_ING: {
+            actions: "addResponseChatChunk",
+          },
+          RECEIVE_END: "response_message_box",
+          RECEIVE_CANCEL: "idle",
         },
       },
       response_message_box: {
@@ -140,12 +152,23 @@ const dragStateMachine = createMachine(
         chats: (context) =>
           context.chats.concat({ role: "user", content: context.selectedText }),
       }),
-      addResponseChat: assign({
+      addInitialResponseChat: assign({
         chats: (context, event) =>
           context.chats.concat({
             role: "assistant",
-            content: event.data.result,
+            content: event.data.firstChunk,
           }),
+      }),
+      addResponseChatChunk: assign({
+        chats: ({ chats }, event) => {
+          const lastChat = chats.at(-1);
+          if (!lastChat) {
+            return chats;
+          }
+          return chats
+            .slice(0, chats.length - 1)
+            .concat({ ...lastChat, content: lastChat.content + event.data });
+        },
       }),
     },
     guards: {

@@ -1,5 +1,3 @@
-import { AxiosError } from "axios";
-
 type GetDataType<T extends Message["type"]> = Exclude<
   Extract<
     Message,
@@ -51,6 +49,10 @@ export function sendMessageToBackground<M extends Message>({
   } catch (error) {
     console.log(error);
   }
+  const disconnect = () => {
+    port.disconnect();
+  };
+  return { disconnect };
 }
 
 export function sendMessageToClient(
@@ -68,19 +70,14 @@ export function sendErrorMessageToClient(
   port: chrome.runtime.Port,
   error: unknown
 ) {
-  if (!(error instanceof Error)) {
-    const unknownError = new Error();
-    unknownError.name = "Unknown Error";
-    sendMessageToClient(port, { type: "Error", error: unknownError });
-    return;
+  const sendError = new Error();
+  sendError.name = "Unknown Error";
+
+  if (error instanceof Error) {
+    error.name && (sendError.name = error.name);
+    sendError.message = error.message;
   }
-  if ((error as AxiosError).isAxiosError) {
-    const axiosError = error as AxiosError;
-    const customError = new Error();
-    customError.message = axiosError.response?.data?.error?.message;
-    customError.name = axiosError.response?.data?.error?.code ?? error.name;
-    sendMessageToClient(port, { type: "Error", error: customError });
-  } else {
-    sendMessageToClient(port, { type: "Error", error });
-  }
+
+  sendMessageToClient(port, { type: "Error", error: sendError });
+  return;
 }

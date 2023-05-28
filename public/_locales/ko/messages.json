@@ -38,6 +38,9 @@
   "quickChattingPage_sendButtonText": {
     "message": "전송"
   },
+  "quickChattingPage_stopButtonText": {
+    "message": "답변 중단"
+  },
   "quickChattingPage_chattingPlaceholder": {
     "message": "ex. 안녕!"
   },
@@ -109,6 +112,9 @@
   },
   "responseMessageBox_sendButtonText": {
     "message": "전송"
+  },
+  "responseMessageBox_stopButtonText": {
+    "message": "답변 중단"
   },
   "responseMessageBox_messageInputPlacepolder": {
     "message": "ex. 위 내용을 알기 쉽게 요약해줘"

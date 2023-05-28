@@ -22,7 +22,9 @@ type RequiredDataNullableInput<T extends Message> = {
 };
 
 chrome.runtime.onConnect.addListener((port) => {
-  port.onDisconnect.addListener(() => console.log("Port disconnected"));
+  port.onDisconnect.addListener(() => {
+    console.log("Port disconnected");
+  });
   port.onMessage.addListener(async (message: Message) => {
     Logger.receive(message);
 
@@ -92,6 +94,32 @@ chrome.runtime.onConnect.addListener((port) => {
           await ApiKeyStorage.setApiKey(null);
           sendResponse({ type: "ResetAPIKey", data: "success" });
           break;
+        case "RequestInitialDragGPTStream": {
+          const slot = await SlotStorage.getSelectedSlot();
+          const apiKey = await ApiKeyStorage.getApiKey();
+          const response = await chatGPT({
+            input: message.input,
+            slot,
+            apiKey,
+            onDelta: (chunk) => {
+              sendResponse({
+                type: "RequestInitialDragGPTStream",
+                data: {
+                  result: "",
+                  chunk,
+                },
+              });
+            },
+          });
+          sendResponse({
+            type: "RequestInitialDragGPTStream",
+            data: {
+              isDone: true,
+              result: response.result,
+            },
+          });
+          break;
+        }
         case "RequestOnetimeChatGPT": {
           const selectedSlot = await SlotStorage.getSelectedSlot();
           const apiKey = await ApiKeyStorage.getApiKey();
@@ -106,7 +134,7 @@ chrome.runtime.onConnect.addListener((port) => {
           });
           break;
         }
-        case "RequestQuickChatGPT": {
+        case "RequestChatGPTStream": {
           await QuickChatHistoryStorage.pushChatHistories({
             role: "user",
             content: message.input?.at(-1)?.content ?? "",
@@ -116,12 +144,24 @@ chrome.runtime.onConnect.addListener((port) => {
             chats: message.input,
             slot: { type: "ChatGPT" },
             apiKey,
+            onDelta: (chunk) => {
+              sendResponse({
+                type: "RequestChatGPTStream",
+                data: {
+                  result: "",
+                  chunk,
+                },
+              });
+            },
           });
           await QuickChatHistoryStorage.pushChatHistories({
             role: "assistant",
             content: response.result,
           });
-          sendResponse({ type: "RequestQuickChatGPT", data: response });
+          sendResponse({
+            type: "RequestChatGPTStream",
+            data: { result: response.result, isDone: true },
+          });
           break;
         }
         case "RequestOngoingChatGPT": {

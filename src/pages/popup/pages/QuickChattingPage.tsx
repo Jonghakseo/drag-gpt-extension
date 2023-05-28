@@ -1,26 +1,21 @@
 import { HStack, Textarea, VStack } from "@chakra-ui/react";
 import StyledButton from "@pages/popup/components/StyledButton";
 import { useMachine } from "@xstate/react";
-import chatStateMachine from "@src/shared/xState/chatStateMachine";
 import { ChatCompletionRequestMessage } from "openai";
 import {
   sendMessageToBackground,
   sendMessageToBackgroundAsync,
 } from "@src/chrome/message";
-import { FormEventHandler, KeyboardEventHandler, useEffect } from "react";
+import { FormEventHandler, KeyboardEventHandler } from "react";
 import UserChat from "@src/shared/component/UserChat";
 import ChatText from "@src/shared/component/ChatText";
 import AssistantChat from "@src/shared/component/AssistantChat";
 import { useScrollDownEffect } from "@src/shared/hook/useScrollDownEffect";
 import { t } from "@src/chrome/i18n";
 import { useCopyClipboard } from "@src/shared/hook/useCopyClipboard";
+import streamChatStateMachine from "@src/shared/xState/streamChatStateMachine";
+import { getGPTResponseAsStream } from "@src/shared/services/getGPTResponseAsStream";
 
-async function getGPTResponse(messages: ChatCompletionRequestMessage[]) {
-  return await sendMessageToBackgroundAsync({
-    type: "RequestQuickChatGPT",
-    input: messages,
-  });
-}
 async function getChatHistoryFromBackground() {
   return await sendMessageToBackgroundAsync({
     type: "GetQuickChatHistory",
@@ -41,16 +36,19 @@ type QuickChattingPageProps = {
 export default function QuickChattingPage({
   onClickBackButton,
 }: QuickChattingPageProps) {
-  const [state, send] = useMachine(chatStateMachine, {
+  const [state, send] = useMachine(streamChatStateMachine, {
     services: {
       getChatHistoryFromBackground,
       getGPTResponse: (context) => {
-        const chatsWithoutError = context.chats.filter(
-          (chat) => chat.role !== "error"
-        );
-        return getGPTResponse(
-          chatsWithoutError as ChatCompletionRequestMessage[]
-        );
+        return getGPTResponseAsStream({
+          messages: context.chats.filter(
+            (chat) => chat.role !== "error"
+          ) as ChatCompletionRequestMessage[],
+          onDelta: (chunk) => {
+            send("RECEIVE_ING", { data: chunk });
+          },
+          onFinish: (result) => send("RECEIVE_DONE", { data: result }),
+        });
       },
     },
     actions: {
@@ -62,7 +60,9 @@ export default function QuickChattingPage({
     },
   });
 
-  const { scrollDownRef } = useScrollDownEffect([state.context.chats.length]);
+  const { scrollDownRef } = useScrollDownEffect([
+    state.context.chats.at(-1)?.content,
+  ]);
   const { isCopied, copy } = useCopyClipboard([
     state.context.chats.filter(({ role }) => role === "assistant").length,
   ]);
@@ -75,6 +75,7 @@ export default function QuickChattingPage({
   };
 
   const isLoading = state.matches("loading");
+  const isReceiving = state.matches("receiving");
 
   const onChatSubmit: FormEventHandler = (event) => {
     event.preventDefault();
@@ -83,6 +84,10 @@ export default function QuickChattingPage({
 
   const onClickResetButton = () => {
     send("RESET");
+  };
+
+  const onClickStopButton = () => {
+    send("RECEIVE_CANCEL");
   };
 
   const onChatInputKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (
@@ -166,9 +171,20 @@ export default function QuickChattingPage({
               ? t("quickChattingPage_copyButtonText_copied")
               : t("quickChattingPage_copyButtonText_copy")}
           </StyledButton>
-          <StyledButton type="submit" isLoading={isLoading} colorScheme="blue">
-            {t("quickChattingPage_sendButtonText")}
-          </StyledButton>
+          <HStack>
+            {isReceiving && (
+              <StyledButton colorScheme="orange" onClick={onClickStopButton}>
+                {t("quickChattingPage_stopButtonText")}
+              </StyledButton>
+            )}
+            <StyledButton
+              type="submit"
+              isLoading={isLoading || isReceiving}
+              colorScheme="blue"
+            >
+              {t("quickChattingPage_sendButtonText")}
+            </StyledButton>
+          </HStack>
         </HStack>
       </VStack>
     </VStack>

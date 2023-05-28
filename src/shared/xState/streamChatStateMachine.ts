@@ -1,18 +1,22 @@
 import { assign, createMachine } from "xstate";
 
 type Events =
-  | { type: "EXIT" | "QUERY" | "RESET" }
-  | { type: "CHANGE_TEXT"; data: string };
+  | { type: "EXIT" | "QUERY" | "RESET" | "RECEIVE_CANCEL" }
+  | { type: "CHANGE_TEXT"; data: string }
+  | { type: "RECEIVE_ING"; data: string }
+  | { type: "RECEIVE_DONE"; data: string };
 
 interface Context {
   inputText: string;
   chats: Chat[];
+  tempResponse: string;
   error?: Error;
+  cancelReceive?: () => unknown;
 }
 
 type Services = {
   getGPTResponse: {
-    data: { result: string };
+    data: { cancel: Context["cancelReceive"]; firstChunk: string };
   };
   getChatHistoryFromBackground: {
     data: Chat[];
@@ -22,11 +26,12 @@ type Services = {
 const initialContext: Context = {
   inputText: "",
   chats: [],
+  tempResponse: "",
 };
 
-const chatStateMachine = createMachine(
+const streamChatStateMachine = createMachine(
   {
-    id: "chat-state",
+    id: "stream-chat-state",
     initial: "init",
     predictableActionArguments: true,
     context: initialContext,
@@ -35,7 +40,7 @@ const chatStateMachine = createMachine(
       events: {} as Events,
       services: {} as Services,
     },
-    tsTypes: {} as import("./chatStateMachine.typegen").Typegen0,
+    tsTypes: {} as import("./streamChatStateMachine.typegen").Typegen0,
     states: {
       init: {
         invoke: {
@@ -61,12 +66,25 @@ const chatStateMachine = createMachine(
       loading: {
         invoke: {
           src: "getGPTResponse",
-          onDone: { target: "idle", actions: "addAssistantChat" },
+          onDone: {
+            target: "receiving",
+            actions: ["addInitialAssistantChat", "setCancelReceive"],
+          },
           onError: { target: "idle", actions: "addErrorChat" },
         },
         on: {
           EXIT: "finish",
           RESET: { actions: "resetChatData" },
+          CHANGE_TEXT: {
+            actions: "updateChatText",
+          },
+        },
+      },
+      receiving: {
+        on: {
+          RECEIVE_ING: { target: "receiving", actions: "addResponseToken" },
+          RECEIVE_DONE: { target: "idle", actions: "replaceLastResponse" },
+          RECEIVE_CANCEL: { target: "idle", actions: "execCancelReceive" },
           CHANGE_TEXT: {
             actions: "updateChatText",
           },
@@ -90,13 +108,40 @@ const chatStateMachine = createMachine(
             content: context.inputText,
           }),
       }),
-      addAssistantChat: assign({
+      addInitialAssistantChat: assign({
         chats: (context, event) =>
           context.chats.concat({
             role: "assistant",
-            content: event.data.result,
+            content: event.data.firstChunk,
           }),
       }),
+      addResponseToken: assign({
+        chats: (context, event) => {
+          return context.chats.map((chat, index) => {
+            // if last index
+            if (index === context.chats.length - 1) {
+              return { ...chat, content: chat.content + event.data };
+            }
+            return chat;
+          });
+        },
+      }),
+      replaceLastResponse: assign({
+        chats: (context, event) => {
+          return context.chats.map((chat, index) => {
+            if (index === context.chats.length - 1) {
+              return { ...chat, content: event.data };
+            }
+            return chat;
+          });
+        },
+      }),
+      setCancelReceive: assign({
+        cancelReceive: (_, event) => event.data.cancel,
+      }),
+      execCancelReceive: (context) => {
+        context.cancelReceive?.();
+      },
       addErrorChat: assign({
         chats: (context, event) => {
           const error: Error = event.data as Error;
@@ -120,4 +165,4 @@ const chatStateMachine = createMachine(
   }
 );
 
-export default chatStateMachine;
+export default streamChatStateMachine;
