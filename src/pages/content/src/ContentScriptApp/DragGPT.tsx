@@ -77,8 +77,6 @@ export default function DragGPT() {
     },
   });
 
-  console.log(state.context.error);
-
   useEffect(() => {
     const onMouseUp = async (event: MouseEvent) => {
       /** Selection 이벤트 호출을 기다리는 해키한 코드 */
