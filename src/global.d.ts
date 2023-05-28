@@ -92,9 +92,9 @@ declare global {
     data?: { result: string };
   };
   type RequestQuickChatGPTMessage = {
-    type: "RequestQuickChatGPT";
+    type: "RequestQuickChatGPTStream";
     input?: ChatCompletionRequestMessage[];
-    data?: { result: string };
+    data?: { result: string; chunk?: string; isDone?: boolean };
   };
   type SaveAPIKeyMessage = {
     type: "SaveAPIKey";
