@@ -49,6 +49,14 @@ export async function chatGPT({
     } as CreateChatCompletionRequest),
   });
 
+  if (response.status !== 200) {
+    const jsonBody = await response.json();
+    const error = new Error();
+    error.name = jsonBody.error.type;
+    error.message = jsonBody.error.code + jsonBody.error.message ?? "";
+    throw error;
+  }
+
   const reader = response.body
     ?.pipeThrough(new TextDecoderStream())
     .getReader();

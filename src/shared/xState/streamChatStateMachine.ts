@@ -85,6 +85,9 @@ const streamChatStateMachine = createMachine(
           RECEIVE_ING: { target: "receiving", actions: "addResponseToken" },
           RECEIVE_DONE: { target: "idle", actions: "replaceLastResponse" },
           RECEIVE_CANCEL: { target: "idle", actions: "execCancelReceive" },
+          CHANGE_TEXT: {
+            actions: "updateChatText",
+          },
         },
       },
       finish: {

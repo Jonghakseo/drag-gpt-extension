@@ -9,10 +9,7 @@ import ErrorMessageBox from "@pages/content/src/ContentScriptApp/components/mess
 import { useMachine } from "@xstate/react";
 import delayPromise from "@pages/content/src/ContentScriptApp/utils/delayPromise";
 import dragStateMachine from "@pages/content/src/ContentScriptApp/xState/dragStateMachine";
-import {
-  sendMessageToBackground,
-  sendMessageToBackgroundAsync,
-} from "@src/chrome/message";
+import { sendMessageToBackground } from "@src/chrome/message";
 import styled from "@emotion/styled";
 import { getPositionOnScreen } from "@pages/content/src/ContentScriptApp/utils/getPositionOnScreen";
 import useSelectedSlot from "@pages/content/src/ContentScriptApp/hooks/useSelectedSlot";
@@ -79,6 +76,8 @@ export default function DragGPT() {
         }),
     },
   });
+
+  console.log(state.context.error);
 
   useEffect(() => {
     const onMouseUp = async (event: MouseEvent) => {

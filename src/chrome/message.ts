@@ -70,11 +70,14 @@ export function sendErrorMessageToClient(
   port: chrome.runtime.Port,
   error: unknown
 ) {
-  if (!(error instanceof Error)) {
-    const unknownError = new Error();
-    unknownError.name = "Unknown Error";
-    sendMessageToClient(port, { type: "Error", error: unknownError });
-    return;
+  const sendError = new Error();
+  sendError.name = "Unknown Error";
+
+  if (error instanceof Error) {
+    error.name && (sendError.name = error.name);
+    sendError.message = error.message;
   }
-  sendMessageToClient(port, { type: "Error", error });
+
+  sendMessageToClient(port, { type: "Error", error: sendError });
+  return;
 }

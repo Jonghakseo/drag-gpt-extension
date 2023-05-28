@@ -10,7 +10,6 @@ import { ChatCompletionRequestMessage } from "openai";
 import ChatText from "@src/shared/component/ChatText";
 import AssistantChat from "@src/shared/component/AssistantChat";
 import UserChat from "@src/shared/component/UserChat";
-import ChatCollapse from "@src/shared/component/ChatCollapse";
 import { useScrollDownEffect } from "@src/shared/hook/useScrollDownEffect";
 import { useCopyClipboard } from "@src/shared/hook/useCopyClipboard";
 import { t } from "@src/chrome/i18n";
@@ -55,7 +54,7 @@ export default function ResponseMessageBox({
   const isLoading = state.matches("loading");
   const isReceiving = state.matches("receiving");
 
-  const { scrollDownRef } = useScrollDownEffect([chats.length]);
+  const { scrollDownRef } = useScrollDownEffect([chats.at(-1)?.content]);
   const { isCopied, copy } = useCopyClipboard([
     chats.filter(({ role }) => role === "assistant").length,
   ]);
@@ -128,6 +127,11 @@ export default function ResponseMessageBox({
               ? t("responseMessageBox_copyButtonText_copied")
               : t("responseMessageBox_copyButtonText_copy")}
           </StyledButton>
+          {isReceiving && (
+            <StyledButton colorScheme="orange" onClick={onClickStopButton}>
+              {t("responseMessageBox_stopButtonText")}
+            </StyledButton>
+          )}
           <HStack as="form" onSubmit={onChatSubmit}>
             <Input
               width={230}
@@ -138,11 +142,7 @@ export default function ResponseMessageBox({
               }
               onKeyDown={(e) => e.stopPropagation()}
             />
-            {isReceiving && (
-              <StyledButton colorScheme="orange" onClick={onClickStopButton}>
-                {t("responseMessageBox_stopButtonText")}
-              </StyledButton>
-            )}
+
             <StyledButton type="submit" isLoading={isLoading || isReceiving}>
               {t("responseMessageBox_sendButtonText")}
             </StyledButton>
@@ -179,11 +179,11 @@ const ChatBox = ({
 
   if (chat.role === "assistant") {
     return (
-      <ChatCollapse>
-        <AssistantChat>
-          <ChatText>{chat.content}</ChatText>
-        </AssistantChat>
-      </ChatCollapse>
+      // <ChatCollapse>
+      <AssistantChat>
+        <ChatText>{chat.content}</ChatText>
+      </AssistantChat>
+      // </ChatCollapse>
     );
   }
 
