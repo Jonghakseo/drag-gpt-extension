@@ -7,7 +7,6 @@ type Events =
 interface Context {
   inputText: string;
   chats: Chat[];
-  leftToken: number;
   error?: Error;
 }
 
@@ -20,11 +19,9 @@ type Services = {
   };
 };
 
-const MAX_TOKEN = 4096 as const;
 const initialContext: Context = {
   inputText: "",
   chats: [],
-  leftToken: MAX_TOKEN,
 };
 
 const chatStateMachine = createMachine(
@@ -99,7 +96,6 @@ const chatStateMachine = createMachine(
             role: "assistant",
             content: event.data.result,
           }),
-        leftToken: (_, event) => MAX_TOKEN - event.data.tokenUsage,
       }),
       addErrorChat: assign({
         chats: (context, event) => {
