@@ -15,7 +15,7 @@ import { useCopyClipboard } from "@src/shared/hook/useCopyClipboard";
 import { t } from "@src/chrome/i18n";
 import { DragHandleIcon } from "@chakra-ui/icons";
 import streamChatStateMachine from "@src/shared/xState/streamChatStateMachine";
-import { getGPTResponseAsStream } from "@src/shared/services/getGPTResponseAsStream";
+import { getDragGPTResponseAsStream } from "@src/shared/services/getGPTResponseAsStream";
 
 type ResponseMessageBoxProps = Omit<
   MessageBoxProps,
@@ -33,7 +33,7 @@ export default function ResponseMessageBox({
     services: {
       getChatHistoryFromBackground: () => Promise.resolve(initialChats),
       getGPTResponse: (context) => {
-        return getGPTResponseAsStream({
+        return getDragGPTResponseAsStream({
           messages: context.chats.filter(
             (chat) => chat.role !== "error"
           ) as ChatCompletionRequestMessage[],

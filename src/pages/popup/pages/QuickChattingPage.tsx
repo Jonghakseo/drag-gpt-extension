@@ -14,7 +14,7 @@ import { useScrollDownEffect } from "@src/shared/hook/useScrollDownEffect";
 import { t } from "@src/chrome/i18n";
 import { useCopyClipboard } from "@src/shared/hook/useCopyClipboard";
 import streamChatStateMachine from "@src/shared/xState/streamChatStateMachine";
-import { getGPTResponseAsStream } from "@src/shared/services/getGPTResponseAsStream";
+import { getQuickGPTResponseAsStream } from "@src/shared/services/getGPTResponseAsStream";
 
 async function getChatHistoryFromBackground() {
   return await sendMessageToBackgroundAsync({
@@ -40,7 +40,7 @@ export default function QuickChattingPage({
     services: {
       getChatHistoryFromBackground,
       getGPTResponse: (context) => {
-        return getGPTResponseAsStream({
+        return getQuickGPTResponseAsStream({
           messages: context.chats.filter(
             (chat) => chat.role !== "error"
           ) as ChatCompletionRequestMessage[],
