@@ -79,22 +79,27 @@ declare global {
   type RequestOnetimeChatGPTMessage = {
     type: "RequestOnetimeChatGPT";
     input: string;
-    data?: { result: string; tokenUsage: number };
+    data?: { result: string };
   };
   type RequestGenerateChatGPTPromptMessage = {
     type: "RequestGenerateChatGPTPrompt";
     input: string;
-    data?: { result: string; tokenUsage: number };
+    data?: { result: string };
   };
   type RequestOngoingChatGPTMessage = {
     type: "RequestOngoingChatGPT";
     input: ChatCompletionRequestMessage[];
-    data?: { result: string; tokenUsage: number };
+    data?: { result: string };
+  };
+  type RequestInitialDragGPTMessage = {
+    type: "RequestInitialDragGPTStream";
+    input?: string;
+    data?: { result: string; chunk?: string; isDone?: boolean };
   };
   type RequestQuickChatGPTMessage = {
-    type: "RequestQuickChatGPT";
+    type: "RequestChatGPTStream";
     input?: ChatCompletionRequestMessage[];
-    data?: { result: string; tokenUsage: number };
+    data?: { result: string; chunk?: string; isDone?: boolean };
   };
   type SaveAPIKeyMessage = {
     type: "SaveAPIKey";
@@ -133,6 +138,7 @@ declare global {
   };
 
   type Message =
+    | RequestInitialDragGPTMessage
     | RequestQuickChatGPTMessage
     | RequestOngoingChatGPTMessage
     | ResetQuickChatHistoryMessage

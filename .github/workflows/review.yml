@@ -6,6 +6,7 @@ on:
 
 jobs:
   add-auto-review-comment:
+    if: contains(github.event.pull_request.labels.*.name, 'review')
     runs-on: ubuntu-latest
     name: Code Review with ChatGPT
     steps:
