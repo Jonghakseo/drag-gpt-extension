@@ -6,7 +6,7 @@ You can easily ask or request the selected content to ChatGPT by dragging and cl
 
 Made by [chrome-extension-boilerplate-react-vite](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite)
 
-[Install Extension](chrome.google.com/webstore/detail/draggpt-easy-start-with-d/akgdgnhlglhelinkmnmiakgccdkghjbh)
+[Install Extension](https://chrome.google.com/webstore/detail/akgdgnhlglhelinkmnmiakgccdkghjbh)
 
 ---
 
