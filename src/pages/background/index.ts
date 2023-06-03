@@ -134,7 +134,7 @@ chrome.runtime.onConnect.addListener((port) => {
           });
           break;
         }
-        case "RequestChatGPTStream": {
+        case "RequestQuickChatGPTStream": {
           await QuickChatHistoryStorage.pushChatHistories({
             role: "user",
             content: message.input?.at(-1)?.content ?? "",
@@ -146,7 +146,7 @@ chrome.runtime.onConnect.addListener((port) => {
             apiKey,
             onDelta: (chunk) => {
               sendResponse({
-                type: "RequestChatGPTStream",
+                type: "RequestQuickChatGPTStream",
                 data: {
                   result: "",
                   chunk,
@@ -159,7 +159,29 @@ chrome.runtime.onConnect.addListener((port) => {
             content: response.result,
           });
           sendResponse({
-            type: "RequestChatGPTStream",
+            type: "RequestQuickChatGPTStream",
+            data: { result: response.result, isDone: true },
+          });
+          break;
+        }
+        case "RequestDragGPTStream": {
+          const apiKey = await ApiKeyStorage.getApiKey();
+          const response = await chatGPT({
+            chats: message.input,
+            slot: { type: "ChatGPT" },
+            apiKey,
+            onDelta: (chunk) => {
+              sendResponse({
+                type: "RequestDragGPTStream",
+                data: {
+                  result: "",
+                  chunk,
+                },
+              });
+            },
+          });
+          sendResponse({
+            type: "RequestDragGPTStream",
             data: { result: response.result, isDone: true },
           });
           break;
