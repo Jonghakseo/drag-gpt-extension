@@ -79,5 +79,4 @@ export function sendErrorMessageToClient(
   }
 
   sendMessageToClient(port, { type: "Error", error: sendError });
-  return;
 }
