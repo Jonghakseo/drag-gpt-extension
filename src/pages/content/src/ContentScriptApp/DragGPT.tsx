@@ -128,6 +128,7 @@ export default function DragGPT() {
             </AssistantChat>
           }
           width={480}
+          isOutsideClickDisabled={true}
           onClose={() => send("RECEIVE_CANCEL")}
           anchorTop={state.context.anchorNodePosition.top}
           anchorCenter={state.context.anchorNodePosition.center}
