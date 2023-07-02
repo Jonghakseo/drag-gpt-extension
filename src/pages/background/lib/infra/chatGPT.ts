@@ -3,6 +3,13 @@ import type {
   CreateChatCompletionRequest,
 } from "openai";
 
+type Error = {
+  error: {
+    type: string;
+    code: string | "context_length_exceeded";
+    message?: string;
+  };
+};
 export async function chatGPT({
   input,
   slot,
@@ -31,14 +38,20 @@ export async function chatGPT({
     messages.push({ role: "user", content: input });
   }
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    method: "POST",
-    body: JSON.stringify({
-      model: "gpt-3.5-turbo",
+  let response = await requestApi(apiKey, {
+    model: "gpt-3.5-turbo",
+    max_tokens: slot.maxTokens,
+    messages,
+    stream: true,
+    temperature: slot.temperature,
+    top_p: slot.topP,
+    frequency_penalty: slot.frequencyPenalty,
+    presence_penalty: slot.presencePenalty,
+  });
+
+  await handleError(response, async () => {
+    response = await requestApi(apiKey, {
+      model: "gpt-3.5-turbo-16k",
       max_tokens: slot.maxTokens,
       messages,
       stream: true,
@@ -46,17 +59,39 @@ export async function chatGPT({
       top_p: slot.topP,
       frequency_penalty: slot.frequencyPenalty,
       presence_penalty: slot.presencePenalty,
-    } as CreateChatCompletionRequest),
+    });
+    await handleError(response);
   });
 
+  const result = await parseResult(response, onDelta);
+
+  return { result };
+}
+
+async function handleError(
+  response: Response,
+  whenContextExceeded?: () => Promise<unknown>
+) {
   if (response.status !== 200) {
-    const jsonBody = await response.json();
+    const responseError: Error = await response.json();
+
+    if (responseError.error.code === "context_length_exceeded") {
+      await whenContextExceeded?.();
+      return;
+    }
+
     const error = new Error();
-    error.name = jsonBody.error.type;
-    error.message = jsonBody.error.code + jsonBody.error.message ?? "";
+    error.name = responseError.error.type;
+    error.message =
+      responseError.error.code + responseError.error.message ?? "";
     throw error;
   }
+}
 
+async function parseResult(
+  response: Response,
+  onDelta?: (chunk: string) => unknown
+) {
   const reader = response.body
     ?.pipeThrough(new TextDecoderStream())
     .getReader();
@@ -82,10 +117,18 @@ export async function chatGPT({
       onDelta?.(chunk);
     });
   }
+  return result;
+}
 
-  return {
-    result,
-  };
+async function requestApi(apiKey: string, body: CreateChatCompletionRequest) {
+  return fetch("https://api.openai.com/v1/chat/completions", {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    method: "POST",
+    body: JSON.stringify(body),
+  });
 }
 
 function hasChats(
