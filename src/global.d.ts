@@ -56,109 +56,109 @@ declare global {
     content: string;
   };
 
-  type AddNewSlotMessage = {
+  type AddNewSlot = {
     type: "AddNewSlot";
     input: Slot;
     data?: "success";
   };
-  type SelectSlotMessage = {
+  type SelectSlot = {
     type: "SelectSlot";
     input: string;
     data?: "success";
   };
-  type UpdateSlotMessage = {
+  type UpdateSlot = {
     type: "UpdateSlot";
     input: Slot;
     data?: "success";
   };
-  type DeleteSlotMessage = {
+  type DeleteSlot = {
     type: "DeleteSlot";
     input: string;
     data?: "success";
   };
-  type RequestOnetimeChatGPTMessage = {
+  type RequestOnetimeChatGPT = {
     type: "RequestOnetimeChatGPT";
     input: string;
     data?: { result: string };
   };
-  type RequestGenerateChatGPTPromptMessage = {
+  type RequestGenerateChatGPTPrompt = {
     type: "RequestGenerateChatGPTPrompt";
     input: string;
     data?: { result: string };
   };
-  type RequestOngoingChatGPTMessage = {
+  type RequestOngoingChatGPT = {
     type: "RequestOngoingChatGPT";
     input: ChatCompletionRequestMessage[];
     data?: { result: string };
   };
-  type RequestInitialDragGPTMessage = {
+  type RequestInitialDragGPT = {
     type: "RequestInitialDragGPTStream";
     input?: string;
     data?: { result: string; chunk?: string; isDone?: boolean };
   };
-  type RequestDragGPTMessage = {
+  type RequestDragGPT = {
     type: "RequestDragGPTStream";
     input?: ChatCompletionRequestMessage[];
     data?: { result: string; chunk?: string; isDone?: boolean };
   };
-  type RequestQuickChatGPTMessage = {
+  type RequestQuickChatGPT = {
     type: "RequestQuickChatGPTStream";
     input?: ChatCompletionRequestMessage[];
     data?: { result: string; chunk?: string; isDone?: boolean };
   };
-  type SaveAPIKeyMessage = {
+  type SaveAPIKey = {
     type: "SaveAPIKey";
     input: string;
     data?: "success";
   };
-  type ResetAPIKeyMessage = {
+  type ResetAPIKey = {
     type: "ResetAPIKey";
     input?: never;
     data?: "success";
   };
-  type GetAPIKeyMessage = {
+  type GetAPIKey = {
     type: "GetAPIKey";
     input?: never;
     data?: string;
   };
-  type GetSlotsMessage = {
+  type GetSlots = {
     type: "GetSlots";
     input?: never;
     data?: Slot[];
   };
-  type GetQuickChatHistoryMessage = {
+  type GetQuickChatHistory = {
     type: "GetQuickChatHistory";
     input?: never;
     data?: Chat[];
   };
-  type ResetQuickChatHistoryMessage = {
+  type ResetQuickChatHistory = {
     type: "ResetQuickChatHistory";
     input?: never;
     data?: "success";
   };
-  type ErrorMessage = {
+  type Error = {
     type: "Error";
     input?: never;
     error: Error;
   };
 
   type Message =
-    | RequestInitialDragGPTMessage
-    | RequestQuickChatGPTMessage
-    | RequestDragGPTMessage
-    | RequestOngoingChatGPTMessage
-    | ResetQuickChatHistoryMessage
-    | GetQuickChatHistoryMessage
-    | AddNewSlotMessage
-    | UpdateSlotMessage
-    | GetSlotsMessage
-    | GetAPIKeyMessage
-    | ResetAPIKeyMessage
-    | SelectSlotMessage
-    | DeleteSlotMessage
-    | RequestOnetimeChatGPTMessage
-    | RequestGenerateChatGPTPromptMessage
-    | SaveAPIKeyMessage;
+    | RequestInitialDragGPT
+    | RequestQuickChatGPT
+    | RequestDragGPT
+    | RequestOngoingChatGPT
+    | ResetQuickChatHistory
+    | GetQuickChatHistory
+    | AddNewSlot
+    | UpdateSlot
+    | GetSlots
+    | GetAPIKey
+    | ResetAPIKey
+    | SelectSlot
+    | DeleteSlot
+    | RequestOnetimeChatGPT
+    | RequestGenerateChatGPTPrompt
+    | SaveAPIKey;
 
   type RequestMessage<M = Message> = Omit<M, "data">;
   type ResponseMessage<M = Message> = Omit<M, "input" | "error">;
