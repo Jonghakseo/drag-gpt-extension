@@ -10,7 +10,7 @@ type Events =
       data: Slot;
     }
   | {
-      type: "CHANGE_API_KEY" | "BACK_TO_LIST" | "GO_TO_PROMPT_GENERATOR";
+      type: "CHANGE_API_KEY" | "BACK_TO_LIST";
     };
 
 interface Context {
@@ -60,7 +60,6 @@ const slotListPageStateMachine = createMachine(
                 context.slots.find((slot) => slot.id === event.data),
             }),
           },
-          GO_TO_PROMPT_GENERATOR: "prompt_generator",
           ADD_SLOT: {
             actions: ["addSlot", "addSlotMessageSendToBackground"],
           },
@@ -74,11 +73,6 @@ const slotListPageStateMachine = createMachine(
           SELECT_SLOT: {
             actions: ["selectSlot", "selectSlotMessageSendToBackground"],
           },
-        },
-      },
-      prompt_generator: {
-        on: {
-          BACK_TO_LIST: "slot_list",
         },
       },
       slot_detail: {

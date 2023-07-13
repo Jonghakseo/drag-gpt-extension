@@ -77,9 +77,6 @@
   "slotListItem_editButtonText": {
     "message": "编辑"
   },
-  "slotListItem_promptGeneratorButton": {
-    "message": "提示生成器"
-  },
   "slotDetail_promptSlotName": {
     "message": "提示槽位名称"
   },
