@@ -137,12 +137,12 @@ chrome.runtime.onConnect.addListener((port) => {
         case "RequestQuickChatGPTStream": {
           await QuickChatHistoryStorage.pushChatHistories({
             role: "user",
-            content: message.input?.at(-1)?.content ?? "",
+            content: message.input?.messages.at(-1)?.content ?? "",
           });
           const apiKey = await ApiKeyStorage.getApiKey();
           const response = await chatGPT({
-            chats: message.input,
-            slot: { type: "ChatGPT" },
+            chats: message.input?.messages,
+            slot: { type: message.input?.isGpt4 ? "ChatGPT4" : "ChatGPT" },
             apiKey,
             onDelta: (chunk) => {
               sendResponse({

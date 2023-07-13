@@ -1,7 +1,7 @@
 import { assign, createMachine } from "xstate";
 
 type Events =
-  | { type: "EXIT" | "QUERY" | "RESET" | "RECEIVE_CANCEL" }
+  | { type: "EXIT" | "QUERY" | "RESET" | "RECEIVE_CANCEL" | "TOGGLE_IS_GPT4" }
   | { type: "CHANGE_TEXT"; data: string }
   | { type: "RECEIVE_ING"; data: string }
   | { type: "RECEIVE_DONE"; data: string };
@@ -10,6 +10,7 @@ interface Context {
   inputText: string;
   chats: Chat[];
   tempResponse: string;
+  isGpt4: boolean;
   error?: Error;
   cancelReceive?: () => unknown;
 }
@@ -27,6 +28,7 @@ const initialContext: Context = {
   inputText: "",
   chats: [],
   tempResponse: "",
+  isGpt4: false,
 };
 
 const streamChatStateMachine = createMachine(
@@ -61,6 +63,9 @@ const streamChatStateMachine = createMachine(
           CHANGE_TEXT: {
             actions: "updateChatText",
           },
+          TOGGLE_IS_GPT4: {
+            actions: "toggleIsGpt4",
+          },
         },
       },
       loading: {
@@ -78,6 +83,9 @@ const streamChatStateMachine = createMachine(
           CHANGE_TEXT: {
             actions: "updateChatText",
           },
+          TOGGLE_IS_GPT4: {
+            actions: "toggleIsGpt4",
+          },
         },
       },
       receiving: {
@@ -87,6 +95,9 @@ const streamChatStateMachine = createMachine(
           RECEIVE_CANCEL: { target: "idle", actions: "execCancelReceive" },
           CHANGE_TEXT: {
             actions: "updateChatText",
+          },
+          TOGGLE_IS_GPT4: {
+            actions: "toggleIsGpt4",
           },
         },
       },
@@ -158,6 +169,7 @@ const streamChatStateMachine = createMachine(
         inputText: () => "",
       }),
       resetChatData: assign({ chats: () => [] }),
+      toggleIsGpt4: assign({ isGpt4: (context) => !context.isGpt4 }),
     },
     guards: {
       isValidText: (context) => context.inputText.length > 0,
