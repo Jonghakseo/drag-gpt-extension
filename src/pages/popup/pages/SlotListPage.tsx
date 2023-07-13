@@ -2,7 +2,6 @@ import { Button, HStack, Text, VStack } from "@chakra-ui/react";
 import { useMachine } from "@xstate/react";
 import slotListPageStateMachine from "@pages/popup/xState/slotListPageStateMachine";
 import SlotDetail from "@pages/popup/components/SlotDetail";
-import StyledButton from "@pages/popup/components/StyledButton";
 import Footer from "@pages/popup/components/layout/Footer";
 import {
   sendMessageToBackground,
@@ -12,7 +11,6 @@ import SlotListItem from "@pages/popup/components/SlotListItem";
 import { COLORS } from "@src/constant/style";
 import { createNewChatGPTSlot } from "@src/shared/slot/createNewChatGPTSlot";
 import { t } from "@src/chrome/i18n";
-import PromptGenerator from "@pages/popup/components/PromptGenerator";
 
 const getAllSlotsFromBackground = async () => {
   return await sendMessageToBackgroundAsync({
@@ -152,9 +150,6 @@ export default function SlotListPage({
           onUpdate={updateSlotData}
           exitDetail={() => send("BACK_TO_LIST")}
         />
-      )}
-      {state.matches("prompt_generator") && (
-        <PromptGenerator exit={() => send("BACK_TO_LIST")} />
       )}
       <Footer />
     </>
