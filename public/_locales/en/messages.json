@@ -77,9 +77,6 @@
   "slotListItem_editButtonText": {
     "message": "EDIT"
   },
-  "slotListItem_promptGeneratorButton": {
-    "message": "Prompt Generator"
-  },
   "slotDetail_promptSlotName": {
     "message": "Prompt Slot name"
   },

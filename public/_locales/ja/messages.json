@@ -77,9 +77,6 @@
   "slotListItem_editButtonText": {
     "message": "編集"
   },
-  "slotListItem_promptGeneratorButton": {
-    "message": "プロンプトジェネレーター"
-  },
   "slotDetail_promptSlotName": {
     "message": "プロンプトスロット名"
   },
