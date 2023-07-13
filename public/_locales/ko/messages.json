@@ -77,9 +77,6 @@
   "slotListItem_editButtonText": {
     "message": "수정"
   },
-  "slotListItem_promptGeneratorButton": {
-    "message": "프롬프트 생성기"
-  },
   "slotDetail_promptSlotName": {
     "message": "프롬프트 슬롯 이름"
   },

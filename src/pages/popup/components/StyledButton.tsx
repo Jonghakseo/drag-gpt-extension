@@ -57,7 +57,7 @@ type StyledButtonProps = ButtonProps;
 
 const StyledButton = ({ ...restProps }: StyledButtonProps) => {
   return (
-    <_StyledButton
+    <Button
       colorScheme="whiteAlpha"
       variant="solid"
       size="sm"
