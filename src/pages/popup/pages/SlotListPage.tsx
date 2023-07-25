@@ -1,8 +1,7 @@
-import { HStack, Text, VStack } from "@chakra-ui/react";
+import { Button, HStack, Text, VStack } from "@chakra-ui/react";
 import { useMachine } from "@xstate/react";
 import slotListPageStateMachine from "@pages/popup/xState/slotListPageStateMachine";
 import SlotDetail from "@pages/popup/components/SlotDetail";
-import StyledButton from "@pages/popup/components/StyledButton";
 import Footer from "@pages/popup/components/layout/Footer";
 import {
   sendMessageToBackground,
@@ -12,7 +11,6 @@ import SlotListItem from "@pages/popup/components/SlotListItem";
 import { COLORS } from "@src/constant/style";
 import { createNewChatGPTSlot } from "@src/shared/slot/createNewChatGPTSlot";
 import { t } from "@src/chrome/i18n";
-import PromptGenerator from "@pages/popup/components/PromptGenerator";
 
 const getAllSlotsFromBackground = async () => {
   return await sendMessageToBackgroundAsync({
@@ -104,10 +102,6 @@ export default function SlotListPage({
     send({ type: "EDIT_SLOT", data: slotId });
   };
 
-  const goToPromptGeneratorPage = () => {
-    send({ type: "GO_TO_PROMPT_GENERATOR" });
-  };
-
   const onClickResetButton = () => {
     if (confirm(t("slotListPage_resetApiKeyConfirmMessage"))) {
       send("CHANGE_API_KEY");
@@ -118,24 +112,25 @@ export default function SlotListPage({
     <>
       {state.matches("slot_list") && (
         <VStack spacing={3} width="100%">
-          <HStack width="100%" justifyContent="space-between">
-            <StyledButton colorScheme="gray" onClick={addNewSlot}>
+          <HStack width="100%">
+            <Button colorScheme="gray" size="xs" onClick={addNewSlot}>
               {t("slotListPage_newSlotButtonText")}
-            </StyledButton>
-            <StyledButton colorScheme="gray" onClick={onClickQuickChatButton}>
+            </Button>
+            <Button
+              colorScheme="gray"
+              size="xs"
+              onClick={onClickQuickChatButton}
+            >
               {t("slotListPage_quickChatButtonText")}
-            </StyledButton>
-            <StyledButton colorScheme="gray" onClick={onClickResetButton}>
+            </Button>
+            <Button colorScheme="gray" size="xs" onClick={onClickResetButton}>
               {t("slotListPage_resetApiKeyButtonText")}
-            </StyledButton>
+            </Button>
           </HStack>
           <HStack justifyContent="space-between" w="100%">
             <Text color={COLORS.WHITE} fontWeight="bold">
               {t("slotListPage_promptSlotsTitle")}
             </Text>
-            <StyledButton onClick={goToPromptGeneratorPage} colorScheme="blue">
-              {t("slotListItem_promptGeneratorButton")}
-            </StyledButton>
           </HStack>
           {state.context.slots.map((slot, index) => (
             <SlotListItem
@@ -155,9 +150,6 @@ export default function SlotListPage({
           onUpdate={updateSlotData}
           exitDetail={() => send("BACK_TO_LIST")}
         />
-      )}
-      {state.matches("prompt_generator") && (
-        <PromptGenerator exit={() => send("BACK_TO_LIST")} />
       )}
       <Footer />
     </>

@@ -41,6 +41,6 @@ export interface Typegen0 {
   eventsCausingServices: {
     getAllSlotsFromBackground: "CHANGE_API_KEY" | "xstate.init";
   };
-  matchesStates: "init" | "prompt_generator" | "slot_detail" | "slot_list";
+  matchesStates: "init" | "slot_detail" | "slot_list";
   tags: never;
 }
