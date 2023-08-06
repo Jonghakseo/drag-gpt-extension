@@ -47,7 +47,7 @@ const streamChatStateMachine = createMachine(
       init: {
         invoke: {
           src: "getChatHistoryFromBackground",
-          onDone: { target: "idle", actions: "setChats" },
+          onDone: { target: "idle", actions: ["setChats"] },
           onError: { target: "idle" },
         },
       },

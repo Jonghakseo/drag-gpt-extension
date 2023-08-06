@@ -1,4 +1,3 @@
-import { ChatCompletionRequestMessage } from "openai";
 import { sendMessageToBackground } from "@src/chrome/message";
 
 export async function getQuickGPTResponseAsStream({
@@ -7,7 +6,7 @@ export async function getQuickGPTResponseAsStream({
   onDelta,
   onFinish,
 }: {
-  messages: ChatCompletionRequestMessage[];
+  messages: Chat[];
   isGpt4: boolean;
   onDelta: (chunk: string) => unknown;
   onFinish: (result: string) => unknown;
@@ -33,11 +32,11 @@ export async function getQuickGPTResponseAsStream({
 }
 
 export async function getDragGPTResponseAsStream({
-  messages,
+  input,
   onDelta,
   onFinish,
 }: {
-  messages: ChatCompletionRequestMessage[];
+  input: { chats: Chat[]; sessionId: string };
   onDelta: (chunk: string) => unknown;
   onFinish: (result: string) => unknown;
 }) {
@@ -46,7 +45,7 @@ export async function getDragGPTResponseAsStream({
       const { disconnect } = sendMessageToBackground({
         message: {
           type: "RequestDragGPTStream",
-          input: messages,
+          input,
         },
         handleSuccess: (response) => {
           if (response.isDone || !response.chunk) {

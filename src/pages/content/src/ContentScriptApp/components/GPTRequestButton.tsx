@@ -79,9 +79,9 @@ export default function GPTRequestButton({
         {...restProps}
       >
         {loading ? (
-          <Spinner color="white" width={8} height={8} />
+          <Spinner color="white" width="8px" height="px" />
         ) : (
-          <ChatIcon aria-label="request" color="white" boxSize={12} />
+          <ChatIcon aria-label="request" color="white" boxSize="12px" />
         )}
       </StyledRequestButton>
     </Tooltip>
