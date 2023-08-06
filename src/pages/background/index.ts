@@ -225,8 +225,16 @@ chrome.runtime.onConnect.addListener((port) => {
           sendResponse({ type: "ResetQuickChatHistory", data: "success" });
           break;
         }
-        case "SaveChatHistory": {
+        case "PushChatHistory": {
           await ChatHistoryStorage.pushChatHistories(
+            message.input.sessionId,
+            message.input.chats
+          );
+          sendResponse({ type: "PushChatHistory", data: "success" });
+          break;
+        }
+        case "SaveChatHistory": {
+          await ChatHistoryStorage.saveChatHistories(
             message.input.sessionId,
             message.input.chats,
             message.input.type
@@ -234,9 +242,28 @@ chrome.runtime.onConnect.addListener((port) => {
           sendResponse({ type: "SaveChatHistory", data: "success" });
           break;
         }
+        case "DeleteChatHistorySession": {
+          await ChatHistoryStorage.deleteChatHistory(message.input);
+          sendResponse({ type: "DeleteChatHistorySession", data: "success" });
+          break;
+        }
+        case "DeleteAllChatHistory": {
+          await ChatHistoryStorage.resetChatHistories();
+          sendResponse({ type: "DeleteAllChatHistory", data: "success" });
+          break;
+        }
         case "GetAllChatHistory": {
-          const allChatHistories = await ChatHistoryStorage.getChatHistories();
-          sendResponse({ type: "GetAllChatHistory", data: allChatHistories });
+          sendResponse({
+            type: "GetAllChatHistory",
+            data: await ChatHistoryStorage.getChatHistories(),
+          });
+          break;
+        }
+        case "GetChatSessionHistory": {
+          sendResponse({
+            type: "GetChatSessionHistory",
+            data: await ChatHistoryStorage.getChatHistory(message.input),
+          });
           break;
         }
         default: {

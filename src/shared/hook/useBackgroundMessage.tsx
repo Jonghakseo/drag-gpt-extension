@@ -13,7 +13,14 @@ export default function useBackgroundMessage<M extends Message>(message: M) {
       wrapPromise(sendMessageToBackgroundAsync(message))
     );
   }
-  return wrappedPromise!.read() as GetDataType<M["type"]>;
+  return {
+    data: wrappedPromiseRecord.get(messageKey)!.read() as GetDataType<
+      M["type"]
+    >,
+    refetch: () => {
+      wrappedPromiseRecord.delete(messageKey);
+    },
+  };
 }
 
 function wrapPromise<R>(promise: Promise<R>) {

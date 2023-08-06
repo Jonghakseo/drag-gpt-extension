@@ -3,7 +3,14 @@ import MessageBox, {
 } from "@pages/content/src/ContentScriptApp/components/messageBox/MessageBox";
 import StyledButton from "@pages/popup/components/StyledButton";
 import { FormEventHandler } from "react";
-import { Button, HStack, Input, Text, VStack } from "@chakra-ui/react";
+import {
+  BoxProps,
+  Button,
+  HStack,
+  Input,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import DraggableBox from "@pages/content/src/ContentScriptApp/components/DraggableBox";
 import { useMachine } from "@xstate/react";
 import ChatText from "@src/shared/component/ChatText";
@@ -17,6 +24,7 @@ import streamChatStateMachine from "@src/shared/xState/streamChatStateMachine";
 import { getDragGPTResponseAsStream } from "@src/shared/services/getGPTResponseAsStream";
 import { sendMessageToBackgroundAsync } from "@src/chrome/message";
 import useGeneratedId from "@src/shared/hook/useGeneratedId";
+import { COLORS } from "@src/constant/style";
 
 type ResponseMessageBoxProps = Omit<
   MessageBoxProps,
@@ -41,15 +49,22 @@ export default function ResponseMessageBox({
         return initialChats;
       },
       getGPTResponse: (context) => {
+        void sendMessageToBackgroundAsync({
+          type: "PushChatHistory",
+          input: { sessionId, chats: context.chats.at(-1) as Chat },
+        });
         return getDragGPTResponseAsStream({
           input: { chats: context.chats, sessionId },
           onDelta: (chunk) => send("RECEIVE_ING", { data: chunk }),
           onFinish: (result) => {
-            void sendMessageToBackgroundAsync({
-              type: "SaveChatHistory",
-              input: { sessionId, chats: context.chats, type: "Drag" },
-            });
             send("RECEIVE_DONE", { data: result });
+            void sendMessageToBackgroundAsync({
+              type: "PushChatHistory",
+              input: {
+                sessionId,
+                chats: { role: "assistant", content: result },
+              },
+            });
           },
         });
       },
@@ -129,6 +144,7 @@ export default function ResponseMessageBox({
         <VStack alignItems="start" pt={2}>
           <HStack width="100%" as="form" onSubmit={onChatSubmit}>
             <Input
+              size="sm"
               width="100%"
               color="white"
               value={state.context.inputText}
@@ -142,13 +158,15 @@ export default function ResponseMessageBox({
             <Button
               size="sm"
               type="submit"
+              colorScheme="blue"
+              color={COLORS.WHITE}
               isLoading={isLoading || isReceiving}
             >
               {t("responseMessageBox_sendButtonText")}
             </Button>
           </HStack>
           <HStack width="100%" justifyContent="flex-start" gap="4px">
-            <Button size="xs" onClick={onClickCopy}>
+            <Button size="xs" onClick={onClickCopy} color="black">
               {isCopied
                 ? t("responseMessageBox_copyButtonText_copied")
                 : t("responseMessageBox_copyButtonText_copy")}
@@ -170,11 +188,13 @@ export default function ResponseMessageBox({
   );
 }
 
-// TODO refactor
-export const ChatBox = ({ chat }: { chat: Chat }) => {
+type ChatBoxProps = {
+  chat: Chat;
+} & BoxProps;
+export const ChatBox = ({ chat, ...restProps }: ChatBoxProps) => {
   if (chat.role === "error") {
     return (
-      <AssistantChat>
+      <AssistantChat {...restProps}>
         <ChatText isError>{chat.content}</ChatText>
       </AssistantChat>
     );
@@ -182,14 +202,14 @@ export const ChatBox = ({ chat }: { chat: Chat }) => {
 
   if (chat.role === "assistant") {
     return (
-      <AssistantChat>
+      <AssistantChat {...restProps}>
         <ChatText>{chat.content}</ChatText>
       </AssistantChat>
     );
   }
 
   return (
-    <UserChat>
+    <UserChat {...restProps}>
       <ChatText bold>{chat.content.trim()}</ChatText>
     </UserChat>
   );

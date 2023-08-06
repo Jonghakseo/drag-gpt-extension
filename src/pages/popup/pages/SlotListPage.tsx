@@ -1,4 +1,4 @@
-import { Button, HStack, Text, VStack } from "@chakra-ui/react";
+import { Button, HStack, Link, Text, VStack } from "@chakra-ui/react";
 import { useMachine } from "@xstate/react";
 import slotListPageStateMachine from "@pages/popup/xState/slotListPageStateMachine";
 import SlotDetail from "@pages/popup/components/SlotDetail";
@@ -125,6 +125,13 @@ export default function SlotListPage({
             </Button>
             <Button colorScheme="gray" size="xs" onClick={onClickResetButton}>
               {t("slotListPage_resetApiKeyButtonText")}
+            </Button>
+            <Button
+              colorScheme="gray"
+              size="xs"
+              onClick={() => chrome.runtime.openOptionsPage()}
+            >
+              {t("slogListPage_showChatHistoryButtonText")}
             </Button>
           </HStack>
           <HStack justifyContent="space-between" w="100%">

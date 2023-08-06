@@ -1,5 +1,8 @@
 import type Chrome from "chrome";
-import { ChatHistories } from "@pages/background/lib/storage/chatHistoryStorage";
+import {
+  ChatHistories,
+  SessionHistories,
+} from "@pages/background/lib/storage/chatHistoryStorage";
 
 declare namespace chrome {
   export default Chrome;
@@ -139,15 +142,35 @@ declare global {
     input?: never;
     data?: "success";
   };
+  type PushChatHistory = {
+    type: "PushChatHistory";
+    input: { chats: Chat | Chat[]; sessionId: string };
+    data?: "success";
+  };
   type SaveChatHistory = {
     type: "SaveChatHistory";
     input: { chats: Chat[]; sessionId: string; type: "Quick" | "Drag" };
+    data?: "success";
+  };
+  type DeleteAllChatHistory = {
+    type: "DeleteAllChatHistory";
+    input?: never;
+    data?: "success";
+  };
+  type DeleteChatHistorySession = {
+    type: "DeleteChatHistorySession";
+    input: string;
     data?: "success";
   };
   type GetAllChatHistory = {
     type: "GetAllChatHistory";
     input?: never;
     data?: ChatHistories;
+  };
+  type GetChatSessionHistory = {
+    type: "GetChatSessionHistory";
+    input: string;
+    data?: SessionHistories;
   };
   type ErrorMessage = {
     type: "Error";
@@ -162,7 +185,11 @@ declare global {
     | RequestOngoingChatGPT
     | ResetQuickChatHistory
     | SaveChatHistory
+    | PushChatHistory
     | GetAllChatHistory
+    | DeleteAllChatHistory
+    | DeleteChatHistorySession
+    | GetChatSessionHistory
     | GetQuickChatHistory
     | AddNewSlot
     | UpdateSlot

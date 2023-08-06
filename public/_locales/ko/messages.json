@@ -62,6 +62,9 @@
   "slotListPage_newSlotButtonText": {
     "message": "슬롯 추가"
   },
+  "slogListPage_showChatHistoryButtonText": {
+    "message": "대화 기록 보기"
+  },
   "slotListPage_quickChatButtonText": {
     "message": "빠른 대화"
   },

@@ -1,9 +1,10 @@
 import { ILocalStorage, LocalStorage } from "@src/chrome/localStorage";
 
 type SessionId = string;
-type SessionHistories = {
+export type SessionHistories = {
   history: Chat[];
   updatedAt: number;
+  createdAt: number;
   type?: "Quick" | "Drag";
 };
 export type ChatHistories = Record<SessionId, SessionHistories>;
@@ -24,11 +25,40 @@ export class ChatHistoryStorage {
 
   static async getChatHistory(sessionId: string): Promise<SessionHistories> {
     const chatHistories = await this.getChatHistories();
-    return chatHistories[sessionId] || { history: [], updatedAt: 0 };
+    return (
+      chatHistories[sessionId] || {
+        history: [],
+        updatedAt: 0,
+        createdAt: Date.now(),
+      }
+    );
   }
 
   static async resetChatHistories(): Promise<void> {
     await this.storage.save(this.CHAT_HISTORY_KEY, EMPTY_CHAT_HISTORIES);
+  }
+
+  static async saveChatHistories(
+    sessionId: string,
+    chatOrChats: Chat | Chat[],
+    type: "Quick" | "Drag"
+  ): Promise<void> {
+    const chatHistories = await this.getChatHistories();
+    await this.storage.save(this.CHAT_HISTORY_KEY, {
+      ...chatHistories,
+      [sessionId]: {
+        type,
+        history: chatOrChats,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+    });
+  }
+
+  static async deleteChatHistory(sessionId: string): Promise<void> {
+    const chatHistories = await this.getChatHistories();
+    delete chatHistories[sessionId];
+    await this.storage.save(this.CHAT_HISTORY_KEY, chatHistories);
   }
 
   static async pushChatHistories(
