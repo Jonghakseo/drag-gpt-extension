@@ -4,5 +4,13 @@ import { PropsWithChildren } from "react";
 type AssistantChatProps = PropsWithChildren & Omit<BoxProps, "alignSelf">;
 
 export default function AssistantChat({ ...restProps }: AssistantChatProps) {
-  return <Box alignSelf="flex-start" {...restProps} />;
+  return (
+    <Box
+      alignSelf="flex-start"
+      style={{
+        marginInlineEnd: "16px",
+      }}
+      {...restProps}
+    />
+  );
 }

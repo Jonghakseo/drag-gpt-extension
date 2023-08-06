@@ -1,18 +1,36 @@
-import { ChakraProvider, theme, ThemeProvider } from "@chakra-ui/react";
-import { FC } from "react";
-import ResetStyleProvider from "@src/shared/component/ResetStyleProvider";
+import {
+  ChakraProvider,
+  ColorModeScript,
+  CSSReset,
+  DarkMode,
+  extendTheme,
+  Spinner,
+  ThemeConfig,
+} from "@chakra-ui/react";
+import { FC, Suspense } from "react";
 import FontProvider from "@src/shared/component/FontProvider";
+import OptionMainPage from "@pages/options/src/pages/Main";
+
+const config: ThemeConfig = {
+  initialColorMode: "dark",
+  useSystemColorMode: false,
+};
+
+const theme = extendTheme({ config });
 
 const App: FC = () => {
   return (
-    <ResetStyleProvider>
-      <FontProvider>
-        <ChakraProvider>
+    <FontProvider>
+      <DarkMode>
+        <ChakraProvider theme={theme}>
+          <CSSReset />
           {/*  TODO router */}
-          <ThemeProvider theme={theme}>Options</ThemeProvider>
+          <Suspense fallback={<Spinner size="lg" />}>
+            <OptionMainPage />
+          </Suspense>
         </ChakraProvider>
-      </FontProvider>
-    </ResetStyleProvider>
+      </DarkMode>
+    </FontProvider>
   );
 };
 

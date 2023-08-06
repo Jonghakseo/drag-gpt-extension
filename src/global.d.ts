@@ -1,4 +1,5 @@
 import type Chrome from "chrome";
+import { ChatHistories } from "@pages/background/lib/storage/chatHistoryStorage";
 
 declare namespace chrome {
   export default Chrome;
@@ -140,10 +141,15 @@ declare global {
   };
   type SaveChatHistory = {
     type: "SaveChatHistory";
-    input: { chats: Chat[]; sessionId: string };
+    input: { chats: Chat[]; sessionId: string; type: "Quick" | "Drag" };
     data?: "success";
   };
-  type Error = {
+  type GetAllChatHistory = {
+    type: "GetAllChatHistory";
+    input?: never;
+    data?: ChatHistories;
+  };
+  type ErrorMessage = {
     type: "Error";
     input?: never;
     error: Error;
@@ -156,6 +162,7 @@ declare global {
     | RequestOngoingChatGPT
     | ResetQuickChatHistory
     | SaveChatHistory
+    | GetAllChatHistory
     | GetQuickChatHistory
     | AddNewSlot
     | UpdateSlot

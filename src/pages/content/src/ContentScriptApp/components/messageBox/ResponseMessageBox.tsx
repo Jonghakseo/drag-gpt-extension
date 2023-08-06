@@ -3,7 +3,7 @@ import MessageBox, {
 } from "@pages/content/src/ContentScriptApp/components/messageBox/MessageBox";
 import StyledButton from "@pages/popup/components/StyledButton";
 import { FormEventHandler } from "react";
-import { HStack, Input, Text, VStack } from "@chakra-ui/react";
+import { Button, HStack, Input, Text, VStack } from "@chakra-ui/react";
 import DraggableBox from "@pages/content/src/ContentScriptApp/components/DraggableBox";
 import { useMachine } from "@xstate/react";
 import ChatText from "@src/shared/component/ChatText";
@@ -30,13 +30,13 @@ export default function ResponseMessageBox({
   onClose,
   ...restProps
 }: ResponseMessageBoxProps) {
-  const { id: sessionId } = useGeneratedId();
+  const { id: sessionId } = useGeneratedId("drag_");
   const [state, send] = useMachine(streamChatStateMachine, {
     services: {
       getChatHistoryFromBackground: async () => {
         void sendMessageToBackgroundAsync({
           type: "SaveChatHistory",
-          input: { sessionId, chats: initialChats },
+          input: { sessionId, chats: initialChats, type: "Drag" },
         });
         return initialChats;
       },
@@ -47,7 +47,7 @@ export default function ResponseMessageBox({
           onFinish: (result) => {
             void sendMessageToBackgroundAsync({
               type: "SaveChatHistory",
-              input: { sessionId, chats: context.chats },
+              input: { sessionId, chats: context.chats, type: "Drag" },
             });
             send("RECEIVE_DONE", { data: result });
           },
@@ -100,13 +100,13 @@ export default function ResponseMessageBox({
           display="flex"
           alignItems="center"
           width="100%"
-          height={24}
+          height="24px"
           color="white"
           fontWeight="bold"
           cursor="move"
           className={DraggableBox.handlerClassName}
         >
-          <DragHandleIcon mr={4} boxSize={12} />
+          <DragHandleIcon mr="4px" boxSize="12px" />
           {t("responseMessageBox_responseTitle")}
         </Text>
       }
@@ -121,30 +121,16 @@ export default function ResponseMessageBox({
           overflowY="scroll"
         >
           {chats.map((chat, index) => (
-            <ChatBox
-              key={index}
-              chat={chat}
-              isLastAndResponse={lastResponseIndex === index}
-            />
+            <ChatBox key={index} chat={chat} />
           ))}
         </VStack>
       }
       footer={
-        // TODO refactor
-        <HStack width="100%" pt={8} justifyContent="space-between">
-          <StyledButton onClick={onClickCopy}>
-            {isCopied
-              ? t("responseMessageBox_copyButtonText_copied")
-              : t("responseMessageBox_copyButtonText_copy")}
-          </StyledButton>
-          {isReceiving && (
-            <StyledButton colorScheme="orange" onClick={onClickStopButton}>
-              {t("responseMessageBox_stopButtonText")}
-            </StyledButton>
-          )}
-          <HStack as="form" onSubmit={onChatSubmit}>
+        <VStack alignItems="start" pt={2}>
+          <HStack width="100%" as="form" onSubmit={onChatSubmit}>
             <Input
-              width={230}
+              width="100%"
+              color="white"
               value={state.context.inputText}
               placeholder={t("responseMessageBox_messageInputPlacepolder")}
               onChange={(e) =>
@@ -153,11 +139,31 @@ export default function ResponseMessageBox({
               onKeyDown={(e) => e.stopPropagation()}
             />
 
-            <StyledButton type="submit" isLoading={isLoading || isReceiving}>
+            <Button
+              size="sm"
+              type="submit"
+              isLoading={isLoading || isReceiving}
+            >
               {t("responseMessageBox_sendButtonText")}
-            </StyledButton>
+            </Button>
           </HStack>
-        </HStack>
+          <HStack width="100%" justifyContent="flex-start" gap="4px">
+            <Button size="xs" onClick={onClickCopy}>
+              {isCopied
+                ? t("responseMessageBox_copyButtonText_copied")
+                : t("responseMessageBox_copyButtonText_copy")}
+            </Button>
+            {isReceiving && (
+              <Button
+                size="xs"
+                colorScheme="orange"
+                onClick={onClickStopButton}
+              >
+                {t("responseMessageBox_stopButtonText")}
+              </Button>
+            )}
+          </HStack>
+        </VStack>
       }
       {...restProps}
     />
@@ -165,20 +171,7 @@ export default function ResponseMessageBox({
 }
 
 // TODO refactor
-const ChatBox = ({
-  chat,
-  isLastAndResponse,
-}: {
-  chat: Chat;
-  isLastAndResponse: boolean;
-}) => {
-  if (isLastAndResponse) {
-    return (
-      <AssistantChat>
-        <ChatText>{chat.content}</ChatText>
-      </AssistantChat>
-    );
-  }
+export const ChatBox = ({ chat }: { chat: Chat }) => {
   if (chat.role === "error") {
     return (
       <AssistantChat>
@@ -189,11 +182,9 @@ const ChatBox = ({
 
   if (chat.role === "assistant") {
     return (
-      // <ChatCollapse>
       <AssistantChat>
         <ChatText>{chat.content}</ChatText>
       </AssistantChat>
-      // </ChatCollapse>
     );
   }
 

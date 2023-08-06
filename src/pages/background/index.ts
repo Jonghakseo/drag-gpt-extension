@@ -228,10 +228,15 @@ chrome.runtime.onConnect.addListener((port) => {
         case "SaveChatHistory": {
           await ChatHistoryStorage.pushChatHistories(
             message.input.sessionId,
-            message.input.chats
+            message.input.chats,
+            message.input.type
           );
-          console.log(await ChatHistoryStorage.getChatHistories());
           sendResponse({ type: "SaveChatHistory", data: "success" });
+          break;
+        }
+        case "GetAllChatHistory": {
+          const allChatHistories = await ChatHistoryStorage.getChatHistories();
+          sendResponse({ type: "GetAllChatHistory", data: allChatHistories });
           break;
         }
         default: {
