@@ -1,36 +1,27 @@
 import {
   Button,
-  FormControl,
   FormLabel,
   HStack,
   Switch,
-  Text,
   Textarea,
   VStack,
 } from "@chakra-ui/react";
 import StyledButton from "@pages/popup/components/StyledButton";
 import { useMachine } from "@xstate/react";
-import { ChatCompletionRequestMessage } from "openai";
 import {
   sendMessageToBackground,
   sendMessageToBackgroundAsync,
 } from "@src/chrome/message";
-import { FormEventHandler, KeyboardEventHandler, useState } from "react";
-import UserChat from "@src/shared/component/UserChat";
-import ChatText from "@src/shared/component/ChatText";
-import AssistantChat from "@src/shared/component/AssistantChat";
+import { FormEventHandler, KeyboardEventHandler } from "react";
 import { useScrollDownEffect } from "@src/shared/hook/useScrollDownEffect";
 import { t } from "@src/chrome/i18n";
 import { useCopyClipboard } from "@src/shared/hook/useCopyClipboard";
 import streamChatStateMachine from "@src/shared/xState/streamChatStateMachine";
 import { getQuickGPTResponseAsStream } from "@src/shared/services/getGPTResponseAsStream";
 import { COLORS } from "@src/constant/style";
+import useGeneratedId from "@src/shared/hook/useGeneratedId";
+import { ChatBox } from "@pages/content/src/ContentScriptApp/components/messageBox/ResponseMessageBox";
 
-async function getChatHistoryFromBackground() {
-  return await sendMessageToBackgroundAsync({
-    type: "GetQuickChatHistory",
-  });
-}
 function resetChatHistoriesFromBackground() {
   sendMessageToBackground({
     message: {
@@ -46,15 +37,19 @@ type QuickChattingPageProps = {
 export default function QuickChattingPage({
   onClickBackButton,
 }: QuickChattingPageProps) {
+  const { id: sessionId, regenerate: regenerateSessionId } =
+    useGeneratedId("quick_");
   const [state, send] = useMachine(streamChatStateMachine, {
     services: {
-      getChatHistoryFromBackground,
+      getChatHistoryFromBackground: () => {
+        return sendMessageToBackgroundAsync({
+          type: "GetQuickChatHistory",
+        });
+      },
       getGPTResponse: (context) => {
         return getQuickGPTResponseAsStream({
           isGpt4: context.isGpt4,
-          messages: context.chats.filter(
-            (chat) => chat.role !== "error"
-          ) as ChatCompletionRequestMessage[],
+          messages: context.chats,
           onDelta: (chunk) => {
             send("RECEIVE_ING", { data: chunk });
           },
@@ -65,7 +60,12 @@ export default function QuickChattingPage({
     actions: {
       exitChatting: onClickBackButton,
       resetChatData: (context) => {
+        void sendMessageToBackgroundAsync({
+          type: "SaveChatHistory",
+          input: { chats: context.chats, sessionId, type: "Quick" },
+        });
         context.chats = [];
+        regenerateSessionId();
         resetChatHistoriesFromBackground();
       },
     },
@@ -132,41 +132,13 @@ export default function QuickChattingPage({
         maxHeight="300px"
         fontSize={13}
       >
-        {state.context.chats.map((chat, index) => {
-          switch (chat.role) {
-            case "user":
-              return (
-                <UserChat
-                  key={index}
-                  style={{
-                    marginInlineStart: "16px",
-                  }}
-                >
-                  <ChatText>{chat.content}</ChatText>
-                </UserChat>
-              );
-            case "assistant":
-              return (
-                <AssistantChat
-                  key={index}
-                  style={{
-                    marginInlineEnd: "16px",
-                  }}
-                >
-                  <ChatText>{chat.content}</ChatText>
-                </AssistantChat>
-              );
-            case "error":
-              return (
-                <AssistantChat key={index}>
-                  <ChatText isError>{chat.content}</ChatText>
-                </AssistantChat>
-              );
-          }
-        })}
+        {state.context.chats.map((chat, index) => (
+          <ChatBox chat={chat} key={index} />
+        ))}
       </VStack>
       <VStack as="form" onSubmit={onChatSubmit} mt="auto" w="100%">
         <Textarea
+          color="black"
           size="xs"
           resize="none"
           width="100%"

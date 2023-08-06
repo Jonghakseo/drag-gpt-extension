@@ -25,6 +25,7 @@ export default function ChatText({
       textAlign="start"
       color={isError ? "red" : "white"}
       lineHeight={1.3}
+      fontSize="14px"
       fontWeight={bold ? "bold" : "normal"}
       {...restProps}
     >

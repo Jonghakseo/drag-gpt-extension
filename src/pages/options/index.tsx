@@ -1,6 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import Options from "@pages/options/Options";
+import App from "@pages/options/src/App";
 import "@pages/options/index.css";
 import refreshOnUpdate from "virtual:reload-on-update-in-view";
 
@@ -12,7 +12,7 @@ function init() {
     throw new Error("Can not find #app-container");
   }
   const root = createRoot(appContainer);
-  root.render(<Options />);
+  root.render(<App />);
 }
 
 init();

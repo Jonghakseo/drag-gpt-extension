@@ -18,7 +18,7 @@ export async function chatGPT({
   onDelta,
 }: {
   slot: ChatGPTSlot;
-  chats?: ChatCompletionRequestMessage[];
+  chats?: Chat[];
   input?: string;
   apiKey: string;
   onDelta?: (chunk: string) => unknown;
@@ -32,7 +32,7 @@ export async function chatGPT({
     });
   }
   if (hasChats(chats)) {
-    messages.push(...chats);
+    messages.push(...convertChatsToMessages(chats));
   }
   if (input) {
     messages.push({ role: "user", content: input });
@@ -131,8 +131,17 @@ async function requestApi(apiKey: string, body: CreateChatCompletionRequest) {
   });
 }
 
-function hasChats(
-  chats?: ChatCompletionRequestMessage[]
-): chats is ChatCompletionRequestMessage[] {
+function hasChats(chats?: Chat[]): chats is Chat[] {
   return chats !== undefined && chats.length > 0;
+}
+
+function convertChatsToMessages(chats: Chat[]): ChatCompletionRequestMessage[] {
+  return chats
+    .filter((chat) => chat.role !== "error")
+    .map((chat) => {
+      return {
+        role: chat.role === "user" ? "user" : "assistant",
+        content: chat.content,
+      };
+    });
 }

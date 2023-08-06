@@ -1,4 +1,4 @@
-type GetDataType<T extends Message["type"]> = Exclude<
+export type GetDataType<T extends Message["type"]> = Exclude<
   Extract<
     Message,
     {
