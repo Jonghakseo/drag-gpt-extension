@@ -1,4 +1,13 @@
-import { HStack, Textarea, VStack } from "@chakra-ui/react";
+import {
+  Button,
+  FormControl,
+  FormLabel,
+  HStack,
+  Switch,
+  Text,
+  Textarea,
+  VStack,
+} from "@chakra-ui/react";
 import StyledButton from "@pages/popup/components/StyledButton";
 import { useMachine } from "@xstate/react";
 import { ChatCompletionRequestMessage } from "openai";
@@ -6,7 +15,7 @@ import {
   sendMessageToBackground,
   sendMessageToBackgroundAsync,
 } from "@src/chrome/message";
-import { FormEventHandler, KeyboardEventHandler } from "react";
+import { FormEventHandler, KeyboardEventHandler, useState } from "react";
 import UserChat from "@src/shared/component/UserChat";
 import ChatText from "@src/shared/component/ChatText";
 import AssistantChat from "@src/shared/component/AssistantChat";
@@ -15,6 +24,7 @@ import { t } from "@src/chrome/i18n";
 import { useCopyClipboard } from "@src/shared/hook/useCopyClipboard";
 import streamChatStateMachine from "@src/shared/xState/streamChatStateMachine";
 import { getQuickGPTResponseAsStream } from "@src/shared/services/getGPTResponseAsStream";
+import { COLORS } from "@src/constant/style";
 
 async function getChatHistoryFromBackground() {
   return await sendMessageToBackgroundAsync({
@@ -41,6 +51,7 @@ export default function QuickChattingPage({
       getChatHistoryFromBackground,
       getGPTResponse: (context) => {
         return getQuickGPTResponseAsStream({
+          isGpt4: context.isGpt4,
           messages: context.chats.filter(
             (chat) => chat.role !== "error"
           ) as ChatCompletionRequestMessage[],
@@ -166,17 +177,37 @@ export default function QuickChattingPage({
           onKeyDown={onChatInputKeyDown}
         />
         <HStack justifyContent="space-between" w="100%">
-          <StyledButton onClick={onClickCopy}>
-            {isCopied
-              ? t("quickChattingPage_copyButtonText_copied")
-              : t("quickChattingPage_copyButtonText_copy")}
-          </StyledButton>
           <HStack>
+            <StyledButton onClick={onClickCopy}>
+              {isCopied
+                ? t("quickChattingPage_copyButtonText_copied")
+                : t("quickChattingPage_copyButtonText_copy")}
+            </StyledButton>
+            <FormLabel
+              htmlFor="is-gpt4-switch"
+              mb="0"
+              color={COLORS.WHITE}
+              fontSize={12}
+            >
+              {t("quickChattingPage_isGpt4")}
+            </FormLabel>
+            <Switch
+              id="is-gpt4-switch"
+              isChecked={state.context.isGpt4}
+              onChange={() => send("TOGGLE_IS_GPT4")}
+            />
+          </HStack>
+          <HStack justifyContent="end">
             {isReceiving && (
-              <StyledButton colorScheme="orange" onClick={onClickStopButton}>
+              <Button
+                colorScheme="orange"
+                size="xs"
+                onClick={onClickStopButton}
+              >
                 {t("quickChattingPage_stopButtonText")}
-              </StyledButton>
+              </Button>
             )}
+
             <StyledButton
               type="submit"
               isLoading={isLoading || isReceiving}

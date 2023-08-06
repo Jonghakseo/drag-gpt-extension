@@ -1,36 +1,36 @@
 {
   "extensionName": {
-    "message": "Drag GPT - Dragと簡単にAIを始めよう！"
+    "message": "ドラッグGPT - 簡単にAIを始めてみよう！"
   },
   "extensionDescription": {
-    "message": "選択したコンテンツをChatGPTに簡単に問い合わせることができます。ドラッグしてボタンをクリックしてください。"
+    "message": "ドラッグしてボタンをクリックするだけで、簡単に選択した内容をChatGPTに質問したり要求したりすることができます！"
   },
   "dragGPT": {
-    "message": "Drag GPT"
+    "message": "ドラッグGPT"
   },
   "noApiKeyPage_openAIApiKey_placeholder": {
     "message": "OpenAI APIキー"
   },
   "noApiKeyPage_checkingApiKey": {
-    "message": "APIキーを確認中です..."
+    "message": "APIキーを確認するために\nテストリクエストを送信中..."
   },
   "noApiKeyPage_howToGetApiKey": {
-    "message": "OpenAIのAPIキーを取得する方法は？"
+    "message": "OpenAIのAPIキーの取得方法は？"
   },
   "noApiKeyPage_howToGetApiKeyDetail1": {
-    "message": "{OpenAIアカウントにサインアップ}します。"
+    "message": "OpenAIアカウントがない場合、{登録}が必要です。"
   },
   "noApiKeyPage_howToGetApiKeyDetail2": {
-    "message": "{APIキーのページ}に移動します。"
+    "message": "{APIキーページ}に移動してください。"
   },
   "noApiKeyPage_howToGetApiKeyDetail3": {
-    "message": "新しいシークレットキーを作成してAPIキーを生成します。"
+    "message": "APIキーの作成には、新しいシークレットキーを作成するボタンをクリックしてください。"
   },
   "noApiKeyPage_howToGetApiKeyDetail4": {
-    "message": "キーをコピーして入力フィールドに貼り付け、保存をクリックします。"
+    "message": "キーをコピーして入力し、保存ボタンをクリックすると、開始できます！"
   },
   "footer_EmailText": {
-    "message": "機能提案/バグ報告"
+    "message": "機能の提案/バグの報告"
   },
   "noApiKeyPage_saveButtonText": {
     "message": "保存"
@@ -39,7 +39,7 @@
     "message": "送信"
   },
   "quickChattingPage_stopButtonText": {
-    "message": "回答中断"
+    "message": "回答停止"
   },
   "quickChattingPage_chattingPlaceholder": {
     "message": "例：こんにちは！"
@@ -48,28 +48,31 @@
     "message": "戻る"
   },
   "quickChattingPage_resetButtonText": {
-    "message": "リセット"
-  },
-  "quickChattingPage_copyButtonText_copied": {
-    "message": "コピーしました！"
+    "message": "会話のリセット"
   },
   "quickChattingPage_copyButtonText_copy": {
-    "message": "最後の応答をコピー"
+    "message": "最後の応答のコピー"
+  },
+  "quickChattingPage_copyButtonText_copied": {
+    "message": "コピー済み！"
+  },
+  "quickChattingPage_isGpt4": {
+    "message": "GPT4"
   },
   "slotListPage_newSlotButtonText": {
-    "message": "新規スロット"
+    "message": "スロットを追加"
   },
   "slotListPage_quickChatButtonText": {
     "message": "クイックチャット"
   },
   "slotListPage_resetApiKeyButtonText": {
-    "message": "APIキーをリセット"
+    "message": "APIキーのリセット"
   },
   "slotListPage_promptSlotsTitle": {
     "message": "プロンプトスロット"
   },
   "slotListPage_resetApiKeyConfirmMessage": {
-    "message": "よろしいですか？"
+    "message": "本当にAPIキーをリセットしますか？"
   },
   "slotListItem_deleteButtonText": {
     "message": "削除"
@@ -81,16 +84,19 @@
     "message": "プロンプトスロット名"
   },
   "slotDetail_promptSlotName_placeholder": {
-    "message": "例：コードレビュー"
+    "message": "例：英語から日本語への翻訳用"
   },
   "slotDetail_writePromptTitle": {
-    "message": "ChatGPTのプロンプトを入力してください（最大2000文字）"
+    "message": "ChatGPTの要求に使用するプロンプトを作成してください（最大2000文字）"
   },
   "slotDetail_promptInputPlaceholder": {
-    "message": "例：あなたはコードレビュアーです。"
+    "message": "例：英文または単語の日本語訳を教えてください"
   },
   "slotDetail_temperatureTitle": {
-    "message": "無作為性 (temperature: 0~2)"
+    "message": "ランダム性（temperature：0～2）"
+  },
+  "slotDetail_isGpt4": {
+    "message": "GPT4の使用（デフォルト：3.5）"
   },
   "slotDetail_saveButtonText": {
     "message": "保存"
@@ -99,39 +105,27 @@
     "message": "キャンセル"
   },
   "responseMessageBox_responseTitle": {
-    "message": "応答"
+    "message": "回答"
   },
   "responseMessageBox_copyButtonText_copy": {
-    "message": "最後の応答をコピー"
+    "message": "最後の応答のコピー"
   },
   "responseMessageBox_copyButtonText_copied": {
-    "message": "コピーしました！"
+    "message": "コピー済み！"
   },
   "responseMessageBox_sendButtonText": {
     "message": "送信"
   },
   "responseMessageBox_stopButtonText": {
-    "message": "回答中断"
+    "message": "回答停止"
   },
   "responseMessageBox_messageInputPlacepolder": {
-    "message": "例：要約！"
+    "message": "例：上記の内容を簡潔に要約してください"
   },
   "errorMessageBox_errorTitle": {
     "message": "エラー"
   },
   "errorMessageBox_unknownError": {
-    "message": "不明なエラー"
-  },
-  "promptGenerator_backButton": {
-    "message": "戻る"
-  },
-  "promptGenerator_guideMessage": {
-    "message": "希望するプロンプトがありますが、使用方法がわからない場合は、プロンプト作成を任せてみませんか？"
-  },
-  "promptGenerator_placeholder": {
-    "message": "コンバージョンを増やすマーケティングコピーを生成するプロンプト。"
-  },
-  "promptGenerator_generateButton": {
-    "message": "生成"
+    "message": "未知のエラー"
   }
 }

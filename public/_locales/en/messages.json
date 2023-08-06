@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "Drag GPT - Easy start AI with Drag!"
+    "message": "Drag GPT - Start AI Easily with Drag and Drop!"
   },
   "extensionDescription": {
-    "message": "You can easily ask or request the selected content to ChatGPT by dragging and clicking the button."
+    "message": "Easily ask questions or make requests to ChatGPT by simply dragging and clicking!"
   },
   "dragGPT": {
     "message": "Drag GPT"
@@ -12,126 +12,120 @@
     "message": "OpenAI API Key"
   },
   "noApiKeyPage_checkingApiKey": {
-    "message": "Currently sending a request\nto check for the API key..."
+    "message": "Checking API Key...\nSending test request..."
   },
   "noApiKeyPage_howToGetApiKey": {
-    "message": "How to get openai api key?"
+    "message": "How to Get OpenAI API Key?"
   },
   "noApiKeyPage_howToGetApiKeyDetail1": {
-    "message": "{Sign up} for an OpenAI account."
+    "message": "If you don't have an OpenAI account, you need to {sign up}."
   },
   "noApiKeyPage_howToGetApiKeyDetail2": {
-    "message": "Navigate to the {API key page}"
+    "message": "Go to the {API Key page}."
   },
   "noApiKeyPage_howToGetApiKeyDetail3": {
-    "message": "Create a new secret key to generate an API key."
+    "message": "Click on the Create a new secret key button to generate an API key."
   },
   "noApiKeyPage_howToGetApiKeyDetail4": {
-    "message": "Copy the key and paste it into the input field, then click save."
+    "message": "Copy the key, enter it, and click the Save button to get started!"
   },
   "footer_EmailText": {
-    "message": "feature suggestions / bug reports"
+    "message": "Feature Suggestions / Bug Reports"
   },
   "noApiKeyPage_saveButtonText": {
-    "message": "SAVE"
+    "message": "Save"
   },
   "quickChattingPage_sendButtonText": {
-    "message": "SEND"
+    "message": "Send"
   },
   "quickChattingPage_stopButtonText": {
-    "message": "STOP"
+    "message": "Stop"
   },
   "quickChattingPage_chattingPlaceholder": {
-    "message": "ex. Hello!"
+    "message": "e.g. Hello!"
   },
   "quickChattingPage_backButtonText": {
-    "message": "BACK"
+    "message": "Back"
   },
   "quickChattingPage_resetButtonText": {
-    "message": "RESET"
-  },
-  "quickChattingPage_copyButtonText_copied": {
-    "message": "COPIED!"
+    "message": "Reset Conversation"
   },
   "quickChattingPage_copyButtonText_copy": {
-    "message": "COPY LAST RESPONSE"
+    "message": "Copy Last Response"
+  },
+  "quickChattingPage_copyButtonText_copied": {
+    "message": "Copied!"
+  },
+  "quickChattingPage_isGpt4": {
+    "message": "GPT4"
   },
   "slotListPage_newSlotButtonText": {
-    "message": "NEW SLOT"
+    "message": "Add Slot"
   },
   "slotListPage_quickChatButtonText": {
-    "message": "QUICK CHAT"
+    "message": "Quick Chat"
   },
   "slotListPage_resetApiKeyButtonText": {
-    "message": "RESET API KEY"
+    "message": "Reset API Key"
   },
   "slotListPage_promptSlotsTitle": {
     "message": "Prompt Slots"
   },
   "slotListPage_resetApiKeyConfirmMessage": {
-    "message": "Are you sure?"
+    "message": "Are you sure you want to reset the API key?"
   },
   "slotListItem_deleteButtonText": {
-    "message": "DEL"
+    "message": "Delete"
   },
   "slotListItem_editButtonText": {
-    "message": "EDIT"
+    "message": "Edit"
   },
   "slotDetail_promptSlotName": {
-    "message": "Prompt Slot name"
+    "message": "Prompt Slot Name"
   },
   "slotDetail_promptSlotName_placeholder": {
-    "message": "ex. Code Review"
+    "message": "e.g. English to Korean Translation"
   },
   "slotDetail_writePromptTitle": {
-    "message": "Write a prompt for ChatGPT (MAX 2000)"
+    "message": "Please write the pre-defined prompt for ChatGPT requests (up to 2000 characters)"
   },
   "slotDetail_promptInputPlaceholder": {
-    "message": "ex. You are a code reviewer."
+    "message": "e.g. Tell me the Korean meaning of an English sentence or word."
   },
   "slotDetail_temperatureTitle": {
     "message": "Randomness (temperature: 0~2)"
   },
+  "slotDetail_isGpt4": {
+    "message": "Use GPT4 (default: 3.5)"
+  },
   "slotDetail_saveButtonText": {
-    "message": "SAVE"
+    "message": "Save"
   },
   "slotDetail_cancelButtonText": {
-    "message": "CANCEL"
+    "message": "Cancel"
   },
   "responseMessageBox_responseTitle": {
     "message": "Response"
   },
   "responseMessageBox_copyButtonText_copy": {
-    "message": "COPY LAST RESPONSE"
+    "message": "Copy Last Response"
   },
   "responseMessageBox_copyButtonText_copied": {
-    "message": "COPIED!"
+    "message": "Copied!"
   },
   "responseMessageBox_sendButtonText": {
-    "message": "SEND"
+    "message": "Send"
   },
   "responseMessageBox_stopButtonText": {
-    "message": "STOP"
+    "message": "Stop"
   },
   "responseMessageBox_messageInputPlacepolder": {
-    "message": "ex. Summarize!"
+    "message": "e.g. Summarize the above content for me."
   },
   "errorMessageBox_errorTitle": {
     "message": "Error"
   },
   "errorMessageBox_unknownError": {
-    "message": "Unknown error"
-  },
-  "promptGenerator_backButton": {
-    "message": "BACK"
-  },
-  "promptGenerator_guideMessage": {
-    "message": "If you have a desired prompt but don't know how to input it to use, why not entrust the prompt creation to us?"
-  },
-  "promptGenerator_placeholder": {
-    "message": "A prompt that will generate a marketing copy that will increase conversions."
-  },
-  "promptGenerator_generateButton": {
-    "message": "GENERATE"
+    "message": "Unknown Error"
   }
 }

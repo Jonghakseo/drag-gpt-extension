@@ -6,6 +6,7 @@ import {
   SliderFilledTrack,
   SliderThumb,
   SliderTrack,
+  Switch,
   Text,
   Textarea,
   Tooltip,
@@ -33,6 +34,7 @@ export default function SlotDetail({
   exitDetail,
 }: SlotDetailProps) {
   const [slot, setSlot] = useState(initialSlot);
+  const isGpt4 = slot.type === "ChatGPT4";
 
   const onSaveButtonClick = () => {
     onUpdate(slot);
@@ -44,6 +46,11 @@ export default function SlotDetail({
       ...prevState,
       [key]: value,
     }));
+  };
+
+  const toggleGpt4Switch = () => {
+    updateSlot("type", isGpt4 ? "ChatGPT" : "ChatGPT4");
+    console.log(isGpt4, slot);
   };
 
   return (
@@ -84,7 +91,6 @@ export default function SlotDetail({
         textAlign="start"
         whiteSpace="pre-wrap"
         fontSize={12}
-        lineHeight={1.3}
       >
         {t("slotDetail_temperatureTitle")}
       </Text>
@@ -94,6 +100,17 @@ export default function SlotDetail({
           updateSlot("temperature", temperature);
         }}
       />
+      <HStack justifyContent="space-between">
+        <Text
+          color={COLORS.WHITE}
+          textAlign="start"
+          whiteSpace="pre-wrap"
+          fontSize={12}
+        >
+          {t("slotDetail_isGpt4")}
+        </Text>
+        <Switch isChecked={isGpt4} onChange={toggleGpt4Switch} />
+      </HStack>
       <HStack paddingTop={4} width="100%" justifyContent="space-between">
         <StyledButton onClick={onSaveButtonClick} colorScheme="blue">
           {t("slotDetail_saveButtonText")}
@@ -117,7 +134,7 @@ const TemperatureSlider = ({
   const [showTooltip, setShowTooltip] = useState(false);
 
   return (
-    <Box pt="6px" pb="2px" w="100%">
+    <Box pb="2px" w="100%">
       <Slider
         min={0}
         max={2}

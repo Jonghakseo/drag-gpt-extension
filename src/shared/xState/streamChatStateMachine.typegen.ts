@@ -41,6 +41,7 @@ export interface Typegen0 {
     resetChatText: "QUERY";
     setCancelReceive: "done.invoke.stream-chat-state.loading:invocation[0]";
     setChats: "done.invoke.stream-chat-state.init:invocation[0]";
+    toggleIsGpt4: "TOGGLE_IS_GPT4";
     updateChatText: "CHANGE_TEXT";
   };
   eventsCausingDelays: {};
