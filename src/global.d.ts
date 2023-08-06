@@ -1,5 +1,4 @@
 import type Chrome from "chrome";
-import type { ChatCompletionRequestMessage } from "openai";
 
 declare namespace chrome {
   export default Chrome;
@@ -88,7 +87,7 @@ declare global {
   };
   type RequestOngoingChatGPT = {
     type: "RequestOngoingChatGPT";
-    input: ChatCompletionRequestMessage[];
+    input: Chat[];
     data?: { result: string };
   };
   type RequestInitialDragGPT = {
@@ -98,13 +97,13 @@ declare global {
   };
   type RequestDragGPT = {
     type: "RequestDragGPTStream";
-    input?: ChatCompletionRequestMessage[];
+    input?: { chats: Chat[]; sessionId: string };
     data?: { result: string; chunk?: string; isDone?: boolean };
   };
   type RequestQuickChatGPT = {
     type: "RequestQuickChatGPTStream";
     input?: {
-      messages: ChatCompletionRequestMessage[];
+      messages: Chat[];
       isGpt4: boolean;
     };
     data?: { result: string; chunk?: string; isDone?: boolean };
@@ -139,6 +138,11 @@ declare global {
     input?: never;
     data?: "success";
   };
+  type SaveChatHistory = {
+    type: "SaveChatHistory";
+    input: { chats: Chat[]; sessionId: string };
+    data?: "success";
+  };
   type Error = {
     type: "Error";
     input?: never;
@@ -151,6 +155,7 @@ declare global {
     | RequestDragGPT
     | RequestOngoingChatGPT
     | ResetQuickChatHistory
+    | SaveChatHistory
     | GetQuickChatHistory
     | AddNewSlot
     | UpdateSlot

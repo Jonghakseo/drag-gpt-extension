@@ -1,21 +1,18 @@
 import {
   Button,
-  FormControl,
   FormLabel,
   HStack,
   Switch,
-  Text,
   Textarea,
   VStack,
 } from "@chakra-ui/react";
 import StyledButton from "@pages/popup/components/StyledButton";
 import { useMachine } from "@xstate/react";
-import { ChatCompletionRequestMessage } from "openai";
 import {
   sendMessageToBackground,
   sendMessageToBackgroundAsync,
 } from "@src/chrome/message";
-import { FormEventHandler, KeyboardEventHandler, useState } from "react";
+import { FormEventHandler, KeyboardEventHandler, useId } from "react";
 import UserChat from "@src/shared/component/UserChat";
 import ChatText from "@src/shared/component/ChatText";
 import AssistantChat from "@src/shared/component/AssistantChat";
@@ -25,12 +22,9 @@ import { useCopyClipboard } from "@src/shared/hook/useCopyClipboard";
 import streamChatStateMachine from "@src/shared/xState/streamChatStateMachine";
 import { getQuickGPTResponseAsStream } from "@src/shared/services/getGPTResponseAsStream";
 import { COLORS } from "@src/constant/style";
+import generateId from "@src/shared/utils/generateId";
+import useGeneratedId from "@src/shared/hook/useGeneratedId";
 
-async function getChatHistoryFromBackground() {
-  return await sendMessageToBackgroundAsync({
-    type: "GetQuickChatHistory",
-  });
-}
 function resetChatHistoriesFromBackground() {
   sendMessageToBackground({
     message: {
@@ -46,15 +40,18 @@ type QuickChattingPageProps = {
 export default function QuickChattingPage({
   onClickBackButton,
 }: QuickChattingPageProps) {
+  const { id: sessionId, regenerate: regenerateSessionId } = useGeneratedId();
   const [state, send] = useMachine(streamChatStateMachine, {
     services: {
-      getChatHistoryFromBackground,
+      getChatHistoryFromBackground: () => {
+        return sendMessageToBackgroundAsync({
+          type: "GetQuickChatHistory",
+        });
+      },
       getGPTResponse: (context) => {
         return getQuickGPTResponseAsStream({
           isGpt4: context.isGpt4,
-          messages: context.chats.filter(
-            (chat) => chat.role !== "error"
-          ) as ChatCompletionRequestMessage[],
+          messages: context.chats,
           onDelta: (chunk) => {
             send("RECEIVE_ING", { data: chunk });
           },
@@ -65,7 +62,12 @@ export default function QuickChattingPage({
     actions: {
       exitChatting: onClickBackButton,
       resetChatData: (context) => {
+        void sendMessageToBackgroundAsync({
+          type: "SaveChatHistory",
+          input: { chats: context.chats, sessionId },
+        });
         context.chats = [];
+        regenerateSessionId();
         resetChatHistoriesFromBackground();
       },
     },

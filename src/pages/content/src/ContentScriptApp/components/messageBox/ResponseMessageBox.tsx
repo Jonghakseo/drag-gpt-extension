@@ -6,7 +6,6 @@ import { FormEventHandler } from "react";
 import { HStack, Input, Text, VStack } from "@chakra-ui/react";
 import DraggableBox from "@pages/content/src/ContentScriptApp/components/DraggableBox";
 import { useMachine } from "@xstate/react";
-import { ChatCompletionRequestMessage } from "openai";
 import ChatText from "@src/shared/component/ChatText";
 import AssistantChat from "@src/shared/component/AssistantChat";
 import UserChat from "@src/shared/component/UserChat";
@@ -16,6 +15,8 @@ import { t } from "@src/chrome/i18n";
 import { DragHandleIcon } from "@chakra-ui/icons";
 import streamChatStateMachine from "@src/shared/xState/streamChatStateMachine";
 import { getDragGPTResponseAsStream } from "@src/shared/services/getGPTResponseAsStream";
+import { sendMessageToBackgroundAsync } from "@src/chrome/message";
+import useGeneratedId from "@src/shared/hook/useGeneratedId";
 
 type ResponseMessageBoxProps = Omit<
   MessageBoxProps,
@@ -29,18 +30,27 @@ export default function ResponseMessageBox({
   onClose,
   ...restProps
 }: ResponseMessageBoxProps) {
+  const { id: sessionId } = useGeneratedId();
   const [state, send] = useMachine(streamChatStateMachine, {
     services: {
-      getChatHistoryFromBackground: () => Promise.resolve(initialChats),
+      getChatHistoryFromBackground: async () => {
+        void sendMessageToBackgroundAsync({
+          type: "SaveChatHistory",
+          input: { sessionId, chats: initialChats },
+        });
+        return initialChats;
+      },
       getGPTResponse: (context) => {
         return getDragGPTResponseAsStream({
-          messages: context.chats.filter(
-            (chat) => chat.role !== "error"
-          ) as ChatCompletionRequestMessage[],
-          onDelta: (chunk) => {
-            send("RECEIVE_ING", { data: chunk });
+          input: { chats: context.chats, sessionId },
+          onDelta: (chunk) => send("RECEIVE_ING", { data: chunk }),
+          onFinish: (result) => {
+            void sendMessageToBackgroundAsync({
+              type: "SaveChatHistory",
+              input: { sessionId, chats: context.chats },
+            });
+            send("RECEIVE_DONE", { data: result });
           },
-          onFinish: (result) => send("RECEIVE_DONE", { data: result }),
         });
       },
     },

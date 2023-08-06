@@ -9,9 +9,10 @@ import {
   sendMessageToClient,
 } from "@src/chrome/message";
 import { QuickChatHistoryStorage } from "@pages/background/lib/storage/quickChatHistoryStorage";
-import { exhaustiveMatchingGuard } from "@src/shared/ts-util/exhaustiveMatchingGuard";
+import { exhaustiveMatchingGuard } from "@src/shared/ts-utils/exhaustiveMatchingGuard";
 import { createNewChatGPTSlot } from "@src/shared/slot/createNewChatGPTSlot";
 import { PROMPT_GENERATE_PROMPT } from "@src/constant/promptGeneratePrompt";
+import { ChatHistoryStorage } from "@pages/background/lib/storage/chatHistoryStorage";
 
 reloadOnUpdate("pages/background");
 
@@ -166,9 +167,10 @@ chrome.runtime.onConnect.addListener((port) => {
         }
         case "RequestDragGPTStream": {
           const apiKey = await ApiKeyStorage.getApiKey();
+          const slot = await SlotStorage.getSelectedSlot();
           const response = await chatGPT({
-            chats: message.input,
-            slot: { type: "ChatGPT" },
+            chats: message.input?.chats,
+            slot: { type: slot.type },
             apiKey,
             onDelta: (chunk) => {
               sendResponse({
@@ -221,6 +223,15 @@ chrome.runtime.onConnect.addListener((port) => {
         case "ResetQuickChatHistory": {
           await QuickChatHistoryStorage.resetChatHistories();
           sendResponse({ type: "ResetQuickChatHistory", data: "success" });
+          break;
+        }
+        case "SaveChatHistory": {
+          await ChatHistoryStorage.pushChatHistories(
+            message.input.sessionId,
+            message.input.chats
+          );
+          console.log(await ChatHistoryStorage.getChatHistories());
+          sendResponse({ type: "SaveChatHistory", data: "success" });
           break;
         }
         default: {
