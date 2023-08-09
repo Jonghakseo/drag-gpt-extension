@@ -1,5 +1,5 @@
 import Popup from "@pages/popup/Popup";
-import StyleProvider from "@pages/popup/style/StyleProvider";
+import StyleProvider from "@src/shared/component/StyleProvider";
 
 export default function App() {
   return (
