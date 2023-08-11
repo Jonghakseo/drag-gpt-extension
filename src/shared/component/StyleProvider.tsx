@@ -9,7 +9,7 @@ import {
 
 const colorModeManager = {
   type: "localStorage" as const,
-  get: () => "dark" as const,
+  get: () => "light" as const,
   set() {
     return;
   },
