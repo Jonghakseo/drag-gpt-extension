@@ -3,7 +3,7 @@ import StyleProvider from "@src/shared/component/StyleProvider";
 
 export default function App() {
   return (
-    <StyleProvider>
+    <StyleProvider isDark={false}>
       <Popup />
     </StyleProvider>
   );
