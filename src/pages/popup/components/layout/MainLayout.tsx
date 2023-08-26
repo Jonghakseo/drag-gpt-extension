@@ -8,7 +8,7 @@ const Container = styled.div`
   position: relative;
   width: fit-content;
   height: fit-content;
-  min-width: 300px;
+  min-width: 440px;
   min-height: 300px;
 
   display: flex;
