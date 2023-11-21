@@ -39,7 +39,8 @@ export async function chatGPT({
   }
 
   let response = await requestApi(apiKey, {
-    model: slot.type === "ChatGPT" ? "gpt-3.5-turbo" : "gpt-4",
+    model:
+      slot.type === "ChatGPT" ? "gpt-3.5-turbo-1106" : "gpt-4-1106-preview",
     max_tokens: slot.maxTokens,
     messages,
     stream: true,
@@ -51,7 +52,8 @@ export async function chatGPT({
 
   await handleError(response, async () => {
     response = await requestApi(apiKey, {
-      model: slot.type === "ChatGPT" ? "gpt-3.5-turbo-16k" : "gpt-4-32k",
+      model:
+        slot.type === "ChatGPT" ? "gpt-3.5-turbo-1106" : "gpt-4-1106-preview",
       max_tokens: slot.maxTokens,
       messages,
       stream: true,
@@ -102,23 +104,32 @@ async function parseResult(
     if (done) {
       break;
     }
-    if (value.includes("data: [DONE]")) {
-      break;
-    }
     const lines = value.split("\n\n").filter(Boolean);
     const chunks = lines
       .map((line) => line.substring(5).trim())
-      .map((line) => JSON.parse(line))
-      .map((data) => data.choices.at(0).delta.content)
+      .map(parseToJSON)
+      .map((data) => data?.choices.at(0).delta.content)
       .filter(Boolean);
 
     chunks.forEach((chunk) => {
       result += chunk;
       onDelta?.(chunk);
     });
+
+    if (value.includes("data: [DONE]")) {
+      break;
+    }
   }
   return result;
 }
+
+const parseToJSON = (line: string) => {
+  try {
+    return JSON.parse(line);
+  } catch {
+    return;
+  }
+};
 
 async function requestApi(apiKey: string, body: CreateChatCompletionRequest) {
   return fetch("https://api.openai.com/v1/chat/completions", {
