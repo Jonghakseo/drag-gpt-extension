@@ -99,7 +99,8 @@ async function parseResult(
 
   let result = "";
   while (reader) {
-    const { value, done } = await reader.read();
+    const { value: _value, done } = await reader.read();
+    const value = (_value as string).trim();
     if (done) {
       break;
     }
@@ -125,7 +126,8 @@ async function parseResult(
 const parseToJSON = (line: string) => {
   try {
     return JSON.parse(line);
-  } catch {
+  } catch (e) {
+    console.error(e);
     return;
   }
 };
