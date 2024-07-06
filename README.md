@@ -31,10 +31,10 @@ It uses the openai API, and currently, you can instruct what action to take with
 - Feature to create prompt suitable for role (e.g. 'Prompt generator to create short text required for SNS marketing')
 
 ### TODO
-- Fine-tune prompt parameters
-- Select text model (currently fixed to gpt-3.5-turbo)
-- Image input/output feature (for GPT-4)
-- Add a feature to view conversation history
+- [x] Fine-tune prompt parameters
+- [x] Select text model (currently fixed to gpt-3.5-turbo)
+- [ ] Image input/output feature (for GPT-4)
+- [x] Add a feature to view conversation history
 
 ## Installation <a name="installation"></a>
 
