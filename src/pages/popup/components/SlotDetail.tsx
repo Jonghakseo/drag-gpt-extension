@@ -34,7 +34,7 @@ export default function SlotDetail({
   exitDetail,
 }: SlotDetailProps) {
   const [slot, setSlot] = useState(initialSlot);
-  const isGpt4 = slot.type === "ChatGPT4";
+  const isGpt4Turbo = slot.type === "gpt4-turbo";
 
   const onSaveButtonClick = () => {
     onUpdate(slot);
@@ -48,9 +48,9 @@ export default function SlotDetail({
     }));
   };
 
-  const toggleGpt4Switch = () => {
-    updateSlot("type", isGpt4 ? "ChatGPT" : "ChatGPT4");
-    console.log(isGpt4, slot);
+  const toggleGpt4TurboSwitch = () => {
+    updateSlot("type", isGpt4Turbo ? "gpt4-turbo" : "gpt4o");
+    console.log(isGpt4Turbo, slot);
   };
 
   return (
@@ -107,9 +107,9 @@ export default function SlotDetail({
           whiteSpace="pre-wrap"
           fontSize={12}
         >
-          {t("slotDetail_isGpt4")}
+          {t("slotDetail_isGpt4Turbo")}
         </Text>
-        <Switch isChecked={isGpt4} onChange={toggleGpt4Switch} />
+        <Switch isChecked={isGpt4Turbo} onChange={toggleGpt4TurboSwitch} />
       </HStack>
       <HStack paddingTop={4} width="100%" justifyContent="space-between">
         <StyledButton onClick={onSaveButtonClick} colorScheme="blue">

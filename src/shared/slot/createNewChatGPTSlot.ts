@@ -1,6 +1,6 @@
 export function createNewChatGPTSlot(config?: Partial<Slot>): Slot {
   return {
-    type: "ChatGPT",
+    type: "gpt4o",
     isSelected: false,
     id: generateId(),
     name: "",

@@ -98,8 +98,8 @@
   "slotDetail_temperatureTitle": {
     "message": "Randomness (temperature: 0~2)"
   },
-  "slotDetail_isGpt4": {
-    "message": "Use GPT4 (default: 3.5)"
+  "slotDetail_isGpt4Turbo": {
+    "message": "Use gpt4-turbo (default: gpt4o)"
   },
   "slotDetail_saveButtonText": {
     "message": "Save"

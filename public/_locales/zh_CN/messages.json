@@ -98,8 +98,8 @@
   "slotDetail_temperatureTitle": {
     "message": "随机性（温度：0~2）"
   },
-  "slotDetail_isGpt4": {
-    "message": "使用 GPT4（默认值：3.5）"
+  "slotDetail_isGpt4Turbo": {
+    "message": "使用 GPT4Turbo（默认值：gpt4o）"
   },
   "slotDetail_saveButtonText": {
     "message": "保存"

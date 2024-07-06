@@ -83,7 +83,7 @@ chrome.runtime.onConnect.addListener((port) => {
           await chatGPT({
             input: "hello",
             apiKey: message.input,
-            slot: { type: "ChatGPT" },
+            slot: { type: "gpt4o" },
           }).catch((error) => {
             ApiKeyStorage.setApiKey(null);
             throw error;
@@ -143,7 +143,7 @@ chrome.runtime.onConnect.addListener((port) => {
           const apiKey = await ApiKeyStorage.getApiKey();
           const response = await chatGPT({
             chats: message.input?.messages,
-            slot: { type: message.input?.isGpt4 ? "ChatGPT4" : "ChatGPT" },
+            slot: { type: message.input?.isGpt4Turbo ? "gpt4-turbo" : "gpt4o" },
             apiKey,
             onDelta: (chunk) => {
               sendResponse({
@@ -204,7 +204,7 @@ chrome.runtime.onConnect.addListener((port) => {
           const response = await chatGPT({
             input: message.input,
             slot: {
-              type: "ChatGPT",
+              type: "gpt4o",
               system: PROMPT_GENERATE_PROMPT,
             },
             apiKey,

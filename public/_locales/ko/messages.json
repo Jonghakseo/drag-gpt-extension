@@ -98,8 +98,8 @@
   "slotDetail_temperatureTitle": {
     "message": "무작위성 (temperature: 0~2)"
   },
-  "slotDetail_isGpt4": {
-    "message": "GPT4 사용 (기본값: 3.5)"
+  "slotDetail_isGpt4Turbo": {
+    "message": "GPT4Turbo 사용 (기본값: gpt4o)"
   },
   "slotDetail_saveButtonText": {
     "message": "저장"

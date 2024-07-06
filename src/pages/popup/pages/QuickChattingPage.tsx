@@ -48,7 +48,7 @@ export default function QuickChattingPage({
       },
       getGPTResponse: (context) => {
         return getQuickGPTResponseAsStream({
-          isGpt4: context.isGpt4,
+          isGpt4Turbo: context.isGpt4Turbo,
           messages: context.chats,
           onDelta: (chunk) => {
             send("RECEIVE_ING", { data: chunk });
@@ -165,8 +165,8 @@ export default function QuickChattingPage({
             </FormLabel>
             <Switch
               id="is-gpt4-switch"
-              isChecked={state.context.isGpt4}
-              onChange={() => send("TOGGLE_IS_GPT4")}
+              isChecked={state.context.isGpt4Turbo}
+              onChange={() => send("TOGGLE_IS_GPT4_TURBO")}
             />
           </HStack>
           <HStack justifyContent="end">

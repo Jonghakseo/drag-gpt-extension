@@ -59,7 +59,7 @@ describe("SlotStorage test", () => {
     test("선택된 슬롯이 없으면 에러가 발생한다", async () => {
       // given
       const savedSlots: Slot[] = [
-        { type: "ChatGPT", id: "id", name: "name", isSelected: false },
+        { type: "gpt4o", id: "id", name: "name", isSelected: false },
       ];
       jest
         .spyOn(SlotStorage, "getAllSlots")
@@ -76,7 +76,7 @@ describe("SlotStorage test", () => {
     test("선택된 슬롯이 있으면 가져온다", async () => {
       // given
       const savedSelectedSlot: Slot = {
-        type: "ChatGPT",
+        type: "gpt4o",
         id: "id",
         name: "name",
         isSelected: true,
@@ -99,7 +99,7 @@ describe("SlotStorage test", () => {
       // given
       const savedSlots: Slot[] = [];
       const slot: Slot = {
-        type: "ChatGPT",
+        type: "gpt4o",
         id: "id",
         name: "name",
         isSelected: false,
@@ -121,14 +121,14 @@ describe("SlotStorage test", () => {
       // given
       const savedSlots: Slot[] = [
         {
-          type: "ChatGPT",
+          type: "gpt4o",
           id: "id1",
           name: "name",
           isSelected: false,
         },
       ];
       const slot: Slot = {
-        type: "ChatGPT",
+        type: "gpt4o",
         id: "id2",
         name: "name",
         isSelected: false,
@@ -150,7 +150,7 @@ describe("SlotStorage test", () => {
   test("updateSlot", async () => {
     // given
     const slot: Slot = {
-      type: "ChatGPT",
+      type: "gpt4o",
       id: "id",
       name: "name",
       isSelected: false,
@@ -175,7 +175,7 @@ describe("SlotStorage test", () => {
     // given
     const slotId = "slotId";
     const slot: Slot = {
-      type: "ChatGPT",
+      type: "gpt4o",
       id: slotId,
       name: "name",
       isSelected: false,

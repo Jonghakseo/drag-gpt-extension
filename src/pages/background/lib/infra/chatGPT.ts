@@ -39,7 +39,7 @@ export async function chatGPT({
   }
 
   let response = await requestApi(apiKey, {
-    model: slot.type === "ChatGPT" ? "gpt-3.5-turbo" : "gpt-4",
+    model: slot.type === "gpt4-turbo" ? "gpt-4-turbo" : "gpt-4o",
     max_tokens: slot.maxTokens,
     messages,
     stream: true,
@@ -51,8 +51,7 @@ export async function chatGPT({
 
   await handleError(response, async () => {
     response = await requestApi(apiKey, {
-      model:
-        slot.type === "ChatGPT" ? "gpt-3.5-turbo-0125" : "gpt-4-turbo-preview",
+      model: slot.type === "gpt4-turbo" ? "gpt-4-turbo" : "gpt-4o",
       max_tokens: slot.maxTokens,
       messages,
       stream: true,

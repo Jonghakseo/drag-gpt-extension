@@ -98,8 +98,8 @@
   "slotDetail_temperatureTitle": {
     "message": "ランダム性（temperature：0～2）"
   },
-  "slotDetail_isGpt4": {
-    "message": "GPT4の使用（デフォルト：3.5）"
+  "slotDetail_isGpt4Turbo": {
+    "message": "gpt4Turboの使用（デフォルト：gpt4o）"
   },
   "slotDetail_saveButtonText": {
     "message": "保存"
