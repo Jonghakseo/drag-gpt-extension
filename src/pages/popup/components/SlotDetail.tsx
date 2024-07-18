@@ -1,18 +1,23 @@
 import {
   Box,
+  Button,
+  ButtonProps,
   HStack,
   Input,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Slider,
   SliderFilledTrack,
   SliderThumb,
   SliderTrack,
-  Switch,
   Text,
   Textarea,
   Tooltip,
   VStack,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { forwardRef, ForwardRefRenderFunction, useState } from "react";
 import styled from "@emotion/styled";
 import StyledButton from "@pages/popup/components/StyledButton";
 import { COLORS } from "@src/constant/style";
@@ -34,7 +39,6 @@ export default function SlotDetail({
   exitDetail,
 }: SlotDetailProps) {
   const [slot, setSlot] = useState(initialSlot);
-  const isGpt4Turbo = slot.type === "gpt4-turbo";
 
   const onSaveButtonClick = () => {
     onUpdate(slot);
@@ -46,11 +50,6 @@ export default function SlotDetail({
       ...prevState,
       [key]: value,
     }));
-  };
-
-  const toggleGpt4TurboSwitch = () => {
-    updateSlot("type", isGpt4Turbo ? "gpt4-turbo" : "gpt4o");
-    console.log(isGpt4Turbo, slot);
   };
 
   return (
@@ -100,16 +99,23 @@ export default function SlotDetail({
           updateSlot("temperature", temperature);
         }}
       />
-      <HStack justifyContent="space-between">
-        <Text
-          color={COLORS.WHITE}
-          textAlign="start"
-          whiteSpace="pre-wrap"
-          fontSize={12}
-        >
-          {t("slotDetail_isGpt4Turbo")}
-        </Text>
-        <Switch isChecked={isGpt4Turbo} onChange={toggleGpt4TurboSwitch} />
+      <HStack>
+        <Menu>
+          <MenuButton as={forwardRef(ModelSelectButton)}>
+            {slot.type}
+          </MenuButton>
+          <MenuList>
+            <MenuItem onClick={() => updateSlot("type", "gpt-3.5-turbo")}>
+              gpt-3.5-turbo
+            </MenuItem>
+            <MenuItem onClick={() => updateSlot("type", "gpt-4o")}>
+              gpt-4o
+            </MenuItem>
+            <MenuItem onClick={() => updateSlot("type", "gpt-4-turbo")}>
+              gpt-4-turbo
+            </MenuItem>
+          </MenuList>
+        </Menu>
       </HStack>
       <HStack paddingTop={4} width="100%" justifyContent="space-between">
         <StyledButton onClick={onSaveButtonClick} colorScheme="blue">
@@ -122,6 +128,13 @@ export default function SlotDetail({
     </VStack>
   );
 }
+
+const ModelSelectButton: ForwardRefRenderFunction<
+  HTMLButtonElement,
+  ButtonProps
+> = (props, ref) => {
+  return <Button ref={ref} {...props} size="xs" />;
+};
 
 type TemperatureSliderProps = {
   temperature: number;

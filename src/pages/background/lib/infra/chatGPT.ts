@@ -1,5 +1,6 @@
 import { OpenAI } from "openai";
 import { ChatCompletionMessageParam } from "openai/resources";
+import { ChatModel } from "openai/src/resources/chat/chat";
 
 export async function chatGPT({
   input,
@@ -34,7 +35,7 @@ export async function chatGPT({
   const stream = client.beta.chat.completions
     .stream({
       messages,
-      model: slot.type === "gpt4-turbo" ? "gpt-4-turbo" : "gpt-4o",
+      model: slot.type,
       max_tokens: slot.maxTokens,
       temperature: slot.temperature,
       top_p: slot.topP,

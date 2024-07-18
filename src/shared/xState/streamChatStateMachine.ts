@@ -2,12 +2,11 @@ import { assign, createMachine } from "xstate";
 
 type Events =
   | {
-      type:
-        | "EXIT"
-        | "QUERY"
-        | "RESET"
-        | "RECEIVE_CANCEL"
-        | "TOGGLE_IS_GPT4_TURBO";
+      type: "EXIT" | "QUERY" | "RESET" | "RECEIVE_CANCEL";
+    }
+  | {
+      type: "SELECT_GPT_MODEL";
+      data: "gpt-4-turbo" | "gpt-4o" | "gpt-3.5-turbo";
     }
   | { type: "CHANGE_TEXT"; data: string }
   | { type: "RECEIVE_ING"; data: string }
@@ -17,7 +16,7 @@ interface Context {
   inputText: string;
   chats: Chat[];
   tempResponse: string;
-  isGpt4Turbo: boolean;
+  model: "gpt-4-turbo" | "gpt-4o" | "gpt-3.5-turbo";
   error?: Error;
   cancelReceive?: () => unknown;
 }
@@ -35,7 +34,7 @@ const initialContext: Context = {
   inputText: "",
   chats: [],
   tempResponse: "",
-  isGpt4Turbo: false,
+  model: "gpt-3.5-turbo",
 };
 
 const streamChatStateMachine = createMachine(
@@ -70,8 +69,8 @@ const streamChatStateMachine = createMachine(
           CHANGE_TEXT: {
             actions: "updateChatText",
           },
-          TOGGLE_IS_GPT4_TURBO: {
-            actions: "toggleIsGpt4Turbo",
+          SELECT_GPT_MODEL: {
+            actions: "selectGptModel",
           },
         },
       },
@@ -90,8 +89,8 @@ const streamChatStateMachine = createMachine(
           CHANGE_TEXT: {
             actions: "updateChatText",
           },
-          TOGGLE_IS_GPT4_TURBO: {
-            actions: "toggleIsGpt4Turbo",
+          SELECT_GPT_MODEL: {
+            actions: "selectGptModel",
           },
         },
       },
@@ -103,8 +102,8 @@ const streamChatStateMachine = createMachine(
           CHANGE_TEXT: {
             actions: "updateChatText",
           },
-          TOGGLE_IS_GPT4_TURBO: {
-            actions: "toggleIsGpt4Turbo",
+          SELECT_GPT_MODEL: {
+            actions: "selectGptModel",
           },
         },
       },
@@ -176,8 +175,8 @@ const streamChatStateMachine = createMachine(
         inputText: () => "",
       }),
       resetChatData: assign({ chats: () => [] }),
-      toggleIsGpt4Turbo: assign({
-        isGpt4Turbo: (context) => !context.isGpt4Turbo,
+      selectGptModel: assign({
+        model: (_, event) => event.data,
       }),
     },
     guards: {

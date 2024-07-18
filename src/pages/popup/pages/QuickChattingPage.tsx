@@ -1,8 +1,11 @@
 import {
   Button,
-  FormLabel,
+  ButtonProps,
   HStack,
-  Switch,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Textarea,
   VStack,
 } from "@chakra-ui/react";
@@ -12,13 +15,17 @@ import {
   sendMessageToBackground,
   sendMessageToBackgroundAsync,
 } from "@src/chrome/message";
-import { FormEventHandler, KeyboardEventHandler } from "react";
+import {
+  FormEventHandler,
+  forwardRef,
+  ForwardRefRenderFunction,
+  KeyboardEventHandler,
+} from "react";
 import { useScrollDownEffect } from "@src/shared/hook/useScrollDownEffect";
 import { t } from "@src/chrome/i18n";
 import { useCopyClipboard } from "@src/shared/hook/useCopyClipboard";
 import streamChatStateMachine from "@src/shared/xState/streamChatStateMachine";
 import { getQuickGPTResponseAsStream } from "@src/shared/services/getGPTResponseAsStream";
-import { COLORS } from "@src/constant/style";
 import useGeneratedId from "@src/shared/hook/useGeneratedId";
 import { ChatBox } from "@pages/content/src/ContentScriptApp/components/messageBox/ResponseMessageBox";
 
@@ -40,6 +47,12 @@ export default function QuickChattingPage({
   const { id: sessionId, regenerate: regenerateSessionId } =
     useGeneratedId("quick_");
   const [state, send] = useMachine(streamChatStateMachine, {
+    context: {
+      inputText: "",
+      chats: [],
+      tempResponse: "",
+      model: (localStorage.getItem("model") as any) ?? "gpt-3.5-turbo",
+    },
     services: {
       getChatHistoryFromBackground: () => {
         return sendMessageToBackgroundAsync({
@@ -48,7 +61,7 @@ export default function QuickChattingPage({
       },
       getGPTResponse: (context) => {
         return getQuickGPTResponseAsStream({
-          isGpt4Turbo: context.isGpt4Turbo,
+          model: context.model,
           messages: context.chats,
           onDelta: (chunk) => {
             send("RECEIVE_ING", { data: chunk });
@@ -99,6 +112,11 @@ export default function QuickChattingPage({
 
   const onClickStopButton = () => {
     send("RECEIVE_CANCEL");
+  };
+
+  const onSelectModel = (model: "gpt-4-turbo" | "gpt-4o" | "gpt-3.5-turbo") => {
+    send("SELECT_GPT_MODEL", { data: model });
+    localStorage.setItem("model", model);
   };
 
   const onChatInputKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (
@@ -155,19 +173,22 @@ export default function QuickChattingPage({
                 ? t("quickChattingPage_copyButtonText_copied")
                 : t("quickChattingPage_copyButtonText_copy")}
             </StyledButton>
-            <FormLabel
-              htmlFor="is-gpt4-switch"
-              mb="0"
-              color={COLORS.WHITE}
-              fontSize={12}
-            >
-              {t("quickChattingPage_isGpt4")}
-            </FormLabel>
-            <Switch
-              id="is-gpt4-switch"
-              isChecked={state.context.isGpt4Turbo}
-              onChange={() => send("TOGGLE_IS_GPT4_TURBO")}
-            />
+            <Menu>
+              <MenuButton as={forwardRef(ModelSelectButton)}>
+                {state.context.model}
+              </MenuButton>
+              <MenuList>
+                <MenuItem onClick={() => onSelectModel("gpt-3.5-turbo")}>
+                  gpt-3.5-turbo
+                </MenuItem>
+                <MenuItem onClick={() => onSelectModel("gpt-4o")}>
+                  gpt-4o
+                </MenuItem>
+                <MenuItem onClick={() => onSelectModel("gpt-4-turbo")}>
+                  gpt-4-turbo
+                </MenuItem>
+              </MenuList>
+            </Menu>
           </HStack>
           <HStack justifyContent="end">
             {isReceiving && (
@@ -193,6 +214,13 @@ export default function QuickChattingPage({
     </VStack>
   );
 }
+
+const ModelSelectButton: ForwardRefRenderFunction<
+  HTMLButtonElement,
+  ButtonProps
+> = (props, ref) => {
+  return <Button ref={ref} {...props} size="xs" />;
+};
 
 function findLastResponseChat(chats: Chat[]) {
   return chats.filter((chat) => chat.role === "assistant").at(-1);

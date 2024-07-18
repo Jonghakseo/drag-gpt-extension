@@ -2,12 +2,12 @@ import { sendMessageToBackground } from "@src/chrome/message";
 
 export async function getQuickGPTResponseAsStream({
   messages,
-  isGpt4Turbo,
+  model,
   onDelta,
   onFinish,
 }: {
   messages: Chat[];
-  isGpt4Turbo: boolean;
+  model: "gpt-4-turbo" | "gpt-4o" | "gpt-3.5-turbo";
   onDelta: (chunk: string) => unknown;
   onFinish: (result: string) => unknown;
 }) {
@@ -16,7 +16,7 @@ export async function getQuickGPTResponseAsStream({
       const { disconnect } = sendMessageToBackground({
         message: {
           type: "RequestQuickChatGPTStream",
-          input: { messages, isGpt4Turbo },
+          input: { messages, model },
         },
         handleSuccess: (response) => {
           if (response.isDone || !response.chunk) {

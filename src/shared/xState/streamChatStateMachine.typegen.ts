@@ -39,9 +39,9 @@ export interface Typegen0 {
     replaceLastResponse: "RECEIVE_DONE";
     resetChatData: "RESET";
     resetChatText: "QUERY";
+    selectGptModel: "SELECT_GPT_MODEL";
     setCancelReceive: "done.invoke.stream-chat-state.loading:invocation[0]";
     setChats: "done.invoke.stream-chat-state.init:invocation[0]";
-    toggleIsGpt4Turbo: "TOGGLE_IS_GPT4_TURBO";
     updateChatText: "CHANGE_TEXT";
   };
   eventsCausingDelays: {};

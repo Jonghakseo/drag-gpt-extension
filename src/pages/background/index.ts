@@ -83,7 +83,7 @@ chrome.runtime.onConnect.addListener((port) => {
           await chatGPT({
             input: "hello",
             apiKey: message.input,
-            slot: { type: "gpt4o" },
+            slot: { type: "gpt-3.5-turbo" },
           }).catch((error) => {
             ApiKeyStorage.setApiKey(null);
             throw error;
@@ -136,14 +136,17 @@ chrome.runtime.onConnect.addListener((port) => {
           break;
         }
         case "RequestQuickChatGPTStream": {
+          if (!message.input) {
+            throw Error("RequestQuickChatGPTStream input is undefined");
+          }
           await QuickChatHistoryStorage.pushChatHistories({
             role: "user",
-            content: message.input?.messages.at(-1)?.content ?? "",
+            content: message.input.messages.at(-1)?.content ?? "",
           });
           const apiKey = await ApiKeyStorage.getApiKey();
           const response = await chatGPT({
-            chats: message.input?.messages,
-            slot: { type: message.input?.isGpt4Turbo ? "gpt4-turbo" : "gpt4o" },
+            chats: message.input.messages,
+            slot: { type: message.input.model },
             apiKey,
             onDelta: (chunk) => {
               sendResponse({
@@ -204,7 +207,7 @@ chrome.runtime.onConnect.addListener((port) => {
           const response = await chatGPT({
             input: message.input,
             slot: {
-              type: "gpt4o",
+              type: "gpt-4o",
               system: PROMPT_GENERATE_PROMPT,
             },
             apiKey,
