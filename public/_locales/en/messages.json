@@ -56,9 +56,6 @@
   "quickChattingPage_copyButtonText_copied": {
     "message": "Copied!"
   },
-  "quickChattingPage_isGpt4": {
-    "message": "GPT4"
-  },
   "slotListPage_newSlotButtonText": {
     "message": "Add Slot"
   },

@@ -56,9 +56,6 @@
   "quickChattingPage_copyButtonText_copied": {
     "message": "복사됨!"
   },
-  "quickChattingPage_isGpt4": {
-    "message": "GPT4"
-  },
   "slotListPage_newSlotButtonText": {
     "message": "슬롯 추가"
   },
