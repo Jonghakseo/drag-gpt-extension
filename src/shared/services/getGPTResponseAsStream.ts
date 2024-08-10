@@ -7,7 +7,7 @@ export async function getQuickGPTResponseAsStream({
   onFinish,
 }: {
   messages: Chat[];
-  model: "gpt-4-turbo" | "gpt-4o" | "gpt-3.5-turbo";
+  model: Model;
   onDelta: (chunk: string) => unknown;
   onFinish: (result: string) => unknown;
 }) {

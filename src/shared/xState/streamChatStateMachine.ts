@@ -6,7 +6,7 @@ type Events =
     }
   | {
       type: "SELECT_GPT_MODEL";
-      data: "gpt-4-turbo" | "gpt-4o" | "gpt-3.5-turbo";
+      data: Model;
     }
   | { type: "CHANGE_TEXT"; data: string }
   | { type: "RECEIVE_ING"; data: string }
@@ -16,7 +16,7 @@ interface Context {
   inputText: string;
   chats: Chat[];
   tempResponse: string;
-  model: "gpt-4-turbo" | "gpt-4o" | "gpt-3.5-turbo";
+  model: Model;
   error?: Error;
   cancelReceive?: () => unknown;
 }

@@ -41,8 +41,10 @@ declare module "*.json" {
 }
 
 declare global {
+  type Model = "gpt-4-turbo" | "gpt-4o" | "gpt-3.5-turbo" | "gpt-4o-mini";
+
   type ChatGPTSlot = {
-    type: "gpt-4-turbo" | "gpt-4o" | "gpt-3.5-turbo";
+    type: Model;
     system?: string;
     /** config */
     maxTokens?: number; // max 4000
@@ -108,7 +110,7 @@ declare global {
     type: "RequestQuickChatGPTStream";
     input?: {
       messages: Chat[];
-      model: "gpt-4-turbo" | "gpt-4o" | "gpt-3.5-turbo";
+      model: Model;
     };
     data?: { result: string; chunk?: string; isDone?: boolean };
   };

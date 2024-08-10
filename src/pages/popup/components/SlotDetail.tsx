@@ -108,6 +108,9 @@ export default function SlotDetail({
             <MenuItem onClick={() => updateSlot("type", "gpt-3.5-turbo")}>
               gpt-3.5-turbo
             </MenuItem>
+            <MenuItem onClick={() => updateSlot("type", "gpt-4o-mini")}>
+              gpt-4o-mini
+            </MenuItem>
             <MenuItem onClick={() => updateSlot("type", "gpt-4o")}>
               gpt-4o
             </MenuItem>

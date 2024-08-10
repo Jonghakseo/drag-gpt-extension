@@ -1,6 +1,5 @@
 import { OpenAI } from "openai";
 import { ChatCompletionMessageParam } from "openai/resources";
-import { ChatModel } from "openai/src/resources/chat/chat";
 
 export async function chatGPT({
   input,

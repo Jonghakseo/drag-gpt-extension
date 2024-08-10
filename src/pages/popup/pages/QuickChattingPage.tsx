@@ -51,7 +51,7 @@ export default function QuickChattingPage({
       inputText: "",
       chats: [],
       tempResponse: "",
-      model: (localStorage.getItem("model") as any) ?? "gpt-3.5-turbo",
+      model: (localStorage.getItem("model") as Model) ?? "gpt-3.5-turbo",
     },
     services: {
       getChatHistoryFromBackground: () => {
@@ -114,7 +114,7 @@ export default function QuickChattingPage({
     send("RECEIVE_CANCEL");
   };
 
-  const onSelectModel = (model: "gpt-4-turbo" | "gpt-4o" | "gpt-3.5-turbo") => {
+  const onSelectModel = (model: Model) => {
     send("SELECT_GPT_MODEL", { data: model });
     localStorage.setItem("model", model);
   };
