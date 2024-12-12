@@ -34,6 +34,7 @@ const manifest: chrome.runtime.ManifestV3 = {
       resources: [
         "assets/js/*.js",
         "assets/css/*.css",
+        "logo-dark.png",
         "icon-128.png",
         "icon-34.png",
       ],

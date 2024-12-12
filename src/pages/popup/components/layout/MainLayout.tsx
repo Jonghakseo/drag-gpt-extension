@@ -1,8 +1,6 @@
 import React, { ReactNode } from "react";
-import { Heading } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { COLORS } from "@src/constant/style";
-import { t } from "@src/chrome/i18n";
 
 const Container = styled.div`
   position: relative;
@@ -12,6 +10,7 @@ const Container = styled.div`
   min-height: 300px;
 
   display: flex;
+  gap: 8px;
   flex-direction: column;
   align-items: center;
 
@@ -31,9 +30,11 @@ type MainLayoutProps = {
 export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <Container>
-      <Heading color="gray.50" pb={3} fontSize={18} fontWeight="bold">
-        {t("dragGPT")}
-      </Heading>
+      <img
+        width={160}
+        src={chrome.runtime.getURL("./logo-dark.png")}
+        alt="logo"
+      />
       {children}
     </Container>
   );
