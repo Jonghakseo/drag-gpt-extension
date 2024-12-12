@@ -7,7 +7,7 @@ import StyleProvider from "@src/shared/component/StyleProvider";
 const App: FC = () => {
   return (
     <FontProvider>
-      <StyleProvider isDark={true}>
+      <StyleProvider>
         {/*  TODO router */}
         <Suspense fallback={<Spinner size="lg" m={8} />}>
           <OptionMainPage />
