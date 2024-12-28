@@ -17,6 +17,7 @@ import ChatText from "@src/shared/component/ChatText";
 import AssistantChat from "@src/shared/component/AssistantChat";
 import MessageBox from "@pages/content/src/ContentScriptApp/components/messageBox/MessageBox";
 import { t } from "@src/chrome/i18n";
+import { OnOffStorage } from "@pages/background/lib/storage/onOffStorage";
 
 const Container = styled.div`
   * {
@@ -74,6 +75,12 @@ export default function DragGPT() {
           onDelta: (chunk) => send("RECEIVE_ING", { data: chunk }),
           onFinish: () => send("RECEIVE_END"),
         }),
+      checkOnOffState: async () => {
+        const isOn = await OnOffStorage.getOnOff();
+        if (!isOn) {
+          throw new Error("Off");
+        }
+      },
     },
   });
 
