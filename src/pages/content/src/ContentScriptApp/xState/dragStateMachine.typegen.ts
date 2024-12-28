@@ -12,17 +12,22 @@ export interface Typegen0 {
       type: "error.platform.drag-state.loading:invocation[0]";
       data: unknown;
     };
+    "error.platform.drag-state.request_button:invocation[0]": {
+      type: "error.platform.drag-state.request_button:invocation[0]";
+      data: unknown;
+    };
     "xstate.init": { type: "xstate.init" };
     "xstate.stop": { type: "xstate.stop" };
   };
   invokeSrcNameMap: {
+    checkOnOffState: "done.invoke.drag-state.request_button:invocation[0]";
     getGPTResponse: "done.invoke.drag-state.loading:invocation[0]";
   };
   missingImplementations: {
     actions: "setPositionOnScreen";
     delays: never;
     guards: never;
-    services: "getGPTResponse";
+    services: "checkOnOffState" | "getGPTResponse";
   };
   eventsCausingActions: {
     addInitialResponseChat: "done.invoke.drag-state.loading:invocation[0]";
@@ -33,6 +38,7 @@ export interface Typegen0 {
       | "CLOSE_MESSAGE_BOX"
       | "RECEIVE_CANCEL"
       | "TEXT_SELECTED"
+      | "error.platform.drag-state.request_button:invocation[0]"
       | "xstate.init";
     setAnchorNodePosition: "REQUEST";
     setPositionOnScreen:
@@ -46,6 +52,7 @@ export interface Typegen0 {
     isValidTextSelectedEvent: "TEXT_SELECTED";
   };
   eventsCausingServices: {
+    checkOnOffState: "TEXT_SELECTED";
     getGPTResponse: "REQUEST";
   };
   matchesStates:

@@ -1,4 +1,4 @@
-import { Button, HStack, Link, Text, VStack } from "@chakra-ui/react";
+import { Button, HStack, Link, Switch, Text, VStack } from "@chakra-ui/react";
 import { useMachine } from "@xstate/react";
 import slotListPageStateMachine from "@pages/popup/xState/slotListPageStateMachine";
 import SlotDetail from "@pages/popup/components/SlotDetail";
@@ -11,6 +11,8 @@ import SlotListItem from "@pages/popup/components/SlotListItem";
 import { COLORS } from "@src/constant/style";
 import { createNewChatGPTSlot } from "@src/shared/slot/createNewChatGPTSlot";
 import { t } from "@src/chrome/i18n";
+import { useEffect, useState } from "react";
+import { OnOffStorage } from "@pages/background/lib/storage/onOffStorage";
 
 const getAllSlotsFromBackground = async () => {
   return await sendMessageToBackgroundAsync({
@@ -133,6 +135,7 @@ export default function SlotListPage({
             >
               {t("slogListPage_showChatHistoryButtonText")}
             </Button>
+            <OnOffSwitch />
           </HStack>
           <HStack justifyContent="space-between" w="100%">
             <Text color={COLORS.WHITE} fontWeight="bold">
@@ -162,3 +165,28 @@ export default function SlotListPage({
     </>
   );
 }
+
+const OnOffSwitch = () => {
+  const [isOn, setIsOn] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    OnOffStorage.getOnOff().then((onOff) => {
+      setIsOn(onOff);
+    });
+  }, []);
+
+  if (isOn === null) {
+    return null;
+  }
+
+  return (
+    <Switch
+      isChecked={isOn}
+      onChange={() => {
+        OnOffStorage.toggle().then(() => {
+          setIsOn(!isOn);
+        });
+      }}
+    />
+  );
+};

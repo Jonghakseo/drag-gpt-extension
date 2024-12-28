@@ -37,6 +37,9 @@ type Services = {
   getGPTResponse: {
     data: { firstChunk: string };
   };
+  checkOnOffState: {
+    data: void;
+  };
 };
 
 const initialContext: Context = {
@@ -74,6 +77,12 @@ const dragStateMachine = createMachine(
       },
       request_button: {
         tags: "showRequestButton",
+        invoke: {
+          src: "checkOnOffState",
+          onError: {
+            target: "idle",
+          },
+        },
         on: {
           TEXT_SELECTED: [
             {
