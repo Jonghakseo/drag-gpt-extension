@@ -59,6 +59,7 @@ export default function SlotDetail({
       </Text>
       <Input
         size="xs"
+        color={COLORS.WHITE}
         value={slot.name}
         placeholder={t("slotDetail_promptSlotName_placeholder")}
         onChange={(event) => updateSlot("name", event.target.value)}
@@ -78,6 +79,7 @@ export default function SlotDetail({
         height={70}
         maxLength={2000}
         value={slot.system}
+        color={COLORS.WHITE}
         placeholder={t("slotDetail_promptInputPlaceholder")}
         onChange={(event) => {
           updateSlot("system", event.target.value);

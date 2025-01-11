@@ -50,6 +50,7 @@ export const NoApiKeyPage = ({
               <Input
                 value={apiKey}
                 type="password"
+                color={COLORS.WHITE}
                 h="24px"
                 onChange={handleChange}
                 placeholder={t("noApiKeyPage_openAIApiKey_placeholder")}
