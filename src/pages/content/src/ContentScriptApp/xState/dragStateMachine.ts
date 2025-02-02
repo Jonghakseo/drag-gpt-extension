@@ -69,20 +69,21 @@ const dragStateMachine = createMachine(
         entry: ["resetAll"],
         on: {
           TEXT_SELECTED: {
-            target: "request_button",
+            target: "on_off_check",
             actions: "readyRequestButton",
             cond: "isValidTextSelectedEvent",
           },
         },
       },
-      request_button: {
-        tags: "showRequestButton",
+      on_off_check: {
         invoke: {
           src: "checkOnOffState",
-          onError: {
-            target: "idle",
-          },
+          onError: "idle",
+          onDone: "request_button",
         },
+      },
+      request_button: {
+        tags: "showRequestButton",
         on: {
           TEXT_SELECTED: [
             {
